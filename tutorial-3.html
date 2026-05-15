@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="死锁 · 网络 / 分布式 / 云。">
+<meta name="color-scheme" content="light dark">
+<title>教程笔记 · Part 3 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="themes/themes.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html" aria-label="返回首页">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
+      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
+      </button>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="chipbar" aria-label="章节快速导航">
+    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
+    <div class="chipbar-track">
+        <a class="chip" href="ch1.html">第 1 章 操作系统概论</a>
+        <a class="chip" href="ch2.html">第 2 章 处理器管理</a>
+        <a class="chip" href="ch3.html">第 3 章 同步互斥与死锁</a>
+        <a class="chip" href="ch4.html">第 4 章 存储管理</a>
+        <a class="chip" href="ch5.html">第 5 章 设备管理</a>
+        <a class="chip" href="review.html">总复习提纲</a>
+        <a class="chip" href="homework.html">作业明细</a>
+        <a class="chip" href="tutorial-1.html">教程笔记 · Part 1</a>
+        <a class="chip" href="tutorial-2.html">教程笔记 · Part 2</a>
+        <a class="chip chip-active" href="tutorial-3.html">教程笔记 · Part 3</a>
+    </div>
+  </nav>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="站点导航">
+  <a class="home-link" href="index.html">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
+    <span>课程地图</span>
+  </a>
+  <section class="nav-group" aria-labelledby="grp-chapter"><h3 id="grp-chapter" class="nav-group-title"><span class="nav-group-icon">📖</span>课程章节</h3><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><h3 id="grp-exam" class="nav-group-title"><span class="nav-group-icon">📝</span>考前材料</h3><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><h3 id="grp-tutorial" class="nav-group-title"><span class="nav-group-icon">📚</span>教程笔记</h3><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link nav-link-active" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <div class="sidebar-footer">
+    <a class="ghost" href="themes-gallery.html">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      <span>主题画廊（71 套）</span>
+    </a>
+    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+  </div>
+</aside>
+<main class="main" id="main">
+  <article class="prose">
+    <header class="page-head">
+      <h1>教程笔记 · Part 3</h1>
+      <p class="page-lede">死锁 · 网络 / 分布式 / 云。</p>
+    </header>
+    <blockquote>
+<p>本文覆盖：第六章末尾（死锁）+ 第七章（网络环境下的操作系统）+ 附录《操作系统教程》导学 + 课后阅读材料 + 封底。</p>
+<p>Part 1（前 1/3）+ Part 2（中 1/3）已覆盖第 1-5 章 + 第六章前半（并发概念、PV、管程、经典问题、进程通信），本文从 6.6 死锁开始。</p>
+</blockquote>
+<hr>
+<h2 id="6-66-p230-p239-img-241250"><a class="toclink" href="#6-66-p230-p239-img-241250">第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）</a></h2>
+<h3 id="661"><a class="toclink" href="#661">6.6.1 死锁的产生</a></h3>
+<p><strong>死锁定义</strong>：一组进程处于死锁状态——若进程集合中每个进程都在等待&rdquo;只能由该集合中的另一个进程才能引发的事件&rdquo;，则称这组进程或系统发生了死锁。形式上：n 个进程 P1,&hellip;,Pn，每个 Pi 因申请不到资源 Rj 而处于等待状态，而 Rj 又被 Pi+1 占有，Pn 申请的资源被 P1 占有——形成永无解的循环等待。</p>
+<p><strong>死锁举例</strong>（教材 p231-233 给出 6 个例子，按死锁起因分类）：</p>
+<ul>
+<li>例 3 — 竞争资源：进程 P 持有读卡机申请打印机、Q 持有打印机申请读卡机 → 互相等。</li>
+<li>例 4 — PV 操作使用不当：Q1 = P(s1); P(s2); &hellip;，Q2 = P(s2); P(s1); &hellip;，s1=s2=1 初值。Q1 拿到 s1 后切到 Q2，Q2 拿到 s2，再各自申请对方信号量 → 死锁。<strong>这种死锁不涉资源</strong>，是 P 操作排序不当造成。</li>
+<li>例 5 — 同类资源分配不当：m 个资源被 n 个进程共享，每个进程要求 K 个，且 m&lt;n·K。轮流分配第一轮后资源耗尽，第二轮全部阻塞。</li>
+<li>例 6 — 临时性资源使用不加限制：P1 等 P3 信件 S3 才发 S1；P2 等 P1 信件 S1 才发 S2；P3 等 P2 信件 S2 才发 S3 → 循环等待。</li>
+</ul>
+<h3 id="662"><a class="toclink" href="#662">6.6.2 死锁的防止</a></h3>
+<p><strong>Coffman（1971）总结的 4 个必要条件</strong>（前三个为必要不充分；第四个是前三个同时存在的结果）：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>条件</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>互斥（mutual exclusion）</td>
+<td>资源任一时刻仅一个进程独占</td>
+</tr>
+<tr>
+<td>2</td>
+<td>占有和等待（hold and wait）</td>
+<td>进程因申请资源得不到满足而等待时不释放已占资源</td>
+</tr>
+<tr>
+<td>3</td>
+<td>不剥夺（no preemption）</td>
+<td>资源只能由占用进程主动释放</td>
+</tr>
+<tr>
+<td>4</td>
+<td>循环等待（circular wait）</td>
+<td>存在一个循环等待链</td>
+</tr>
+</tbody>
+</table>
+<p><strong>只要破坏 4 个条件之一即可防止死锁</strong>。</p>
+<p>破坏方法：</p>
+<ol>
+<li><strong>破坏互斥</strong>——资源可同时访问而非互斥。简单但很多资源天然互斥（例如打印机），故并不普适。可考虑 <strong>SPOOLing 技术</strong>用共享磁盘模拟独占设备。</li>
+<li><strong>剥夺式调度</strong>——破坏不剥夺条件。仅适合主存资源和处理器资源（其他资源剥夺代价高）。一种做法：申请未获时主动释放已占资源，重新一起申请。</li>
+<li><strong>静态分配策略</strong>：进程执行前一次申请它需要的全部资源，全部满足才开始。破坏&rdquo;占有和等待&rdquo;条件。优点：实现简单；<strong>缺点</strong>：资源利用率低（早期占有但晚期才使用的资源浪费）。</li>
+<li><strong>层次分配策略</strong>：资源分多个层次，进程只能按层次顺序申请；要释放某层资源必须先释放更高层资源。破坏&rdquo;循环等待&rdquo;。比静态分配资源利用率高，但若进程使用资源的次序与系统层次次序不一致，仍有空闲浪费（例如规定磁带机层次低于绘图仪，进程使用绘图仪前必须先申请磁带机，导致磁带机长时间空闲）。</li>
+</ol>
+<h3 id="663-dijkstra-1965"><a class="toclink" href="#663-dijkstra-1965">6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）</a></h3>
+<p><strong>思想</strong>：在为申请者分配资源前先测试系统状态，若分配会产生死锁则拒绝；否则分配。仅当申请者可能无条件归还它所申请的全部资源时，才分配资源。</p>
+<p><strong>经典例题</strong>（教材 p236）：</p>
+<p>设系统有 3 个进程 P、Q、R，共 10 个同类资源。当前分配状态：</p>
+<table>
+<thead>
+<tr>
+<th>进程</th>
+<th>已占</th>
+<th>还需</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Q</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>R</td>
+<td>2</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+<p>剩余资源 = 10 - 4 - 2 - 2 = 2。</p>
+<ul>
+<li>若给 P 或 R：P 还需 4（4+2=6 仍不足 8 即 4+4），R 还需 7（2+2=4 仍不足 7+2=9）；之后任何进程申请资源都得不到满足 → 可能死锁。</li>
+<li>若给 Q：Q 最多再需 2，2 个剩余可以满足 → Q 可执行结束并归还其全部 4 个资源。系统得到 4 个资源后情况为：P(4,4), R(2,7)。此时可满足 P 的 4 个申请，但 R 仍无法满足（4-4=0 &lt; 7）→ R 申请会被拒绝。</li>
+</ul>
+<p><strong>正确性证明思想</strong>：按银行家算法分配后，系统中至少存在一个进程，单独让它执行下去能获其全部所需资源 → 它可结束并归还资源；归还后又可让下一个进程满足……所以不会有进程永远等待。</p>
+<p><strong>缺点</strong>：保守、资源利用率低；且每次分配前都要检查每个进程对各类资源的最大需求，<strong>时间开销大</strong>。</p>
+<h3 id="664"><a class="toclink" href="#664">6.6.4 死锁的检测</a></h3>
+<p><strong>思路</strong>：不限制资源分配，但定时跑一个死锁检测程序，发现死锁则解除。</p>
+<p><strong>两张表格法</strong>：</p>
+<ul>
+<li>占用资源表：记录每个进程占用了哪些资源</li>
+<li>等待资源表：记录每个被阻塞进程在等什么资源</li>
+</ul>
+<p>若进程 Pi 等待资源 rk，rk 被 Pj 占用，则 Pi 与 Pj 有等待占用关系，记 W(Pi, Pj)。若反复检测出 W(P1,P2), W(P2,P3),&hellip;,W(Pm,P1) 这样的循环 → 系统出现死锁。</p>
+<p><strong>Warshall 传递闭包算法</strong>（用矩阵 A[bij] 表示等待占用关系，bij=1 表示 Pi 等待 Pj 占用的资源）：</p>
+<pre><code class="language-c">for (int k = 1; k &lt;= n; k++)
+    for (int i = 1; i &lt;= n; i++)
+        for (int j = 1; j &lt;= n; j++)
+            bij = bij ∨ (bik ∧ bkj);
+</code></pre>
+<p>执行后得传递闭包 A<em>[bij]。</em><em>若 A</em> 中存在 bii = 1（i = 1,&hellip;,n），即对角线有 1，则说明存在循环等待 → 死锁**。</p>
+<p><strong>死锁解除方法</strong>：</p>
+<ol>
+<li>结束所有进程并重启 OS（代价大）</li>
+<li>撤销所有死锁进程，重新启动它们</li>
+<li>设置校验点（checkpoint）回退（要求系统建立并保存校验点，支持回退/重启机制）</li>
+<li>中止一个卷入死锁的进程，再重新执行</li>
+</ol>
+<blockquote>
+<p>检测死锁是否出现 + 死锁后实际恢复的代价 &gt; 防止/避免的代价；但死锁不常出现时这种做法仍值得。<strong>检测代价依赖于频率，恢复代价是时间损失。</strong></p>
+</blockquote>
+<h3 id="66-p239"><a class="toclink" href="#66-p239">6.6 本章小结（书 p239）</a></h3>
+<p>并发进程间存在两种基本关系：<strong>竞争</strong>（互斥）和<strong>协作</strong>（同步）。</p>
+<ul>
+<li>并发进程中与互斥共享变量有关的程序段称为<strong>临界区</strong>。实现临界区管理的硬件方式（关中断、测试并设置指令等）最大缺点是采用忙式等待测试，<strong>浪费 CPU 时间</strong>。</li>
+<li><strong>信号量与 PV 操作</strong>是一种有效的临界区管理方法。记录型信号量引入等待队列，进入临界区前 P 操作、退出后 V 操作。</li>
+<li>使用信号量与 PV 时，对共享资源的管理分散在各进程中——为统一管理，引入<strong>管程</strong>方法。管程使并发进程间相互作用更清晰，更易于编写正确的并发程序。</li>
+<li>用 PV 或管程可解决进程互斥与同步问题，相关经典问题：</li>
+<li>生产者-消费者问题</li>
+<li>苹果-橘子问题</li>
+<li>读者-写者问题</li>
+<li>哲学家就餐问题</li>
+<li>关中断、信号量与 PV 及管程属于进程的<strong>低级通信机制</strong>。<strong>进程间通信机制</strong>（IPC）是高级通信方式：通过信件交换信息，包括直接通信和间接通信；高级机制有基于流的通信、基于 RPC 的高级通信规约等。</li>
+<li><strong>死锁</strong>：一组并发进程因等待其他进程占有资源而永远不能向前推进的僵化状态。4 个必要条件：互斥、占有和等待、不剥夺、循环等待。三种解决策略：死锁防止、死锁避免、死锁检测和解除。</li>
+</ul>
+<h3 id="p240-246-img-251257"><a class="toclink" href="#p240-246-img-251257">习题六（书 p240-246 / img-251~257）</a></h3>
+<p><strong>1. 思考题（部分）</strong>：（5）进程互斥与进程同步的异同；（7）临界区管理的基本原则；（10）为什么 PV 操作必须是不可分割的原语操作；（11）管程与进程的不同点；（13）霍尔（Hoare）管程的实现方法；（17）产生死锁的必要条件；（18）死锁防止策略列举；（19）银行家算法基本思想；（20）如何判断系统内是否发生死锁。</p>
+<p><strong>2. 应用题精选</strong>（共 24 题，涵盖 PV 与管程经典综合）：</p>
+<ul>
+<li>(1) 用 Bernstein 条件证明 S2 与 S3 可并发，S3 与 S4 不可并发</li>
+<li>(2) k = k*2 与 k = k+1、print k 等并发，找时间相关错误</li>
+<li>(3) 验证 Dijkstra 临界区软件算法满足临界区管理原则</li>
+<li>(4) c1=1-c2 / c2=1-c1 临界区算法分析</li>
+<li>(5)(6) 用关中断 / 测试并设置指令实现单处理器信号量</li>
+<li>(7) S1=S2=0 时 P1/P2 并发后 x、y、z 的值</li>
+<li>(8) n 个进程共享互斥段，每次允许 1 个 vs 至多 m 个并发，信号量初值范围</li>
+<li>(9) R 输入、M 加工、P 输出 三进程协作（一个缓冲区 K 信息块 / 两个缓冲区每个 K 信息块）</li>
+<li>(10) 用记录型信号量解哲学家就餐问题</li>
+<li>(11) 公共汽车上司机/售票员同步</li>
+<li>(12) 快餐店 4 类员工（领班/厨师/打包/出纳）并发流程</li>
+<li>(13) 一个仓库存放 X、Y 两种产品，要求 -N&lt;X-Y&lt;M，用 PV 实现</li>
+<li>(14) 仓库 A、B 零件先入先出装配（max m，差不超 n）</li>
+<li>(15) 单行小巷有 S 安全岛容 2 人，A、B 两端通过算法</li>
+<li>(16) 用管程实现磁盘电梯调度算法</li>
+<li>(17) 阅览室 100 座，登记表登记/注销</li>
+<li>(18) <strong>苹果-橘子问题</strong>：盒子最多 2 水果，爸爸放苹果、妈妈放橘子，儿子吃橘子、女儿吃苹果。① 信号量+PV ② 管程</li>
+<li>(19) 儿童小汽车流水线，N 个槽，组 1 加车架、组 2 加车轮、组 3 取 1 车架+4 车轮组装。① PV ② 管程</li>
+<li>(20) 一组生产者+一组消费者共享 9 缓冲区，生产者一次写三个、消费者一次取一个</li>
+<li>(21) <strong>吸烟者问题</strong>（Patil 1971）：3 位吸烟者各持一种原料（烟草/纸/火柴），供应者随机放出 2 样不在桌上的，唤醒能用的吸烟者</li>
+<li>(22) 三生产者 P1/P2/P3 共享橘子水原料（糖+水+橘子精）</li>
+<li>(23) 页式存储管理 free[index] 数组用管程实现 acquire/release</li>
+<li>(24) 用管程实现&rdquo;睡眠的理发师&rdquo;问题：1 理发师、1 理发椅、n 个候发椅</li>
+</ul>
+<hr>
+<h2 id="7-p247-p302-img-258313"><a class="toclink" href="#7-p247-p302-img-258313">第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）</a></h2>
+<blockquote>
+<p>本章主线：网络体系结构 → 网络/分布式 OS → 云计算/虚拟化 → 移动终端 OS → 网络安全 → 区块链。</p>
+<p>对应学校 ch6（如学校把网络与分布式合并到 ch6）或单独讲座章节。</p>
+</blockquote>
+<h3 id="71-p247-p256"><a class="toclink" href="#71-p247-p256">7.1 计算机网络与网络操作系统（书 p247-p256）</a></h3>
+<h4 id="711"><a class="toclink" href="#711">7.1.1 网络体系结构</a></h4>
+<p><strong>ARPANET</strong>（advanced research projects agency network）— 计算机网络发展里程碑，由通信子网和资源子网两层结构组成，含纠错、路由选择、分组交换、流量控制等。</p>
+<p><strong>OSI-RM</strong>（开放系统互联参考模型，ISO 1980 年代）— 7 层标准化通信体系：物理层 / 数据链路层 / 网络层 / 传输层 / 会话层 / 表示层 / 应用层。每层附加层头，最终从物理层发到目标系统再逐层剥离。</p>
+<p><strong>TCP/IP</strong>（实际工业标准）— 1983 年起在 UNIX BSD 上使用，并非国际标准但简洁实用：</p>
+<ul>
+<li>最知名的两层：传输层 TCP（transmission control protocol）+ 网络层 IP（internet protocol）</li>
+<li>主要特点：适用于多种异构网络互连，提供可靠的端到端协议，与操作系统紧密结合</li>
+<li>三层结构：① 应用层（对应 OSI 应用层 + 表示层 + 会话层），② 传输层 TCP，③ 网际层 IP</li>
+</ul>
+<h4 id="712-nos"><a class="toclink" href="#712-nos">7.1.2 网络操作系统（NOS）</a></h4>
+<p><strong>典型特征</strong>：① 硬件独立性 ② 多用户支持 ③ 支持网络实用程序 ④ 多种客户端支持 ⑤ 单一逻辑目录服务 ⑥ 多种增值服务（文件/打印/通信/数据库/WWW）⑦ 可操作性。</p>
+<p><strong>三种模式</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>特征</th>
+<th>代表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>集中模式</td>
+<td>一台主机+若干终端，处理和控制集中</td>
+<td>UNIX</td>
+</tr>
+<tr>
+<td>C/S（客户机/服务器）</td>
+<td>服务器集中资源管理和安全控制，客户机有独立处理能力，按需请求</td>
+<td>NetWare、Windows NT</td>
+</tr>
+<tr>
+<td>P2P（对等）</td>
+<td>每台机兼客户机和服务器，无中央控制，平等可扩展</td>
+<td>NetWare Lite、Windows for WorkGroup</td>
+</tr>
+</tbody>
+</table>
+<p>C/S 优点：数据分布存储、处理分布、应用编程方便。</p>
+<h4 id="713-nfs"><a class="toclink" href="#713-nfs">7.1.3 网络文件系统（NFS）</a></h4>
+<p><strong>Sun NFS</strong> — 构建于 TCP/IP，广泛用于 UNIX 及其他 POSIX 系统。</p>
+<p><strong>结构</strong>：每个 NFS 服务器输出一个或多个目录供远程客户机访问。客户机将远程目录&rdquo;安装（mount）&rdquo;到本地目录层次中——对客户机程序而言文件本地/远程访问无差别。</p>
+<p><strong>关键数据结构 — VFS（virtual file system）虚拟文件系统层</strong>：每个打开的文件对应一个 v 节点（v-node）。v 节点指针指向：</p>
+<ul>
+<li>客户机代码中的 r 节点（远程节点）→ 表示远程文件</li>
+<li>本地操作系统的 i 节点（i-node）→ 表示本地文件</li>
+</ul>
+<p><strong>关键调用</strong>：</p>
+<ul>
+<li><code>mount</code>：分析远程目录、建立联系，请求得到目录的文件句柄；将句柄交给内核，构造 v 节点</li>
+<li><code>open</code>：打开远程文件得到远程文件描述符，对应 VFS 层中的某个 v 节点</li>
+<li><code>read/write</code>：通常以较大块（<strong>8 KB</strong>）传输；客户机有&rdquo;提前读&rdquo;机制提高性能；写采用&rdquo;延迟写&rdquo;——若 write 提供数据 &lt; 8 KB，先在本地累积，整块满后才传到服务器；文件关闭时统一发送</li>
+</ul>
+<h3 id="72-p256-p266"><a class="toclink" href="#72-p256-p266">7.2 分布式操作系统（书 p256-p266）</a></h3>
+<h4 id="721"><a class="toclink" href="#721">7.2.1 概念与特点</a></h4>
+<p>分布式操作系统建立在&rdquo;松散耦合的多台计算机&rdquo;上，但本身是<strong>紧密耦合软件</strong>——它把整个系统作为一个整体管理，进程可以在任意节点执行而对用户透明。</p>
+<p><strong>与网络 OS 的区别</strong>：网络 OS 强调每台机器独立操作系统，仅协议互联；分布式 OS 强调统一系统映像。</p>
+<h4 id="722"><a class="toclink" href="#722">7.2.2 分布式进程通信</a></h4>
+<p>需解决：① 目标进程寻址 ② 通信原语设计。</p>
+<p><strong>寻址法</strong>：① 机器号+进程号 ② 广播寻址 ③ 名字服务器寻址。</p>
+<p><strong>同步/异步通信原语</strong>：基本形式 <code>Send(P, Message)</code>、<code>Receive(Q, Buffer)</code>。</p>
+<ul>
+<li>同步通信：发送进程阻塞直到收到回答；超时则认为消息丢失，重发。<strong>缺点</strong>：并行性差，无法利用广播功能。</li>
+<li>异步通信：发送后不阻塞继续执行。<strong>缺点</strong>：发送进程不能修改/重用缓冲区。两种解法：① 由 Send 原语将消息复制到系统缓冲区；② 消息发送后向发送进程发中断通知释放缓冲区。</li>
+</ul>
+<p>接收消息也分阻塞型/非阻塞型。</p>
+<p><strong>缓冲/非缓冲原语</strong>：</p>
+<ul>
+<li>缓冲：内核创建信箱，所有寄至该地址的消息进信箱；接收进程从信箱读取，没消息则阻塞</li>
+<li>非缓冲：用指向特定进程的地址；执行 <code>receive(addr, &amp;m)</code>；消息到达时直接复制到接收区</li>
+</ul>
+<p><strong>RPC</strong>（远程过程调用）— 6.5.2 已介绍，本章不再赘述（PRC 见教材 6.5.2 / img-241 上下文）。</p>
+<p><strong>RPC/XDR</strong> 高级通信规约（书 p230-231，与本章对接）：</p>
+<ul>
+<li>客户存根（client stub）+ 服务器存根（server stub）打包/拆包参数</li>
+<li>异构系统中需要 <strong>XDR</strong>（external data representation 外部数据表示）做格式转换</li>
+<li>客户进程通过调用服务器提供的过程/服务实现通信，过程中会话层与表示层规约屏蔽底层网络细节</li>
+</ul>
+<p><strong>套接字（socket）调用时序</strong>（书 p258-259 给出图 7-4，分两组）：</p>
+<p>无连接（UDP）：
+- 服务器：socket() → bind() → recvfrom()/sendto() → closesocket()
+- 客户：socket() → bind() → recvfrom()/sendto() → closesocket()</p>
+<p>面向连接（TCP）：
+- 服务器：socket() → bind() → listen() → accept() → recv()/send() → closesocket() ns → closesocket() s
+- 客户：socket() → connect() → send()/recv() → closesocket()</p>
+<p>服务器收到客户请求后通常<strong>创建子进程</strong>响应，自己继续 listen，形成主从服务器并发。</p>
+<h4 id="723-dsm"><a class="toclink" href="#723-dsm">7.2.3 分布式共享内存（DSM）</a></h4>
+<p>李凯（1986 年）提出 <strong>distributed shared memory</strong> 概念：在物理分散的内存上，给程序员一个逻辑统一的地址空间，任何处理器都能直接读写。优点：内存可扩充、共享内存结构通用、可移植、易编程。</p>
+<p><strong>一致性模型</strong>（性能从严到松）：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>关键特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>严格一致性</td>
+<td>任何读取都得到最近的写入值</td>
+</tr>
+<tr>
+<td>顺序一致性（Lamport 1979）</td>
+<td>所有进程看到的操作序列一致，但不要求实时</td>
+</tr>
+<tr>
+<td>处理器一致性</td>
+<td>同一处理器写入按顺序传播；不同处理器写入可被其他人以不同顺序看到</td>
+</tr>
+<tr>
+<td>PRAM（pipelined RAM）</td>
+<td>同一处理器写入按顺序通知其他人；不同处理器写入次序可不同</td>
+</tr>
+<tr>
+<td>弱一致性（synchronization variable）</td>
+<td>通过同步变量同步内存：同步操作完成时所有写入向外传播；同步操作满足顺序一致</td>
+</tr>
+<tr>
+<td>释放一致性（acquire/release）</td>
+<td>acquire = 进入临界区，release = 离开临界区</td>
+</tr>
+</tbody>
+</table>
+<p><strong>释放一致性条件</strong>：执行共享变量读写前，进程之前的 acquire 必须成功完成；允许 release 前，之前的所有读写必须完成；acquire 和 release 满足处理器一致性（不需顺序一致）。</p>
+<p><strong>基于页的 DSM 设计</strong>：用主存管理单元 + OS 软件模拟多处理器缓存——为每个机器提供线性分页内存，页可在机器间移动。地址空间分为页块（chunks），分布在所有处理器上。访问非本地地址 → 陷入指令 → DSM 软件取来包含该地址的数据块 → 重启故障指令。</p>
+<h4 id="724"><a class="toclink" href="#724">7.2.4 分布式事务处理</a></h4>
+<p><strong>两阶段提交（2PC）</strong>：</p>
+<ul>
+<li>阶段 1（投票）：协调者发 Vote-Request → 参与者响应 Vote-Commit / Vote-Abort</li>
+<li>阶段 2（决定）：若全部 Commit，协调者发 Global-Commit；否则发 Global-Abort；参与者收到后执行并回 ACK</li>
+</ul>
+<p><strong>致命缺点</strong>：参与者在 Ready（投票后等决定）状态崩溃 → 重启后无法独立决定提交还是回滚 → 阻塞。</p>
+<p><strong>三阶段提交（3PC）</strong>（书 p264 状态机 7-6）：</p>
+<ul>
+<li>阶段 1：与 2PC 相同（Vote-Request → Vote-Commit/Abort）</li>
+<li>阶段 2：协调者发 Prepare-Commit（而非直接 Global-Commit），参与者从 Wait 进 Precommit 状态</li>
+<li>阶段 3：协调者发 Global-Commit；ACK</li>
+</ul>
+<p>崩溃的参与者重启后若发现自己已在 Precommit，可以独立做出 Commit 决定（与其他 Ready 状态者也能达成一致），<strong>避免阻塞</strong>。但实际中 2PC 阻塞情况很少，3PC 应用不多。</p>
+<h3 id="73-p266-p273"><a class="toclink" href="#73-p266-p273">7.3 云计算与虚拟化（书 p266-p273）</a></h3>
+<h4 id="731"><a class="toclink" href="#731">7.3.1 云计算</a></h4>
+<p><strong>起源</strong>：60 年代麦卡锡（McCarthy）将计算能力作为像水电一样的公用资源。<strong>云计算</strong>是分布式计算、并行计算、效用计算、网络存储、虚拟化、负载均衡等技术与计算机网络融合的产物。</p>
+<p><strong>服务模式</strong>：</p>
+<ul>
+<li><strong>IaaS</strong>（基础设施即服务）：虚拟机、存储、网络</li>
+<li><strong>PaaS</strong>（平台即服务）：操作系统、运行时、数据库</li>
+<li><strong>SaaS</strong>（软件即服务）：应用程序</li>
+</ul>
+<p><strong>部署模式</strong>：公有云 / 私有云 / 混合云 / 社区云。</p>
+<h4 id="732"><a class="toclink" href="#732">7.3.2 虚拟化</a></h4>
+<p><strong>关键概念 — Hypervisor / VMM（virtual machine monitor）</strong>：位于硬件与虚拟机操作系统之间，承担硬件资源的管理与分配。</p>
+<p><strong>全虚拟化 vs 半虚拟化</strong>：</p>
+<ul>
+<li>全虚拟化：客户 OS 不修改，VMM 完全模拟硬件</li>
+<li>半虚拟化：客户 OS 修改部分代码以协助 VMM，性能更好</li>
+</ul>
+<p><strong>三类虚拟化</strong>：</p>
+<ol>
+<li>
+<p><strong>CPU 虚拟化</strong>（图 7-8）：
+   - 非虚拟化：用户态 [应用程序] / 内核态 [操作系统] / [硬件]
+   - 全虚拟化：用户态 [VM 应用] / 内核态 [VM OS, 监视器] / [服务器硬件]</p>
+</li>
+<li>
+<p><strong>内存虚拟化</strong>（图 7-9）：物理机内存被打包成多个虚拟物理内存供 VM 使用。Hypervisor 维护&rdquo;虚拟机内部连续内存块&rdquo;与&rdquo;物理机内存块&rdquo;的映射。两种实现：<strong>影子页表法</strong> 和 <strong>页表写入法</strong>。地址映射：进程逻辑内存 → 虚拟机虚拟物理内存 → 内存虚拟化管理层 → 服务器物理内存。</p>
+</li>
+<li>
+<p><strong>设备与 I/O 虚拟化</strong>：将物理设备打包成虚拟设备给虚拟机使用，模拟物理设备操作。</p>
+</li>
+</ol>
+<h3 id="74-p273-p286"><a class="toclink" href="#74-p273-p286">7.4 移动终端操作系统（书 p273-p286）</a></h3>
+<h4 id="741"><a class="toclink" href="#741">7.4.1 移动终端处理器结构</a></h4>
+<p><strong>GPU vs CPU</strong>：CPU 擅长逻辑控制和串行计算，GPU 擅长大规模并行浮点运算。</p>
+<p><strong>混合架构</strong>：移动 SoC 同时集成 CPU 核心 + GPU 核心 + 专用加速器（NPU、ISP 等）。</p>
+<p><strong>GPU 编程库</strong>：OpenGL ES（移动端）、Metal（iOS）、Vulkan、CUDA（NVIDIA）等。</p>
+<h4 id="742"><a class="toclink" href="#742">7.4.2 触摸屏与人机交互</a></h4>
+<h4 id="743"><a class="toclink" href="#743">7.4.3 移动终端的无线通信</a></h4>
+<h4 id="744"><a class="toclink" href="#744">7.4.4 移动终端的操作系统实例</a></h4>
+<p><strong>1. Android</strong>（Google 2007 年发布 SDK，2008 年 9 月 1.0）</p>
+<p><strong>分层结构</strong>（图 7-16，自顶向下）：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层</td>
+<td>电话、短信、联系人、浏览器…</td>
+</tr>
+<tr>
+<td>框架层</td>
+<td>活动管理器、窗口管理器、内容提供者、包管理器、资源管理器、视图系统、通知管理器</td>
+</tr>
+<tr>
+<td>系统运行库层</td>
+<td>表面管理、媒体框架、OpenGL ES、Libc、SQLite、WebKit、安卓运行库（核心库 + Dalvik 虚拟机）</td>
+</tr>
+<tr>
+<td>Linux 内核层</td>
+<td>显示屏驱动、键盘驱动、闪存驱动、相机驱动、声卡驱动、蓝牙驱动、Wi-Fi 驱动、<strong>Binder IPC 驱动</strong>、电源管理驱动、USB 驱动</td>
+</tr>
+</tbody>
+</table>
+<p><strong>触摸事件传递机制</strong>（图 7-12 Activity 组件结构）：</p>
+<ul>
+<li>Activity 包含 Window；Window 由 PhoneWindow 实现；PhoneWindow 把 DecorView 作为根视图</li>
+<li>DecorView 分两区：TitleBar（标题栏）+ ContentView（程序员编写的代码）</li>
+<li>事件类型：MotionEvent → ACTION_DOWN / ACTION_MOVE / ACTION_UP</li>
+</ul>
+<p>事件传递三阶段方法：</p>
+<ol>
+<li><code>dispatchTouchEvent</code> — 分发：返回 true 表示已处理；false 调 super 继续分发</li>
+<li><code>onInterceptTouchEvent</code> — 拦截：返回 true 拦截并交本身 onTouchEvent；false 继续传给子视图</li>
+<li><code>onTouchEvent</code> — 处理：返回 true 表示当前视图能处理；false 传回父视图的 onTouchEvent</li>
+</ol>
+<p><strong>Binder IPC</strong> — Android 独有的进程间通信机制；驱动位于 Linux 内核，提供单独设备节点。</p>
+<p><strong>Wi-Fi 通信架构</strong>（图 7-14，自顶向下）：</p>
+<ul>
+<li>应用框架（application framework）：Apps、android.net.wifi</li>
+<li>系统服务的 Wi-Fi 服务（com.android.server.wifi）：WifiService、WifiP2pService、WifiAwareService、WifiRttService</li>
+<li>硬件接口设计语言（HIDL，hardware/interfaces/wifi）：Vendor HAL、Supplicant HAL、Hostapd HAL</li>
+<li>厂商实现驱动 + wificond 进程（system/connectivity/wificond，通过 nl80211 命令与 Wi-Fi 驱动通信）</li>
+</ul>
+<p><strong>HIDL 三类接口</strong>：① Vendor HAL（供应商硬件抽象，对 Wi-Fi 感知 / Rtt 服务必需）② Supplicant HAL（用 wpa_supplicant 守护进程做连接配置）③ Hostapd HAL（用于建立无线接入点 WAP 和认证服务器）</p>
+<p><strong>2. iOS</strong>（图 7-17 分层结构，自顶向下）：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>可触摸层（cocoa touch layer）</td>
+<td>UIKit.Framework（界面）、EventKit、Notification Center、MapKit、Address Book、iAd、Message UI、PushKit</td>
+</tr>
+<tr>
+<td>媒体层（media layer）</td>
+<td>图像（Core Graphics、Core Image、Core Animation、OpenGL ES、Quartz2D）、音频（Core Audio、AV Foundation、OpenAL）、视频（AV Foundation、Core Media）</td>
+</tr>
+<tr>
+<td>核心服务层（core service layer）</td>
+<td>CFNetwork、Core Data、Core Location、Core Motion、Foundation、Webkit、JavaScript</td>
+</tr>
+<tr>
+<td>核心操作系统层（core OS layer）</td>
+<td>基于 FreeBSD + Mach 改写的 <strong>Darwin</strong>，符合 POSIX 标准的 UNIX 内核；包含硬件驱动、内存管理、进程/线程管理（POSIX）、文件系统、网络等</td>
+</tr>
+</tbody>
+</table>
+<p>底层结构提供文件系统、内存管理、I/O 等基础服务；高层结构建立在低层之上，提供 UI 控件、文件访问等具体服务。可触摸层主要核心是 <strong>UIKit.Framework</strong>——应用界面所有组件都由它呈现。核心服务层在核心 OS 层基础上提供更丰富的功能。</p>
+<h3 id="75-p284-p294"><a class="toclink" href="#75-p284-p294">7.5 网络环境下的操作系统安全（书 p284-p294）</a></h3>
+<h4 id="751"><a class="toclink" href="#751">7.5.1 安全概述</a></h4>
+<p>计算机安全广义上包括<strong>物理方面</strong>（环境/设施/设备/载体/人员）和<strong>逻辑方面</strong>（软件保护、信息防窃取/破坏）。</p>
+<p>影响计算机安全的主要因素：① 操作系统资源共享 ② 计算机网络数据传送 ③ 数据库 ④ 计算机病毒。</p>
+<p><strong>可靠性</strong>（reliability）= 硬件系统正常持续运行能力；<strong>安全性</strong>（security）= 防止信息被窃取/破坏。两者是不同概念。</p>
+<h4 id="752"><a class="toclink" href="#752">7.5.2 计算机病毒</a></h4>
+<p><strong>病毒分类</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>寄生病毒</td>
+<td>最普通；附加到可执行文件，执行时复制到其他可执行文件</td>
+</tr>
+<tr>
+<td>常驻内存病毒</td>
+<td>寄居在内存，作为常驻系统程序的一部分；感染所有执行的程序</td>
+</tr>
+<tr>
+<td>引导扇区病毒</td>
+<td>感染软盘/硬盘的引导扇区或主引导记录；磁盘引导时传播</td>
+</tr>
+<tr>
+<td>秘密病毒</td>
+<td>隐蔽自己以避反病毒软件检测</td>
+</tr>
+<tr>
+<td>多形病毒</td>
+<td>每次感染时变异，特征检测困难</td>
+</tr>
+<tr>
+<td>宏病毒</td>
+<td>利用办公应用的宏特性；嵌在文档/可执行文件中，自动执行</td>
+</tr>
+</tbody>
+</table>
+<p><strong>应对</strong>：① 预防（最理想）② 检测（确定感染并定位）③ 识别（病毒类型）④ 清除（根除并恢复程序原状；不能清除则删除并重装无毒版本）。</p>
+<h4 id="753-auditing"><a class="toclink" href="#753-auditing">7.5.3 安全审计（auditing）</a></h4>
+<p><strong>安全审计</strong> = 对系统中与安全相关的活动进行完整记录、检查、审核——事后追踪保证安全性。</p>
+<p><strong>4. 审计缓冲区设计</strong>（图 7-18 审计缓冲机制）：</p>
+<ul>
+<li>用户态：审计点 → 通过审计系统调用进入内核态</li>
+<li>内核态：多个审计点 → 循环缓冲 → 内核审计进程 → 写入审计日志文件</li>
+</ul>
+<p>由于 I/O 耗时，引入缓冲区。可用多个相同大小的缓冲区构成缓冲池提高并发。审计员可调节缓冲区大小和数量。缓冲区控制结构包括：基址、大小、个数、读/写指针、临界界线等。</p>
+<h4 id="754"><a class="toclink" href="#754">7.5.4 安全模型</a></h4>
+<p>OS 安全性内容：</p>
+<ul>
+<li><strong>安全策略</strong>：授权使用计算机和信息资源的规则</li>
+<li><strong>安全模型</strong>：精确、无歧义的抽象描述，关联策略与机制</li>
+<li><strong>安全机制</strong>：解决安全策略所描述的安全问题、保证系统安全的方式方法</li>
+</ul>
+<p><strong>安全模型分两种</strong>：形式化（数学模型，精确）+ 非形式化（自然语言描述）。常见模型：BLP（Bell-LaPadula 多级安全模型）、Biba 完整性模型、Clark-Wilson、RBAC（基于角色的访问控制）。</p>
+<h4 id="755"><a class="toclink" href="#755">7.5.5 安全加密算法</a></h4>
+<p><strong>对称加密</strong>（如 DES、AES）：发收方共享密钥，加密解密同一把密钥。</p>
+<p><strong>公开密钥加密 — RSA</strong>（Rivest, Shamir, Adleman）— 事实国际标准，可加密 + 数字签名：</p>
+<ol>
+<li>网络中每个节点产生一对密钥</li>
+<li>加密密钥放公共文件（公钥），另一为私钥</li>
+<li>A 向 B 发送消息，用 <strong>B 的公开密钥</strong>加密</li>
+<li>B 用 <strong>B 自己的私钥</strong>解密——只有 B 知私钥，故消息保密</li>
+</ol>
+<p><strong>数字签名</strong>：</p>
+<ul>
+<li>A 用私钥加密签名明文 → 签名密文，发给 B</li>
+<li>B 用 A 的公钥解密 → 得签名明文，验证发送者身份且不可抵赖</li>
+<li>数字签名 = 加密；数字签名验证 = 解密</li>
+</ul>
+<p><strong>双重保护（既签名又保密）</strong>：A 先用自己的私钥加密签名得密文 1 → 再用 B 的公钥加密密文 1 得密文 2 → 发给 B；B 收到密文 2 后先用自己的私钥解出密文 1 → 再用 A 的公钥解出签名明文。</p>
+<p><strong>网络加密</strong>两种：<strong>链加密</strong>（相邻节点间链路加密）和<strong>端加密</strong>（端到端加密）。</p>
+<h3 id="76-p293-p302-img-304313"><a class="toclink" href="#76-p293-p302-img-304313">7.6 区块链（书 p293-p302 / img-304~313）</a></h3>
+<h4 id="761"><a class="toclink" href="#761">7.6.1 区块链概述</a></h4>
+<p><strong>起源</strong>：2008 年中本聪发布《Bitcoin: a Peer-to-Peer Electronic Cash System》。</p>
+<ul>
+<li><strong>狭义</strong>：按时间顺序将数据区块以链条方式组合的特定数据结构，由密码学保证不可篡改、不可伪造，去中心化共享总账（decentralized shared ledger）</li>
+<li><strong>广义</strong>：用加密链式区块结构验证存储数据 + 用分布式节点共识算法生成更新数据 + 用智能合约（自动化脚本代码）编程操作数据 — 全新的去中心化基础架构与分布式计算范式</li>
+</ul>
+<p><strong>三个发展阶段</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>主要特征</th>
+<th>代表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>可编程货币</td>
+<td>比特币</td>
+</tr>
+<tr>
+<td>2.0</td>
+<td>可编程金融（智能合约）</td>
+<td>以太坊</td>
+</tr>
+<tr>
+<td>3.0</td>
+<td>可编程社会</td>
+<td>各类应用扩展</td>
+</tr>
+</tbody>
+</table>
+<p><strong>特点</strong>：</p>
+<ol>
+<li>去中心化：用纯数学方法建立信任，非中心机构验证</li>
+<li>时序数据：带时间戳的链式区块结构存储，可验证、可追溯</li>
+<li>集体维护：经济激励机制保证所有节点参与验证</li>
+<li>可编程：脚本代码系统支持智能合约</li>
+<li>安全可信：非对称加密 + 共识算法 → 强大算力抵御外部攻击</li>
+</ol>
+<h4 id="762-5-6"><a class="toclink" href="#762-5-6">7.6.2 区块链的架构（5-6 层模型）</a></h4>
+<p>数据层 → 网络层 → 共识层 → 激励层 → 智能合约层 → 应用层。</p>
+<p><strong>智能合约（smart contract）</strong>：用算法和程序编制合同条款，部署在区块链上、按规则自动执行的数字化协议。</p>
+<ul>
+<li>涉及修改操作 → 全网共识、记录到链上</li>
+<li>仅查询操作 → 不需共识、不需上链</li>
+<li>支持合约内部事件的注册与通知机制</li>
+<li>智能合约目前只能访问链内数据，无法主动监听响应链外事件</li>
+<li>类比：智能合约 ↔ 存储过程；区块链 ↔ 数据库</li>
+</ul>
+<h4 id="763"><a class="toclink" href="#763">7.6.3 区块链的应用</a></h4>
+<p><strong>三类区块链系统对比</strong>（表 7-1）：</p>
+<table>
+<thead>
+<tr>
+<th>特征</th>
+<th>公有链</th>
+<th>联盟链</th>
+<th>私有链</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络结构</td>
+<td>完全去中心化</td>
+<td>部分去中心化</td>
+<td>（多）可信中心</td>
+</tr>
+<tr>
+<td>节点规模</td>
+<td>无控制</td>
+<td>可控</td>
+<td>有限</td>
+</tr>
+<tr>
+<td>加入机制</td>
+<td>随时可参与</td>
+<td>特定群体或有限第三方</td>
+<td>机构内部节点</td>
+</tr>
+<tr>
+<td>记账方</td>
+<td>任意参与节点</td>
+<td>预选节点</td>
+<td>机构内部节点</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>公有链</strong>：完全去中心化，节点无准入，记账方任意参与节点；典型 PoW/PoS 共识</li>
+<li><strong>联盟链</strong>：部分去中心化，由特定群体或有限第三方加入，预选节点记账；常用 PBFT/SBFT</li>
+<li><strong>私有链</strong>：（多）可信中心化，机构内部节点；可省激励层，效率最高，常用 Paxos/RAFT</li>
+</ul>
+<p><strong>三种典型区块链体系架构对比</strong>（图 7-20）：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>比特币</th>
+<th>以太坊</th>
+<th>Hyperledger Fabric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层</td>
+<td>比特币交易</td>
+<td>DApp / 以太币交易</td>
+<td>企业级区块链应用</td>
+</tr>
+<tr>
+<td>智能合约层（编程语言）</td>
+<td>Script</td>
+<td>Solidity / Serpent</td>
+<td>Go / Java</td>
+</tr>
+<tr>
+<td>智能合约层（沙盒）</td>
+<td>—</td>
+<td>EVM</td>
+<td>Docker</td>
+</tr>
+<tr>
+<td>数据层（数据结构）</td>
+<td>二叉 Merkle 树 / 区块链表</td>
+<td>Merkle Patricia 树 / 区块链表</td>
+<td>Merkle Bucket 树 / 区块链表</td>
+</tr>
+<tr>
+<td>数据层（数据模型）</td>
+<td>基于交易的模型</td>
+<td>基于账户的模型</td>
+<td>基于账户的模型</td>
+</tr>
+<tr>
+<td>数据层（数据存储）</td>
+<td>文件存储 LevelDB</td>
+<td>文件存储 LevelDB</td>
+<td>文件存储 LevelDB</td>
+</tr>
+<tr>
+<td>共识层</td>
+<td>PoW</td>
+<td>PoW</td>
+<td>PBFT / SBFT</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>TCP-based P2P</td>
+<td>TCP-based P2P</td>
+<td>HTTP/2-based P2P</td>
+</tr>
+</tbody>
+</table>
+<h3 id="7-p301"><a class="toclink" href="#7-p301">7 章本章小结（书 p301）</a></h3>
+<ul>
+<li><strong>网络操作系统</strong> = 松散耦合多机上的松散耦合软件。OSI-RM 7 层；TCP/IP 实际标准；Sun NFS 是网络文件系统典型例子。</li>
+<li><strong>分布式操作系统</strong> = 松散耦合多机上的紧密耦合软件。分布式进程通信分三类：消息传递机制、远程过程调用（RPC）、套接字。<strong>分布式共享内存</strong>给程序员逻辑统一地址空间；<strong>分布式事务处理</strong>用 2PC / 3PC 协议保数据一致性。</li>
+<li><strong>云计算与虚拟化</strong>：CPU/内存/I/O 虚拟化；IaaS/PaaS/SaaS。</li>
+<li><strong>移动终端操作系统</strong>：处理器结构、人机交互、无线通信、Android、iOS 实例。</li>
+<li><strong>OS 安全</strong>：安全概述、病毒、安全审计、安全模型、加密算法。</li>
+<li><strong>区块链</strong>：概述、架构、应用。</li>
+</ul>
+<blockquote>
+<p>对应学校 ch6（分布式/网络专题）+ ch7（OS 安全/前沿）。</p>
+</blockquote>
+<hr>
+<h2 id="p303-p346-img-314357"><a class="toclink" href="#p303-p346-img-314357">附录 《操作系统教程》导学（书 p303-p346 / img-314~357）</a></h2>
+<h3 id="_1"><a class="toclink" href="#_1">设计思想</a></h3>
+<ul>
+<li>依据<strong>建构主义教学理论</strong>支持自建构主义学习</li>
+<li>配合大规模在线开放课程（MOOC）和翻转课堂</li>
+<li>采用 <strong>Bloom 教学目标分类法</strong>：① 记忆 → ② 理解 → ③ 应用 → ④ 分析 → ⑤ 综合 → ⑥ 评价</li>
+</ul>
+<p><strong>学习者分类</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>适用对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>计算机/软件专业，意从事 OS/DBMS 开发，必修，Bloom 等级要求最高</td>
+</tr>
+<tr>
+<td>B1</td>
+<td>计算机/软件专业，从事上层软件，必修+全面认知</td>
+</tr>
+<tr>
+<td>B2</td>
+<td>电子/控制/通信专业，软硬件协同开发，必修</td>
+</tr>
+<tr>
+<td>C1</td>
+<td>计算机/软件/电子/控制/通信，从事高层应用开发，选修</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>与计算密切相关的理工医专业，从事应用开发，选修</td>
+</tr>
+<tr>
+<td>D</td>
+<td>其他所有专业，按需选修部分内容</td>
+</tr>
+</tbody>
+</table>
+<p><strong>全书 Bloom 等级表</strong>（按章节）每节给出<strong>知识单元-知识点-A/B/C 类要求-学习说明</strong>四列表，并配学习视频时长。</p>
+<p>例：6.6.1 死锁的产生（知识点要求示例）：</p>
+<table>
+<thead>
+<tr>
+<th>知识单元</th>
+<th>知识点</th>
+<th>A 类</th>
+<th>B 类</th>
+<th>C 类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>死锁的概念</td>
+<td>死锁的定义</td>
+<td>理解</td>
+<td>理解</td>
+<td>理解</td>
+</tr>
+<tr>
+<td>死锁的概念</td>
+<td>死锁的例子</td>
+<td>理解</td>
+<td>理解</td>
+<td>理解</td>
+</tr>
+<tr>
+<td>解决死锁三个方法</td>
+<td>死锁的防止</td>
+<td>分析</td>
+<td>应用</td>
+<td>记忆</td>
+</tr>
+<tr>
+<td>解决死锁三个方法</td>
+<td>死锁的避免</td>
+<td>分析</td>
+<td>应用</td>
+<td>记忆</td>
+</tr>
+<tr>
+<td>解决死锁三个方法</td>
+<td>死锁的检测和解除</td>
+<td>分析</td>
+<td>应用</td>
+<td>记忆</td>
+</tr>
+</tbody>
+</table>
+<p>例：6.3.3 生产者-消费者问题探究（知识点）：</p>
+<table>
+<thead>
+<tr>
+<th>知识单元</th>
+<th>知识点</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PV 解生产者-消费者</td>
+<td>生产者-消费者问题分类</td>
+<td>理解</td>
+<td>理解</td>
+<td>记忆</td>
+<td></td>
+</tr>
+<tr>
+<td>PV 解生产者-消费者</td>
+<td>单生产者-消费者共享多个缓冲区</td>
+<td>分析</td>
+<td>应用</td>
+<td>记忆</td>
+<td>算法题</td>
+</tr>
+<tr>
+<td>PV 解生产者-消费者</td>
+<td>多生产者-消费者共享多个缓冲区</td>
+<td>分析</td>
+<td>应用</td>
+<td>记忆</td>
+<td>算法题</td>
+</tr>
+<tr>
+<td>PV 解苹果-橘子</td>
+<td>苹果-橘子问题描述与实质</td>
+<td>理解</td>
+<td>理解</td>
+<td>记忆</td>
+<td></td>
+</tr>
+<tr>
+<td>PV 解苹果-橘子</td>
+<td>PV 操作解苹果-橘子问题</td>
+<td>应用</td>
+<td>分析</td>
+<td>记忆</td>
+<td>算法题</td>
+</tr>
+</tbody>
+</table>
+<p>附录还包含：</p>
+<ul>
+<li><strong>课堂讨论建议</strong>（每章结束时两课时：学生陈述 + 学生讨论 + 教师评析；如&rdquo;第六章 PV 操作&rdquo;、&rdquo;第六章管程与高级通信&rdquo;专题）</li>
+<li><strong>课后阅读</strong>（如 UNIX/Linux/Java 通信机制 = 自选材料 6-1 / 6-2 / 6-3）</li>
+</ul>
+<h3 id="_2"><a class="toclink" href="#_2">附录章节范围</a></h3>
+<table>
+<thead>
+<tr>
+<th>节</th>
+<th>主题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>第一章导学 — 操作系统概述</td>
+</tr>
+<tr>
+<td>1.3.x</td>
+<td>多道程序设计概念、操作控制角度、人机交互角度</td>
+</tr>
+<tr>
+<td>2</td>
+<td>第二章导学 — 处理器与进程</td>
+</tr>
+<tr>
+<td>3</td>
+<td>第三章导学 — 存储管理（逻辑/物理地址、单连续/段式/页式/段页式）</td>
+</tr>
+<tr>
+<td>3.x</td>
+<td>地址转换、主存分配/去配、覆盖、交换、虚存</td>
+</tr>
+<tr>
+<td>4</td>
+<td>第四章导学 — 设备管理（设备独立性、独占型外设、磁盘物理结构、寻道时间/旋转时间/数据传送时间）</td>
+</tr>
+<tr>
+<td>5</td>
+<td>第五章导学 — 文件系统</td>
+</tr>
+<tr>
+<td>6</td>
+<td>第六章导学 — 并发程序设计（含 PV、管程、死锁、RPC）</td>
+</tr>
+<tr>
+<td>7</td>
+<td>第七章导学 — 网络环境下的操作系统（含 7.3 云计算/虚拟化、7.4 移动终端、7.5 安全、7.6 区块链）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>对应学校 ch1-ch9 全覆盖，是复习应试时检索&rdquo;考点要求等级&rdquo;的工具表。</p>
+</blockquote>
+<hr>
+<h2 id="p347-p350-img-358361"><a class="toclink" href="#p347-p350-img-358361">课后阅读材料（书 p347-p350 / img-358~361）</a></h2>
+<p>提供 26 项扩展阅读，分章对应：</p>
+<ul>
+<li>自选 1（第一章自学手册收集）</li>
+<li>自选 2-1（流水线）</li>
+<li>自选 6-1/6-2/6-3（UNIX/Linux/Java 通信机制）</li>
+<li>推荐 2-1：《操作系统教程（第 3 版）》&rdquo;2.7.3 实时调度&rdquo;</li>
+<li>推荐 2-2：《操作系统教程（第 3 版）》&rdquo;2.7.4 多处理器调度&rdquo;（负载共享、群调度、专派、动态调度）</li>
+<li>推荐 3-1：《操作系统教程（第 3 版）》&rdquo;4.6 实例研究：Intel X86/Pentium 存储管理硬件设施&rdquo;</li>
+<li>推荐 3-2：《操作系统教程（第 5 版）》&rdquo;4.7 Linux 虚拟存储管理&rdquo;（页表机制、缺页处理）</li>
+<li>推荐 3-3：《操作系统教程（第 4 版）》&rdquo;4.8 Windows 2003 虚拟存储管理&rdquo;</li>
+<li>推荐 4-1：Stallings <em>OS Internals</em> 8e &ldquo;11.6 RAID&rdquo;</li>
+<li>推荐 4-2：《Windows 内核原理与实现》&rdquo;第六章 Windows I/O 系统&rdquo;</li>
+<li>推荐 4-3：Mauerer <em>Professional Linux Kernel Architecture</em> &ldquo;Device Drivers&rdquo;</li>
+<li>推荐 2-3：《Windows 内核原理与实现》&rdquo;5.2 Windows 中断与异常&rdquo;（含 IRQL、DPC、APC）</li>
+<li>推荐 2-4：Mauerer 第二章 &ldquo;Process Manage and Scheduling&rdquo;（SCHED_OTHER 分时、SCHED_FIFO/SCHED_RR 实时）</li>
+<li>推荐 2-5：《Windows 内核原理与实现》&rdquo;第三章 Windows 进程和线程&rdquo;</li>
+<li>推荐 2-6：<em>Think in Java</em> 4e 第 14 章 &ldquo;Multi-Thread&rdquo;</li>
+<li>推荐 3-1：Stallings 8e &ldquo;8.1 Hardware and Control Structures - Inverted Page Table&rdquo;</li>
+</ul>
+<hr>
+<h2 id="img-362"><a class="toclink" href="#img-362">封底元数据（img-362）</a></h2>
+<ul>
+<li>标题：<strong>操作系统教程（第 6 版）</strong></li>
+<li>系列：普通高等教育精品教材；国家精品在线开放课程主讲教材</li>
+<li>ISBN：978-7-04-055304-8</li>
+<li>定价：¥46.00</li>
+<li>特色：① 继承前 5 版优点，充实内容、缩减篇幅、突出重点 ② 补充大量硬件概念图，体现软硬件协同设计 ③ 与精品在线开放课程结合（MOOC + PPT + 课外阅读 + 习题，依托 MOOC 指导授课者建设 SPOC + 翻转课堂）</li>
+</ul>
+<hr>
+<h2 id="part-3"><a class="toclink" href="#part-3">Part 3 整理疑点</a></h2>
+<ol>
+<li><strong>页 p230 之前已有 RPC 介绍</strong>（6.5.2，本批次起始页正在收尾 RPC + XDR 内容）；6.6 死锁是 ch6 终结小节。<strong>Part 2 / Part 3 边界落在 6.5.2 RPC，Part 3 里把它作为 7.2 的预备背景重述，避免读者跳跃。</strong></li>
+<li><strong>本书没有独立的 ch8/ch9</strong>——网络/分布式/云/移动/安全/区块链全归 ch7，&rdquo;OS 接口&rdquo;散在 ch1（操作控制角度，对应 1.3.3 命令解释程序、1.3.4 人机交互）。任务期望的 ch7-ch9 实为本书 ch7 一章 + 附录。</li>
+<li><strong>第六章并发的 PV 解经典问题代码</strong>（生产者消费者、读者写者、哲学家、苹果橘子）<strong>完整代码在 Part 2</strong>（书 p195-p225）；本 Part 3 仅有死锁示例代码 + 习题题面陈列。如果学校重点考 PV 经典代码，须查 Part 2。</li>
+<li>银行家算法书中只给单类资源例题（教材 p236）；多类资源/Need-Allocation-Available 矩阵版本未在本书呈现，备考时需自行补充。</li>
+<li>死锁检测的 Warshall 传递闭包算法在书中是<strong>矩阵版本</strong>而非常见的&rdquo;资源分配图化简法&rdquo;；考试如出资源分配图法须额外资料。</li>
+</ol>
+<hr>
+<h2 id="241-362"><a class="toclink" href="#241-362">图片清理报告（241-362 段）</a></h2>
+<p><strong>执行</strong>：2026-05-15 子代理批量清理。删 70 张 / 保留 51 张 / 体积 68MB → 44MB（-35%）。</p>
+<p><strong>保留集（51 张，按图索引 second_num）</strong>：
+- 6.6 死锁段（241-249）：章首 + 银行家算法例题（p236）+ 死锁检测两表法（p237）+ Warshall 矩阵
+- 习题六（250-256）：含多类资源银行家矩阵例题（p245 Need/Allocation/Available 矩阵）
+- 第七章封面（257-258）：网络体系结构 + OSI-RM 引言
+- 7.2 分布式（260-275）：套接字时序图（p258-259）+ 2PC/3PC 状态机（p264）
+- 7.3 云计算（277-285）：CPU/内存虚拟化框图（图 7-8、7-9）
+- 7.4 移动 OS（285-298）：Android 分层、触摸事件、Wi-Fi 架构、iOS 分层
+- 7.5 安全（295-303）：审计缓冲机制（图 7-18）+ RSA 数字签名
+- 7.6 区块链（304-312）：5-6 层架构 + 三类系统对比表 + 三大体系架构对比
+- 附录（314-355 抽样）：每章 Bloom 等级表样张
+- 阅读材料 + 封底（358, 360-362）：26 项扩展材料 + ISBN</p>
+<p><strong>抽样验证（5 张未读）</strong>：
+- p245（img-246-245）→ 6.6.3 死锁避免 + 银行家算法引言 → 已 KEEP
+- p246（img-247-246）→ 习题 30 + 大量空白 → DELETE
+- p275（img-275-274）→ 已是 30 内 → KEEP
+- p325（img-326-325）→ 附录 Bloom 等级表（重复模式）→ DELETE
+- p345（img-346-345）→ 附录 5.5 文件存取方法表 → DELETE</p>
+<p><strong>决策矩阵</strong>（与 ch1/ch4 一致）：
+- 章首 / 节首 / 例题 / 状态机 / 架构图 → 保留
+- 纯文字段落 / 习题陈列 / Bloom 等级表（重复模式）/ 微视频 QR 页 / 课后阅读纯文字 → 批删
+- ch5-7 段保留率（51/121=42%）高于 ch1/ch4（~20%）的原因：本段集中了银行家算法、死锁检测矩阵、状态机、架构对比表等结构化图表，删减空间小于扫描密集的硬件章节。</p>
+  </article>
+</main>
+<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3><div class="toc">
+<ul>
+<li><a href="#6-66-p230-p239-img-241250">第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）</a><ul>
+<li><a href="#661">6.6.1 死锁的产生</a></li>
+<li><a href="#662">6.6.2 死锁的防止</a></li>
+<li><a href="#663-dijkstra-1965">6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）</a></li>
+<li><a href="#664">6.6.4 死锁的检测</a></li>
+<li><a href="#66-p239">6.6 本章小结（书 p239）</a></li>
+<li><a href="#p240-246-img-251257">习题六（书 p240-246 / img-251~257）</a></li>
+</ul>
+</li>
+<li><a href="#7-p247-p302-img-258313">第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）</a><ul>
+<li><a href="#71-p247-p256">7.1 计算机网络与网络操作系统（书 p247-p256）</a></li>
+<li><a href="#72-p256-p266">7.2 分布式操作系统（书 p256-p266）</a></li>
+<li><a href="#73-p266-p273">7.3 云计算与虚拟化（书 p266-p273）</a></li>
+<li><a href="#74-p273-p286">7.4 移动终端操作系统（书 p273-p286）</a></li>
+<li><a href="#75-p284-p294">7.5 网络环境下的操作系统安全（书 p284-p294）</a></li>
+<li><a href="#76-p293-p302-img-304313">7.6 区块链（书 p293-p302 / img-304~313）</a></li>
+<li><a href="#7-p301">7 章本章小结（书 p301）</a></li>
+</ul>
+</li>
+<li><a href="#p303-p346-img-314357">附录 《操作系统教程》导学（书 p303-p346 / img-314~357）</a><ul>
+<li><a href="#_1">设计思想</a></li>
+<li><a href="#_2">附录章节范围</a></li>
+</ul>
+</li>
+<li><a href="#p347-p350-img-358361">课后阅读材料（书 p347-p350 / img-358~361）</a></li>
+<li><a href="#img-362">封底元数据（img-362）</a></li>
+<li><a href="#part-3">Part 3 整理疑点</a></li>
+<li><a href="#241-362">图片清理报告（241-362 段）</a></li>
+</ul>
+</div>
+</aside></div>
+<a class="back-to-top" href="#main" aria-label="返回顶部"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#up"/></svg></a>
+<footer class="page-footer">
+  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+</footer>
+<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+  <div class="theme-picker-head">
+    <h3 class="theme-picker-title">选择主题</h3>
+    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
+  </div>
+  <div class="theme-picker-actions">
+    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
+    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  </div>
+  <div class="theme-picker-grid" data-theme-grid></div>
+</aside>
+<div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
+
+<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body></html>

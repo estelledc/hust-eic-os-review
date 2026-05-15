@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="地址转换、四种页面置换、工作集与虚拟内存。">
+<meta name="color-scheme" content="light dark">
+<title>第 4 章 存储管理 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="themes/themes.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html" aria-label="返回首页">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
+      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
+      </button>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="chipbar" aria-label="章节快速导航">
+    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
+    <div class="chipbar-track">
+        <a class="chip" href="ch1.html">第 1 章 操作系统概论</a>
+        <a class="chip" href="ch2.html">第 2 章 处理器管理</a>
+        <a class="chip" href="ch3.html">第 3 章 同步互斥与死锁</a>
+        <a class="chip chip-active" href="ch4.html">第 4 章 存储管理</a>
+        <a class="chip" href="ch5.html">第 5 章 设备管理</a>
+        <a class="chip" href="review.html">总复习提纲</a>
+        <a class="chip" href="homework.html">作业明细</a>
+        <a class="chip" href="tutorial-1.html">教程笔记 · Part 1</a>
+        <a class="chip" href="tutorial-2.html">教程笔记 · Part 2</a>
+        <a class="chip" href="tutorial-3.html">教程笔记 · Part 3</a>
+    </div>
+  </nav>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="站点导航">
+  <a class="home-link" href="index.html">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
+    <span>课程地图</span>
+  </a>
+  <section class="nav-group" aria-labelledby="grp-chapter"><h3 id="grp-chapter" class="nav-group-title"><span class="nav-group-icon">📖</span>课程章节</h3><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link nav-link-active" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><h3 id="grp-exam" class="nav-group-title"><span class="nav-group-icon">📝</span>考前材料</h3><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><h3 id="grp-tutorial" class="nav-group-title"><span class="nav-group-icon">📚</span>教程笔记</h3><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <div class="sidebar-footer">
+    <a class="ghost" href="themes-gallery.html">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      <span>主题画廊（71 套）</span>
+    </a>
+    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+  </div>
+</aside>
+<main class="main" id="main">
+  <article class="prose">
+    <header class="page-head">
+      <h1>第 4 章 存储管理</h1>
+      <p class="page-lede">地址转换、四种页面置换、工作集与虚拟内存。</p>
+    </header>
+    <blockquote>
+<p>来源：课程《操作系统》课件 198 张幻灯片（<code>index.md</code>）
+风格：先类比再定义，公式可背，例题可算，面试常考点单独标注。</p>
+</blockquote>
+<hr>
+<h2 id="41"><a class="toclink" href="#41">4.1 存储管理的目标</a></h2>
+<h3 id="411"><a class="toclink" href="#411">4.1.1 我们要解决什么问题</a></h3>
+<p><strong>类比</strong>：内存就像图书馆的&rdquo;开架阅览区&rdquo;——空间有限、想看的书很多、还不能让两个读者抢同一本书。OS 作为&rdquo;图书管理员&rdquo;要同时做四件事：</p>
+<ol>
+<li><strong>主存分配/回收</strong>：把有限的内存切给多个程序用，回收后还能给下一个用。</li>
+<li><strong>地址转换/重定位</strong>：屏蔽物理细节，让程序员写代码时不用关心&rdquo;我会被装到内存哪个位置&rdquo;。</li>
+<li><strong>存储保护/共享</strong>：A 程序不能踩 B 程序的内存；但共享代码段（比如 libc）允许多程序映射同一份。</li>
+<li><strong>存储扩充</strong>：内存不够？让程序&rdquo;看上去&rdquo;有比物理内存大得多的空间——这就是后面虚存的根。</li>
+</ol>
+<h3 id="412-slide-008009010"><a class="toclink" href="#412-slide-008009010">4.1.2 三级存储器层次（slide-008/009/010）</a></h3>
+<p><strong>核心矛盾</strong>：速度 vs 成本。越快的存储越贵越小，越慢的越便宜越大。</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>名字</th>
+<th>典型容量</th>
+<th>访问时间</th>
+<th>带宽</th>
+<th>谁管</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>寄存器</td>
+<td>&lt; 1 KB</td>
+<td>0.25–0.5 ns</td>
+<td>20–100 GB/s</td>
+<td>编译器</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>Cache</td>
+<td>&gt; 16 MB</td>
+<td>0.5–25 ns</td>
+<td>5–10 GB/s</td>
+<td>硬件</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>主存</td>
+<td>&gt; 16 GB</td>
+<td>80–250 ns</td>
+<td>1–5 GB/s</td>
+<td>OS</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>磁盘</td>
+<td>&gt; 100 GB</td>
+<td>5,000,000 ns（5ms）</td>
+<td>20–150 MB/s</td>
+<td>OS</td>
+</tr>
+</tbody>
+</table>
+<p><strong>面试要点</strong>：磁盘比主存慢 <strong>5 个数量级</strong>——这就是为什么&rdquo;缺页一次代价巨大&rdquo;，也是后面所有页面置换算法的优化动机。</p>
+<p>CPU 内部本身已经有多级存储（寄存器 + Cache + 段部件 + 分页部件），分页/分段不是 OS 凭空发明，而是硬件提供的能力。</p>
+<h3 id="413-vs"><a class="toclink" href="#413-vs">4.1.3 物理地址 vs 逻辑地址</a></h3>
+<ul>
+<li><strong>物理地址</strong>：内存按字节编号，0、1、2&hellip; 是一维线性的，唯一的。</li>
+<li><strong>逻辑地址（虚地址）</strong>：用户程序用的地址，<strong>总是从 0 开始</strong>。</li>
+<li><strong>为什么不直接用物理地址</strong>？</li>
+<li>用户得自己算位置（每搬一次家整个程序都要改）</li>
+<li>多道程序同时跑就乱了</li>
+<li>程序不可移植</li>
+</ul>
+<hr>
+<h2 id="42"><a class="toclink" href="#42">4.2 程序装入与链接</a></h2>
+<h3 id="421"><a class="toclink" href="#421">4.2.1 三种链接</a></h3>
+<table>
+<thead>
+<tr>
+<th>时机</th>
+<th>谁来做</th>
+<th>什么时候定地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>静态链接</strong></td>
+<td>链接器</td>
+<td>编译完成后，所有外部引用全部解析完成</td>
+</tr>
+<tr>
+<td><strong>动态链接</strong></td>
+<td>装入时</td>
+<td>装入内存时再解析共享库</td>
+</tr>
+<tr>
+<td><strong>运行时链接</strong></td>
+<td>进程运行中</td>
+<td>第一次用到符号才解析（dlopen）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="422"><a class="toclink" href="#422">4.2.2 三种装入</a></h3>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>程序里的地址</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>绝对装入</strong></td>
+<td>写死的物理地址</td>
+<td>必须装到特定位置，多任务下完全不可行</td>
+</tr>
+<tr>
+<td><strong>可重定位装入</strong></td>
+<td>相对地址，装入时一次性改写</td>
+<td>装入后不能搬家</td>
+</tr>
+<tr>
+<td><strong>动态运行时装入</strong></td>
+<td>相对地址，运行时硬件翻译</td>
+<td>需要 MMU 硬件支持，但灵活</td>
+</tr>
+</tbody>
+</table>
+<h3 id="423"><a class="toclink" href="#423">4.2.3 三种地址重定位</a></h3>
+<ul>
+<li><strong>静态重定位</strong>：装入时由装入程序把&rdquo;逻辑地址 + 装入基址&rdquo;算成物理地址。简单不要硬件，但程序装入后<strong>搬不动</strong>。</li>
+<li><strong>动态重定位</strong>（现代 OS 都用这个）：执行每条指令时由硬件<strong>重定位寄存器</strong>做加法。基址寄存器内容由 OS 用特权指令设置，程序可以随便搬家。</li>
+<li><strong>运行时链接重定位</strong>：动态链接库地址在运行时确定。</li>
+</ul>
+<p><strong>记忆点</strong>：动态重定位是虚拟存储的基础，没有 MMU 的硬件支持就没有现代 OS。</p>
+<p><strong>slide-020 装入示意</strong>（原图已转 mermaid）：程序里写 <code>mov r1, [500]</code> 引用的是程序地址空间内 500 地址；装入时把整个程序基址搬到主存 1000，那条指令&rdquo;在物理上&rdquo;就要去访问主存 1500：</p>
+<pre class="mermaid">flowchart LR
+    subgraph A["a. 程序地址空间 (0~599)"]
+        A1["0"] --- A2["100: mov r1, [500]"] --- A3["500: 12345"] --- A4["599"]
+    end
+    subgraph B["b. 内存空间 (0~256K-1)"]
+        B1["0"] --- B2["1000"] --- B3["1100: mov r1, [1500]"] --- B4["1500: 12345"] --- B5["1600"] --- B6["256K-1"]
+    end
+    A -->|"装入程序: 基址 +1000"| B
+</pre>
+<p>每个程序内地址 d 装入后变成 <code>1000 + d</code>。这就是静态重定位的&rdquo;一次性改写&rdquo;，动态重定位则是 MMU 在每次访问时即时做这个加法。</p>
+<h3 id="424"><a class="toclink" href="#424">4.2.4 存储保护</a></h3>
+<ul>
+<li><strong>界地址寄存器</strong>（上限/下限）：CPU 检查每个访问地址 ∈ [下限, 上限]，越界就异常。</li>
+<li><strong>存储保护键</strong>：每块内存有一个键，PSW 里有&rdquo;钥匙&rdquo;，访问时比较——配钥匙才能开门。</li>
+</ul>
+<hr>
+<h2 id="43"><a class="toclink" href="#43">4.3 连续分配</a></h2>
+<h3 id="431"><a class="toclink" href="#431">4.3.1 单一连续分配</a></h3>
+<p>内存只装一个用户程序 + OS。早期单道系统用，现在没人用了。</p>
+<h3 id="432"><a class="toclink" href="#432">4.3.2 固定分区</a></h3>
+<p>把主存预先切成 N 个固定大小的分区，每个分区给一个作业用。</p>
+<ul>
+<li><strong>大小相等</strong>：管理简单；但小程序浪费、大程序装不下。</li>
+<li><strong>大小不等</strong>（多个 small/medium/large 池）：缓解但不解决。</li>
+</ul>
+<p><strong>关键数据结构</strong>：MBT（存储分块表）= 分区的&rdquo;大小、位置、是否已用&rdquo;三元组。</p>
+<p><strong>优点</strong>：管理简单，硬件只需一对界地址寄存器。
+<strong>缺点</strong>：必有<strong>内部碎片</strong>（程序比分区小，剩下空间浪费）；并发数固定。</p>
+<h3 id="433"><a class="toclink" href="#433">4.3.3 动态分区（可变分区）</a></h3>
+<p>进程来了再动态切一块&rdquo;刚好够用&rdquo;的分区。</p>
+<p><strong>slide-037 例题（必考原型）</strong>：
+- 物理内存 2560KB，OS 占 0–400K
+- 5 个进程：P1=600KB(t=10)、P2=1000KB(t=5)、P3=300KB(t=20)、P4=700KB(t=8)、P5=500KB(t=15)</p>
+<p><strong>slide-038 演变图</strong>（原图已转表）：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>事件</th>
+<th>内存布局（自上而下）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(a)</td>
+<td>初始</td>
+<td>OS(0–400K) ＋ 空闲 400K–2560K（2160K 大空闲）</td>
+</tr>
+<tr>
+<td>(b)</td>
+<td>P1/P2/P3 装入</td>
+<td>OS / P1(400–1000) / P2(1000–2000) / P3(2000–2300) / 空闲(2300–2560，260K)</td>
+</tr>
+<tr>
+<td>(c)</td>
+<td>P2 离开</td>
+<td>OS / P1 / <strong>空洞(1000–2000)</strong> / P3 / 空闲——<strong>外部碎片首次出现</strong></td>
+</tr>
+<tr>
+<td>(d)</td>
+<td>P4 装入空洞</td>
+<td>OS / P1 / P4(1000–1700) / <strong>空洞(1700–2000，300K)</strong> / P3 / 空闲</td>
+</tr>
+<tr>
+<td>(e)</td>
+<td>P3 离开</td>
+<td>OS / P1 / P4 / 空洞 / <strong>空洞(2000–2300)</strong> / 空闲——两段空洞分裂</td>
+</tr>
+<tr>
+<td>(f)</td>
+<td>P5 装入</td>
+<td>OS / P1 / <strong>P5(900–1000?)</strong> / P4 / 空洞 / 空洞 / 空闲——内存被切得更碎</td>
+</tr>
+</tbody>
+</table>
+<p><strong>记忆点</strong>：动态分区天然产生<strong>外部碎片</strong>——所有空闲加起来够，但每块都太小。这是后续&rdquo;分页&rdquo;出现的动机。</p>
+<h4 id="_1"><a class="toclink" href="#_1">数据结构</a></h4>
+<ul>
+<li>已分配区表 + 未分配区表（FBT）</li>
+<li>链表法：空闲块自身存&rdquo;长度 + 下一块地址&rdquo;</li>
+</ul>
+<h4 id="_2"><a class="toclink" href="#_2">分配算法（必背）</a></h4>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>怎么找</th>
+<th>排序方式</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>首次适应 (First Fit)</strong></td>
+<td>从头找第一个能塞下的</td>
+<td>地址递增</td>
+<td>高地址大块得以保留；时间快</td>
+<td>低地址越来越碎</td>
+</tr>
+<tr>
+<td><strong>下次适应 (Next Fit)</strong></td>
+<td>从上次找到的位置继续</td>
+<td>同上</td>
+<td>分布均匀</td>
+<td>大块容易被切碎</td>
+</tr>
+<tr>
+<td><strong>最佳适应 (Best Fit)</strong></td>
+<td>找差距最小的</td>
+<td>大小递增</td>
+<td>大块得以保留</td>
+<td><strong>小空闲块越来越多</strong>（最碎）</td>
+</tr>
+<tr>
+<td><strong>最坏适应 (Worst Fit)</strong></td>
+<td>找最大的切</td>
+<td>大小递减</td>
+<td>剩下的还能用</td>
+<td>大作业进不来</td>
+</tr>
+</tbody>
+</table>
+<p><strong>slide-046 例题对比</strong>：内存有空隙序列，进程到达顺序不同，不同算法的成败也不同。<strong>结论：没有银弹</strong>。</p>
+<h4 id="_3"><a class="toclink" href="#_3">回收时合并</a></h4>
+<p>释放分区时检查上下相邻——合并相邻空闲分区（避免新生碎片）。</p>
+<h3 id="434-vs"><a class="toclink" href="#434-vs">4.3.4 内部碎片 vs 外部碎片（高频面试）</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>内部碎片</th>
+<th>外部碎片</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>在哪</td>
+<td>已分配分区<strong>内部</strong>没用满</td>
+<td>分区<strong>之间</strong>的小空隙</td>
+</tr>
+<tr>
+<td>谁产生</td>
+<td>固定分区、分页</td>
+<td>动态分区、分段</td>
+</tr>
+<tr>
+<td>怎么消除</td>
+<td>让分区粒度更细（极限就是分页）</td>
+<td>紧凑（compaction，移动程序）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="435"><a class="toclink" href="#435">4.3.5 内存不足的应对</a></h3>
+<ul>
+<li><strong>移动技术（紧凑）</strong>：把零散程序挤到一头，腾出大空闲。<strong>必须用动态重定位</strong>，否则程序搬家就跑不起来。</li>
+<li><strong>对换（swapping）</strong>：低优先级或时间片用完的进程，整个 PCB 写到磁盘，腾内存给别人。</li>
+<li><strong>覆盖（overlay）</strong>：一个程序内部分段，主程序常驻，不常用的子程序按需替换。<strong>用户负担重</strong>，早期用，现在被虚存替代。</li>
+</ul>
+<hr>
+<h2 id="44"><a class="toclink" href="#44">4.4 分页存储管理</a></h2>
+<h3 id="441-slide-062"><a class="toclink" href="#441-slide-062">4.4.1 核心概念（slide-062 起）</a></h3>
+<p><strong>类比</strong>：图书馆把每本书都拆成大小一样的&rdquo;册&rdquo;（如 4KB），书架上每个格子也是同样大小。一本书的不同册可以放在书架的任意格子里——管理员靠一张&rdquo;目录表&rdquo;记录&rdquo;第几册放在第几格&rdquo;。</p>
+<table>
+<thead>
+<tr>
+<th>词</th>
+<th>在 OS 里</th>
+<th>在比喻里</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>页（Page）</td>
+<td>逻辑空间的一块</td>
+<td>书的一册</td>
+</tr>
+<tr>
+<td>页框（Frame）/页架/块</td>
+<td>物理内存的一格</td>
+<td>书架格子</td>
+</tr>
+<tr>
+<td>页表（PMT）</td>
+<td>页号 → 页框号的映射表</td>
+<td>这本书的目录</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键设计</strong>：页大小 = 页框大小，<strong>固定</strong>且通常是 2 的幂（如 4KB = 2¹²）。</p>
+<h3 id="442"><a class="toclink" href="#442">4.4.2 地址转换（必背公式）</a></h3>
+<p>逻辑地址 A，页大小 L：</p>
+<pre><code>页号 p = INT[A / L]
+页内偏移 d = A mod L
+物理地址 = 页框号 × L + d
+</code></pre>
+<p><strong>slide-073 例题</strong>：进程页表已知，每页 1024 字节，逻辑地址 2865 求物理地址：
+- p = INT[2865/1024] = 2
+- d = 2865 mod 1024 = 817
+- 查页表，第 2 页 → 第 6 块
+- 物理地址 = 6 × 1024 + 817 = <strong>6961</strong></p>
+<h3 id="443-slide-065-mermaid"><a class="toclink" href="#443-slide-065-mermaid">4.4.3 slide-065 映射图直觉（原图已转 mermaid）</a></h3>
+<p>三个作业的逻辑空间都被切成 1KB 等大页，物理主存按 1KB 分页框；OS 占 0–2K，下面交错装着各作业的页（作业 1 的 0/1/2 页可以散布在物理空间任意位置）。<strong>核心点</strong>：同一作业的页<strong>不要求物理连续</strong>——这就是分页的革命性突破。</p>
+<pre class="mermaid">flowchart LR
+    subgraph J1["作业 1 逻辑 (0~2K-1)"]
+        J1P0["0 页"]
+        J1P1["1 页"]
+        J1P2["2 页"]
+    end
+    subgraph J2["作业 2 逻辑 (0~3K-1)"]
+        J2P0["0 页"]
+        J2P1["1 页"]
+        J2P2["2 页"]
+    end
+    subgraph J3["作业 3 逻辑 (0~1K-1)"]
+        J3P0["0 页"]
+    end
+    subgraph M["主存 (0~10K-1)"]
+        M0["0~2K: OS"]
+        M1["3K: 作业2(0页)"]
+        M2["4K: 作业1(1页)"]
+        M3["5K: 作业2(1页)"]
+        M4["6K: 作业1(0页)"]
+        M5["7K: 作业3(0页)"]
+        M6["8K: 作业2(2页)"]
+        M7["9K: 作业1(2页)"]
+    end
+    J1P0 -.-> M4
+    J1P1 -.-> M2
+    J1P2 -.-> M7
+    J2P0 -.-> M1
+    J2P1 -.-> M3
+    J2P2 -.-> M6
+    J3P0 -.-> M5
+</pre>
+<p>页在主存中的次序由分配时决定——作业 1 三页可能错落在 6K/4K/9K，作业 2/3 同理，但每个作业自己看是连续的（0、1、2 页）。</p>
+<h3 id="444"><a class="toclink" href="#444">4.4.4 页表的烦恼 → 多级页表</a></h3>
+<p><strong>问题</strong>：32 位地址空间 + 4KB 页 → 1M 个页表项 × 4B = <strong>每进程 4MB 页表</strong>。100 个进程就 400MB！</p>
+<p><strong>多级页表</strong>思路：
+- 把页表本身<strong>也分页</strong>（页表页）
+- 一级页目录指向各级页表页
+- <strong>只有当前用到的页表页才装入主存</strong></p>
+<p>代价：访问数据要 3 次访存（页目录 → 页表页 → 数据）。<strong>TLB 就是来缓解这个的</strong>。</p>
+<h3 id="445-ipt"><a class="toclink" href="#445-ipt">4.4.5 反向页表（IPT）</a></h3>
+<p><strong>思路反过来</strong>：不按逻辑页号建表，按<strong>物理页框号</strong>建表。
+- 表大小 = 物理页框数（与逻辑空间无关）
+- 用 hash 把虚拟页号映射到表项
+- <strong>64MB 主存 + 4KB 页只需 64KB 反向页表</strong>——非常省</p>
+<h3 id="446-tlbtranslation-lookaside-buffer"><a class="toclink" href="#446-tlbtranslation-lookaside-buffer">4.4.6 TLB（快表/Translation Lookaside Buffer）</a></h3>
+<p><strong>类比</strong>：图书管理员每查一次页表都要去远处书柜（主存）翻目录太慢，就在桌上摊开<strong>最近常用的几条目录</strong>——这就是 TLB，本质是关联高速缓存。</p>
+<p><strong>关键公式 — 平均访存时间 EAT</strong>：</p>
+<pre><code>EAT = (1 - p) × (TLB + 主存)
+    + p × (TLB + 2 × 主存)
+</code></pre>
+<ul>
+<li>p = TLB 缺失率</li>
+<li>TLB = 快表查询时间（如 20ns）</li>
+<li>主存 = 一次访存时间（如 100ns）</li>
+<li>TLB 命中：1 次主存（直接拿数据）</li>
+<li>TLB 缺失：先访存查页表 + 再访存取数据 = 2 次主存</li>
+</ul>
+<p><strong>例</strong>：TLB=20ns，主存=100ns，命中率 80%：
+- EAT = 0.8 × (20+100) + 0.2 × (20+200) = 96 + 44 = <strong>140ns</strong></p>
+<h3 id="447"><a class="toclink" href="#447">4.4.7 分页的优缺</a></h3>
+<ul>
+<li>优点：无外部碎片；只有每个进程<strong>最后一页</strong>有内部碎片（最多半页）</li>
+<li>缺点：必须<strong>一次全部装入</strong>；硬件支持成本高；不便于按逻辑共享</li>
+</ul>
+<hr>
+<h2 id="45"><a class="toclink" href="#45">4.5 分段存储管理</a></h2>
+<h3 id="451-slide-082"><a class="toclink" href="#451-slide-082">4.5.1 为什么分段（slide-082 起）</a></h3>
+<p>分页是 OS 强加的<strong>等大切分</strong>（用户不感知，物理单位）。分段是程序员<strong>主动按逻辑模块</strong>切（用户感知段号，逻辑单位）。</p>
+<p><strong>典型分段</strong>：代码段 / 数据段 / 栈段 / 堆段 / 共享库段。每段功能独立、长度天然不同。</p>
+<h3 id="452"><a class="toclink" href="#452">4.5.2 段式逻辑地址（二维）</a></h3>
+<pre><code>逻辑地址 V = (S, W)
+S = 段号
+W = 段内偏移
+</code></pre>
+<p>vs 分页的一维地址：分页地址 A 是一维的，硬件自动切成 (页号, 页内偏移)；分段则程序员<strong>显式</strong>给出 S 和 W。</p>
+<h3 id="453-slide-090"><a class="toclink" href="#453-slide-090">4.5.3 段表（slide-090 例子）</a></h3>
+<p>每个进程一张段表，每行：</p>
+<table>
+<thead>
+<tr>
+<th>段号</th>
+<th>段长</th>
+<th>段基址（在主存中的起始地址）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>slide-090 的作业 1 有 5 个段（M、X、Y、A、B），段表记录每段长度和被装入主存的起点。<strong>段表寄存器</strong>保存当前进程段表的起址和长度。</p>
+<p><strong>slide-090 例（原图已转表）</strong>——作业 1 的段表与主存装入：</p>
+<table>
+<thead>
+<tr>
+<th>逻辑段号</th>
+<th>段名</th>
+<th>段长</th>
+<th>段地址（主存起点）</th>
+<th>主存中位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>M</td>
+<td>K</td>
+<td>3200</td>
+<td>3200 起</td>
+</tr>
+<tr>
+<td>1</td>
+<td>X</td>
+<td>P</td>
+<td>1500</td>
+<td>1500 起</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Y</td>
+<td>L</td>
+<td>6000</td>
+<td>6000 起</td>
+</tr>
+<tr>
+<td>3</td>
+<td>A</td>
+<td>N</td>
+<td>8000</td>
+<td>8000 起</td>
+</tr>
+<tr>
+<td>4</td>
+<td>B</td>
+<td>S</td>
+<td>5000</td>
+<td>5000 起</td>
+</tr>
+</tbody>
+</table>
+<p>注意 5 个段在主存中<strong>完全不连续</strong>（1500、3200、5000、6000、8000），但作业 1 自己看仍是按段号 0~4 索引的二维地址空间——这就是分段在主存里的真实形态。</p>
+<h3 id="454-slide-088"><a class="toclink" href="#454-slide-088">4.5.4 地址转换（slide-088）</a></h3>
+<pre><code>1. 用 S 查段表 → 得 (段长, 段基址)
+2. 检查 W &lt; 段长？否则越界异常
+3. 物理地址 = 段基址 + W
+</code></pre>
+<p>比分页多一步<strong>段长检查</strong>，安全性更高。</p>
+<h3 id="455"><a class="toclink" href="#455">4.5.5 分段优缺</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>分页</th>
+<th>分段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>切分单位</td>
+<td>物理（OS 决定，等大）</td>
+<td>逻辑（用户决定，不等长）</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>一维</td>
+<td>二维</td>
+</tr>
+<tr>
+<td>共享/保护</td>
+<td>难（按物理页粒度）</td>
+<td>易（按逻辑模块）</td>
+</tr>
+<tr>
+<td>碎片</td>
+<td>内部碎片</td>
+<td><strong>外部碎片</strong>（段长不等）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="46"><a class="toclink" href="#46">4.6 段页式</a></h2>
+<p><strong>思路</strong>：段提供逻辑结构（共享、保护、模块化），页解决主存分配（无外部碎片）。</p>
+<h3 id="461"><a class="toclink" href="#461">4.6.1 划分</a></h3>
+<ul>
+<li>主存：等大页框（与分页相同）</li>
+<li>逻辑：先分段（按程序模块）→ 每段内部再分页</li>
+</ul>
+<h3 id="462"><a class="toclink" href="#462">4.6.2 三维逻辑地址</a></h3>
+<pre><code>V = (S, P, d)
+S = 段号
+P = 段内页号
+d = 页内偏移
+</code></pre>
+<h3 id="463"><a class="toclink" href="#463">4.6.3 数据结构（三层索引）</a></h3>
+<ul>
+<li><strong>作业表</strong>：作业号 → 段表起址</li>
+<li><strong>段表</strong>：段号 → 该段页表起址 + 段是否在内存</li>
+<li><strong>页表</strong>：页号 → 页框号 + 页是否在内存</li>
+</ul>
+<h3 id="464"><a class="toclink" href="#464">4.6.4 地址转换</a></h3>
+<ol>
+<li>查 TLB（带 S+P 联合作为 key），命中直接拼地址</li>
+<li>缺失 → 段表查页表起址 → 页表查页框号</li>
+<li>段不在 → 缺段中断；页不在 → 缺页中断</li>
+<li>共需 <strong>3 次访存</strong>（段表 + 页表 + 数据），TLB 命中可降为 1 次</li>
+</ol>
+<h3 id="465"><a class="toclink" href="#465">4.6.5 优缺</a></h3>
+<ul>
+<li>优点：兼具段的共享/保护和页的高利用率</li>
+<li>缺点：每段平均一页内部碎片（比纯分页多）；硬件复杂；管理开销大</li>
+</ul>
+<hr>
+<h2 id="47"><a class="toclink" href="#47">4.7 虚拟存储管理（重头戏）</a></h2>
+<h3 id="471"><a class="toclink" href="#471">4.7.1 局部性原理（虚存的理论基石）</a></h3>
+<p><strong>类比</strong>：你在一段时间内只看图书馆的几本相关书（<strong>空间局部性</strong>），一本书翻开后短时间内反复用（<strong>时间局部性</strong>）。所以——<strong>没必要把整个图书馆都搬到桌上</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>局部性</th>
+<th>含义</th>
+<th>典型来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>时间局部性</strong></td>
+<td>刚访问的指令/数据短时间内还会访问</td>
+<td>循环、函数反复调用</td>
+</tr>
+<tr>
+<td><strong>空间局部性</strong></td>
+<td>访问了某地址，附近地址也会被访问</td>
+<td>顺序执行、数组/记录</td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论</strong>：进程不必全部装入内存就能跑——只把&rdquo;当前要用的部分&rdquo;调进来即可。剩下放在磁盘，需要时再换。</p>
+<h3 id="472"><a class="toclink" href="#472">4.7.2 虚拟存储器定义</a></h3>
+<blockquote>
+<p>在具有层次结构存储器的计算机系统中，采用<strong>自动</strong>实现部分装入和部分对换功能，为用户提供一个比物理内存容量大得多的、可寻址的&rdquo;内存储器&rdquo;。</p>
+</blockquote>
+<p><strong>类比</strong>：图书馆的&rdquo;开架阅览区&rdquo;（主存）只有 100 本书的座位，但全馆（外存）有 10 万本。读者（程序员）写借书条时<strong>假装</strong>可以借任何一本——管理员（OS+MMU）后台帮他换书，他感受不到。</p>
+<h3 id="473"><a class="toclink" href="#473">4.7.3 物质基础（实现条件）</a></h3>
+<ul>
+<li>较大容量的辅存（页文件 / swap）</li>
+<li>一定容量的主存</li>
+<li>地址变换机构（MMU）</li>
+</ul>
+<p>虚拟空间限制：
+- <strong>指令地址场长度</strong>（主要原因）— 32 位机器最多 4GB 虚拟空间
+- 外存大小</p>
+<h3 id="474"><a class="toclink" href="#474">4.7.4 请求分页</a></h3>
+<p>实存分页要求&rdquo;一次全部装入&rdquo;，虚存改为&rdquo;用到才装&rdquo;。</p>
+<p><strong>页表扩展</strong>（必备字段）：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>页号</td>
+<td>逻辑页号</td>
+</tr>
+<tr>
+<td>内存块号</td>
+<td>物理页框号</td>
+</tr>
+<tr>
+<td><strong>驻留位（中断位）</strong></td>
+<td>该页是否在主存</td>
+</tr>
+<tr>
+<td><strong>修改位（M / Dirty）</strong></td>
+<td>在内存时被改过吗（决定是否要写回磁盘）</td>
+</tr>
+<tr>
+<td><strong>引用位（R）</strong></td>
+<td>最近访问过吗（用于 LRU/CLOCK）</td>
+</tr>
+<tr>
+<td>保护位</td>
+<td>读/写/执行权限</td>
+</tr>
+</tbody>
+</table>
+<p>外页表：页号 → 磁盘物理地址（系统启动时建立，存磁盘上）。</p>
+<h3 id="475-slide-115-7"><a class="toclink" href="#475-slide-115-7">4.7.5 缺页中断处理流程（slide-115，必背 7 步）</a></h3>
+<ol>
+<li><strong>挂起</strong>当前进程</li>
+<li>查<strong>外页表</strong>，找到该页在磁盘的位置</li>
+<li>主存<strong>有空闲页框</strong>？有 → 转 6</li>
+<li><strong>无空闲</strong> → 用置换算法选淘汰页；检查修改位</li>
+<li>修改位=1 → 写回磁盘原位</li>
+<li><strong>调页</strong>：把目标页装入分配到的页框，修改页表</li>
+<li>返回断点，<strong>重新执行</strong>被中断的指令</li>
+</ol>
+<p><strong>关键细节</strong>：是&rdquo;重新执行&rdquo;那条访问指令，不是从断点继续——因为指令可能正执行到一半就缺页。</p>
+<h3 id="476"><a class="toclink" href="#476">4.7.6 缺页率公式</a></h3>
+<pre><code>缺页率 f = F / A
+其中  A = 总访问次数 = S（成功）+ F（缺页）
+</code></pre>
+<p><strong>slide-155 例题（程序局部性威力）</strong>：3 页内存，1 页存程序，2 页存数据；数组 100×100，每页放 200 个数。</p>
+<pre><code class="language-c">// 程序 A：按行遍历 — 与存储顺序一致
+for (i=1; i&lt;=100; i++)
+  for (j=1; j&lt;=100; j++)
+    A[i][j] = 0;
+// 缺页 = 10000/200 = 50 次
+
+// 程序 B：按列遍历 — 与存储顺序相反
+for (j=1; j&lt;=100; j++)
+  for (i=1; i&lt;=100; i++)
+    A[i][j] = 0;
+// 缺页 = 10000/2 = 5000 次  ← 100 倍差距！
+</code></pre>
+<p><strong>面试常考</strong>：相同算法，仅访问顺序不同 → 性能差 100 倍。这就是&rdquo;程序员要懂局部性&rdquo;的核心理由。</p>
+<p>影响缺页率的因素：
+- 内存页框数（多 → 缺页少）
+- 页大小（小 → 页表大但缺页粒度细）
+- 替换算法
+- 程序特性（局部性好坏）</p>
+<h3 id="477"><a class="toclink" href="#477">4.7.7 页面置换算法（必考重点）</a></h3>
+<h4 id="1-opt"><a class="toclink" href="#1-opt">(1) OPT — 最佳置换（理论基线）</a></h4>
+<ul>
+<li>淘汰<strong>未来最久不被访问</strong>的页</li>
+<li>无法实现（要预知未来）</li>
+<li>用作其他算法的对比基准</li>
+</ul>
+<h4 id="2-fifo"><a class="toclink" href="#2-fifo">(2) FIFO — 先进先出</a></h4>
+<ul>
+<li>淘汰<strong>进入内存最早</strong>的页</li>
+<li>实现简单：维护页框队列</li>
+<li><strong>Belady 异常</strong>（slide-160）：访问串 4,3,2,1,4,3,5,4,3,2,1,5——分配 3 个页框 vs 4 个页框，<strong>4 个页框反而缺页更多</strong>！原因：FIFO 与局部性矛盾，被淘汰的不一定是不再用的。</li>
+</ul>
+<h4 id="3-lru"><a class="toclink" href="#3-lru">(3) LRU — 最近最少使用</a></h4>
+<ul>
+<li>淘汰<strong>最久没被访问</strong>的页（基于&rdquo;最近用过的还会用&rdquo;的假设）</li>
+<li><strong>不会有 Belady 异常</strong></li>
+<li>实现成本高：</li>
+<li>页面淘汰队列（每访问一次调整队列）</li>
+<li>引用位法（NRU 近似）</li>
+<li>计数法（LFU 变体）</li>
+<li>计时法 / 老化算法（多位寄存器右移）</li>
+</ul>
+<p><strong>slide-165–166 例子</strong>：3 个页框，访问 4,3,0,4,1,1,2,3,2，淘汰序列演变看得很清楚。</p>
+<h4 id="4-clock-os"><a class="toclink" href="#4-clock-os">(4) CLOCK — 时钟（OS 实际常用）</a></h4>
+<p><strong>类比</strong>：把所有页框排成一圈，有一根指针（时钟指针）。</p>
+<pre><code>基本 CLOCK：
+  - 每页有引用位 R
+  - 访问页时 R=1
+  - 淘汰时从指针位置扫描：
+    - 遇 R=1 → R=0，跳过
+    - 遇 R=0 → 选中淘汰，指针前进
+</code></pre>
+<p><strong>改进 CLOCK</strong>（结合修改位 M 和引用位 R 的 4 种组合）：
+1. (R=0, M=0) — 最优先淘汰（既老又干净，不用写回）
+2. (R=0, M=1) — 老但脏（要写回）
+3. (R=1, M=0) — 最近用但干净
+4. (R=1, M=1) — 最近用且脏</p>
+<p>扫描两遍：第一遍找 (0,0)；找不到则第二遍找 (0,1)，过程中把 R 清 0。</p>
+<h4 id="5-second-chance"><a class="toclink" href="#5-second-chance">(5) Second Chance — 第二次机会</a></h4>
+<p>是 FIFO 的改进，碰到 R=1 的&rdquo;重新当作新页放队尾&rdquo;。CLOCK 是它的环形版本。</p>
+<h4 id="slide-180-2321524532523"><a class="toclink" href="#slide-180-2321524532523">slide-180 性能比较（同访问串 2,3,2,1,5,2,4,5,3,2,5,2，3 个页框）</a></h4>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>缺页次数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPT</td>
+<td>6</td>
+</tr>
+<tr>
+<td>LRU</td>
+<td>7</td>
+</tr>
+<tr>
+<td>CLOCK</td>
+<td>8</td>
+</tr>
+<tr>
+<td>FIFO</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+<p><strong>记忆</strong>：OPT &lt; LRU &lt; CLOCK &lt; FIFO（一般情况下）。</p>
+<h3 id="478"><a class="toclink" href="#478">4.7.8 工作集模型 / 抖动（高频考点）</a></h3>
+<p><strong>类比</strong>：你写论文时桌上摊开的几本最相关的书 = 工作集。窗口尺寸 Δ 就是你&rdquo;最近多久内用过的算&rdquo;——比如最近 30 分钟用过的书都摆桌上。</p>
+<h4 id="_4"><a class="toclink" href="#_4">工作集定义</a></h4>
+<pre><code>W(t, Δ) = {进程在时间窗口 (t-Δ, t] 内访问过的页面集合}
+</code></pre>
+<p>slide-185 经典图：
+- 引用串 &hellip;2 6 1 5 7 7 7 5 1 6 2 3 4 1 2 3 4 4 4 3 4 3 4 4 1 3 2 3 4 4 4 3 4 4 4&hellip;
+- 在 t1 时刻，向前看 Δ 个引用 → WS(t1) = {1, 2, 5, 6, 7}
+- 在 t2 时刻 → WS(t2) = {3, 4}（局部性变了，工作集也变了）</p>
+<p><strong>驻留集（resident set）</strong>：进程实际驻留在内存的页集合。</p>
+<h4 id="_5"><a class="toclink" href="#_5">工作集策略</a></h4>
+<ol>
+<li>监视每个进程的工作集</li>
+<li>仅当工作集<strong>全部</strong>装入内存时才让进程运行</li>
+<li>定期清出&rdquo;不在工作集&rdquo;的页</li>
+</ol>
+<h4 id="thrashing"><a class="toclink" href="#thrashing">抖动（Thrashing）</a></h4>
+<ul>
+<li><strong>现象</strong>：CPU 大部分时间在处理缺页中断而非执行用户代码</li>
+<li><strong>原因</strong>：分给进程的页框 &lt; 工作集 → 频繁淘汰马上又要用的页 → 又缺页 → 恶性循环</li>
+<li><strong>对策</strong>：</li>
+<li>工作集模型（保证驻留集 ≥ 工作集）</li>
+<li>缺页频率（PFF）算法：动态调整驻留集大小</li>
+<li>实在不行：挂起一些进程（减少多道程度）</li>
+</ul>
+<h4 id="pff"><a class="toclink" href="#pff">缺页频率（PFF）算法</a></h4>
+<p>监测连续缺页之间的时间间隔：
+- 间隔 &gt; 阈值 τ → 工作集变了，移出窗口内未引用的页
+- 间隔 &lt; 阈值 τ → 进程页框不够，加分配</p>
+<h3 id="479"><a class="toclink" href="#479">4.7.9 页面分配/置换策略组合</a></h3>
+<table>
+<thead>
+<tr>
+<th>分配</th>
+<th>置换</th>
+<th>典型应用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>固定 + 局部</td>
+<td>经典做法</td>
+<td>简单 OS</td>
+</tr>
+<tr>
+<td>可变 + 全局</td>
+<td>灵活</td>
+<td>SVR4</td>
+</tr>
+<tr>
+<td>可变 + 局部</td>
+<td>平衡</td>
+<td>Windows NT</td>
+</tr>
+<tr>
+<td>固定 + 全局</td>
+<td>不合理</td>
+<td>不用</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="48"><a class="toclink" href="#48">4.8 章末速查 + 计算题模板</a></h2>
+<h3 id="481"><a class="toclink" href="#481">4.8.1 必背公式</a></h3>
+<pre><code>分页地址转换：
+  p = INT[A / L]
+  d = A mod L
+  物理地址 = 页框号 × L + d
+
+平均访存时间（带 TLB）：
+  EAT = (1-p)(TLB + Mem) + p(TLB + 2 × Mem)
+
+缺页率：
+  f = F / A = 缺页次数 / 总访问次数
+
+多级页表项数：
+  虚拟空间 / 页大小 = 一级页表项数
+</code></pre>
+<h3 id="482"><a class="toclink" href="#482">4.8.2 地址转换计算题模板</a></h3>
+<blockquote>
+<p>题：32 位逻辑地址，页大小 4KB，进程页表如下，求逻辑地址 0x12345 的物理地址。</p>
+</blockquote>
+<ol>
+<li>页大小 4KB = 2¹² → 偏移占低 12 位</li>
+<li>0x12345 的二进制低 12 位是偏移 d，高 20 位是页号 p</li>
+<li>0x12345 = 0001 0010 0011 0100 0101，<strong>p = 0x12 = 18</strong>, <strong>d = 0x345</strong></li>
+<li>查页表第 18 项 → 假设得页框号 0x7</li>
+<li>物理地址 = 0x7 × 0x1000 + 0x345 = <strong>0x7345</strong></li>
+</ol>
+<h3 id="483"><a class="toclink" href="#483">4.8.3 缺页计算题模板</a></h3>
+<blockquote>
+<p>题：进程分配 3 个页框，访问串 7,0,1,2,0,3,0,4,2,3,0,3,2，问 OPT/LRU/FIFO 各缺页几次？</p>
+</blockquote>
+<p>固定流程：
+1. 画三行表格（每个页框一行）+ 顶部访问序列
+2. 每访问一页，已在内存 → 命中（标 H）；不在 → 缺页（标 F），按算法选淘汰页
+3. 数 F 的总数</p>
+<p><strong>OPT 选淘汰的诀窍</strong>：往后看，谁最远才被用就淘汰谁；后面再也不用的优先淘汰。
+<strong>LRU 选淘汰的诀窍</strong>：往前看，谁最久没用就淘汰谁。
+<strong>FIFO</strong>：维护进入顺序队列，淘汰队首。</p>
+<h3 id="484"><a class="toclink" href="#484">4.8.4 概念区分速查</a></h3>
+<table>
+<thead>
+<tr>
+<th>容易混</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内部 vs 外部碎片</td>
+<td>内部 = 分区<strong>里</strong>没用满；外部 = 分区<strong>间</strong>的小空隙</td>
+</tr>
+<tr>
+<td>分页 vs 分段</td>
+<td>物理 vs 逻辑；一维 vs 二维；OS 决定 vs 程序员决定</td>
+</tr>
+<tr>
+<td>TLB vs Cache</td>
+<td>TLB 缓存&rdquo;页表项&rdquo;；Cache 缓存&rdquo;数据&rdquo;</td>
+</tr>
+<tr>
+<td>缺页中断 vs 越界</td>
+<td>缺页 → 调页继续跑；越界 → 杀进程</td>
+</tr>
+<tr>
+<td>工作集 vs 驻留集</td>
+<td>工作集 = 应该在的；驻留集 = 实际在的</td>
+</tr>
+<tr>
+<td>Belady 异常</td>
+<td>仅 FIFO 会出现；LRU/OPT 不会</td>
+</tr>
+<tr>
+<td>OPT 不能实现的原因</td>
+<td>要预知未来访问串</td>
+</tr>
+</tbody>
+</table>
+<h3 id="485"><a class="toclink" href="#485">4.8.5 面试高频问</a></h3>
+<ol>
+<li><strong>为什么有了分页还要分段</strong>？分页解决物理利用率，分段解决逻辑结构（共享、保护、动态扩展）。</li>
+<li><strong>TLB 命中率为什么能这么高</strong>？局部性原理 + 关联高速缓存的并行查找。</li>
+<li><strong>缺页时为什么是&rdquo;重新执行指令&rdquo;</strong>？指令可能 fetch 一半就缺页，操作数可能跨页，状态难恢复 → 整条指令重做最简单。</li>
+<li><strong>抖动怎么解决</strong>？工作集 + PFF + 必要时挂起进程降低多道程度。</li>
+<li><strong>写时复制（COW）和虚存什么关系</strong>？fork 后父子进程共享物理页，写入时才复制——是请求分页的延伸应用。</li>
+<li><strong>为什么大多数 OS 选 CLOCK 而不是 LRU</strong>？真正的 LRU 维护开销太高（每次访问都要更新顺序）；CLOCK 用引用位近似，性能接近 LRU 但开销小得多。</li>
+</ol>
+<hr>
+<h2 id="slide-indexmd"><a class="toclink" href="#slide-indexmd">索引（按 slide 号回查 index.md）</a></h2>
+<ul>
+<li>三级层次：slide-008/009/010</li>
+<li>重定位类型：slide-17~21</li>
+<li>动态分区例题：slide-37/38（含 5 进程表 + 6 步演变）</li>
+<li>适应算法：slide-44~49</li>
+<li>移动/对换/覆盖：slide-53~60</li>
+<li>分页基础：slide-62~75</li>
+<li>分页地址转换例：slide-72/73</li>
+<li>分页映射图：slide-65</li>
+<li>分段：slide-82~98</li>
+<li>段表/段地址转换：slide-87/88/90</li>
+<li>虚存概念：slide-100~106</li>
+<li>缺页处理 7 步：slide-115</li>
+<li>多级页表 / 反向页表：slide-119~126</li>
+<li>TLB：slide-129</li>
+<li>段页式：slide-131~141</li>
+<li>局部性 / 缺页率：slide-154~156</li>
+<li>OPT/FIFO/LRU/CLOCK：slide-158~180</li>
+<li>工作集：slide-185~191</li>
+<li>PFF：slide-196/197</li>
+</ul>
+  </article>
+</main>
+<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3><div class="toc">
+<ul>
+<li><a href="#41">4.1 存储管理的目标</a><ul>
+<li><a href="#411">4.1.1 我们要解决什么问题</a></li>
+<li><a href="#412-slide-008009010">4.1.2 三级存储器层次（slide-008/009/010）</a></li>
+<li><a href="#413-vs">4.1.3 物理地址 vs 逻辑地址</a></li>
+</ul>
+</li>
+<li><a href="#42">4.2 程序装入与链接</a><ul>
+<li><a href="#421">4.2.1 三种链接</a></li>
+<li><a href="#422">4.2.2 三种装入</a></li>
+<li><a href="#423">4.2.3 三种地址重定位</a></li>
+<li><a href="#424">4.2.4 存储保护</a></li>
+</ul>
+</li>
+<li><a href="#43">4.3 连续分配</a><ul>
+<li><a href="#431">4.3.1 单一连续分配</a></li>
+<li><a href="#432">4.3.2 固定分区</a></li>
+<li><a href="#433">4.3.3 动态分区（可变分区）</a></li>
+<li><a href="#434-vs">4.3.4 内部碎片 vs 外部碎片（高频面试）</a></li>
+<li><a href="#435">4.3.5 内存不足的应对</a></li>
+</ul>
+</li>
+<li><a href="#44">4.4 分页存储管理</a><ul>
+<li><a href="#441-slide-062">4.4.1 核心概念（slide-062 起）</a></li>
+<li><a href="#442">4.4.2 地址转换（必背公式）</a></li>
+<li><a href="#443-slide-065-mermaid">4.4.3 slide-065 映射图直觉（原图已转 mermaid）</a></li>
+<li><a href="#444">4.4.4 页表的烦恼 → 多级页表</a></li>
+<li><a href="#445-ipt">4.4.5 反向页表（IPT）</a></li>
+<li><a href="#446-tlbtranslation-lookaside-buffer">4.4.6 TLB（快表/Translation Lookaside Buffer）</a></li>
+<li><a href="#447">4.4.7 分页的优缺</a></li>
+</ul>
+</li>
+<li><a href="#45">4.5 分段存储管理</a><ul>
+<li><a href="#451-slide-082">4.5.1 为什么分段（slide-082 起）</a></li>
+<li><a href="#452">4.5.2 段式逻辑地址（二维）</a></li>
+<li><a href="#453-slide-090">4.5.3 段表（slide-090 例子）</a></li>
+<li><a href="#454-slide-088">4.5.4 地址转换（slide-088）</a></li>
+<li><a href="#455">4.5.5 分段优缺</a></li>
+</ul>
+</li>
+<li><a href="#46">4.6 段页式</a><ul>
+<li><a href="#461">4.6.1 划分</a></li>
+<li><a href="#462">4.6.2 三维逻辑地址</a></li>
+<li><a href="#463">4.6.3 数据结构（三层索引）</a></li>
+<li><a href="#464">4.6.4 地址转换</a></li>
+<li><a href="#465">4.6.5 优缺</a></li>
+</ul>
+</li>
+<li><a href="#47">4.7 虚拟存储管理（重头戏）</a><ul>
+<li><a href="#471">4.7.1 局部性原理（虚存的理论基石）</a></li>
+<li><a href="#472">4.7.2 虚拟存储器定义</a></li>
+<li><a href="#473">4.7.3 物质基础（实现条件）</a></li>
+<li><a href="#474">4.7.4 请求分页</a></li>
+<li><a href="#475-slide-115-7">4.7.5 缺页中断处理流程（slide-115，必背 7 步）</a></li>
+<li><a href="#476">4.7.6 缺页率公式</a></li>
+<li><a href="#477">4.7.7 页面置换算法（必考重点）</a></li>
+<li><a href="#478">4.7.8 工作集模型 / 抖动（高频考点）</a></li>
+<li><a href="#479">4.7.9 页面分配/置换策略组合</a></li>
+</ul>
+</li>
+<li><a href="#48">4.8 章末速查 + 计算题模板</a><ul>
+<li><a href="#481">4.8.1 必背公式</a></li>
+<li><a href="#482">4.8.2 地址转换计算题模板</a></li>
+<li><a href="#483">4.8.3 缺页计算题模板</a></li>
+<li><a href="#484">4.8.4 概念区分速查</a></li>
+<li><a href="#485">4.8.5 面试高频问</a></li>
+</ul>
+</li>
+<li><a href="#slide-indexmd">索引（按 slide 号回查 index.md）</a></li>
+</ul>
+</div>
+</aside></div>
+<a class="back-to-top" href="#main" aria-label="返回顶部"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#up"/></svg></a>
+<footer class="page-footer">
+  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+</footer>
+<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+  <div class="theme-picker-head">
+    <h3 class="theme-picker-title">选择主题</h3>
+    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
+  </div>
+  <div class="theme-picker-actions">
+    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
+    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  </div>
+  <div class="theme-picker-grid" data-theme-grid></div>
+</aside>
+<div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
+
+<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body></html>

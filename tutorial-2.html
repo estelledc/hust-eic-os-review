@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="存储 · 设备 · 文件系统 · 并发（前段）。">
+<meta name="color-scheme" content="light dark">
+<title>教程笔记 · Part 2 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="themes/themes.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html" aria-label="返回首页">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
+      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
+      </button>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="chipbar" aria-label="章节快速导航">
+    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
+    <div class="chipbar-track">
+        <a class="chip" href="ch1.html">第 1 章 操作系统概论</a>
+        <a class="chip" href="ch2.html">第 2 章 处理器管理</a>
+        <a class="chip" href="ch3.html">第 3 章 同步互斥与死锁</a>
+        <a class="chip" href="ch4.html">第 4 章 存储管理</a>
+        <a class="chip" href="ch5.html">第 5 章 设备管理</a>
+        <a class="chip" href="review.html">总复习提纲</a>
+        <a class="chip" href="homework.html">作业明细</a>
+        <a class="chip" href="tutorial-1.html">教程笔记 · Part 1</a>
+        <a class="chip chip-active" href="tutorial-2.html">教程笔记 · Part 2</a>
+        <a class="chip" href="tutorial-3.html">教程笔记 · Part 3</a>
+    </div>
+  </nav>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="站点导航">
+  <a class="home-link" href="index.html">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
+    <span>课程地图</span>
+  </a>
+  <section class="nav-group" aria-labelledby="grp-chapter"><h3 id="grp-chapter" class="nav-group-title"><span class="nav-group-icon">📖</span>课程章节</h3><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><h3 id="grp-exam" class="nav-group-title"><span class="nav-group-icon">📝</span>考前材料</h3><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><h3 id="grp-tutorial" class="nav-group-title"><span class="nav-group-icon">📚</span>教程笔记</h3><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link nav-link-active" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <div class="sidebar-footer">
+    <a class="ghost" href="themes-gallery.html">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      <span>主题画廊（71 套）</span>
+    </a>
+    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+  </div>
+</aside>
+<main class="main" id="main">
+  <article class="prose">
+    <header class="page-head">
+      <h1>教程笔记 · Part 2</h1>
+      <p class="page-lede">存储 · 设备 · 文件系统 · 并发（前段）。</p>
+    </header>
+    <blockquote>
+<p>范围：PDF 页 121-240（教材印刷页约 110-229）。
+涵盖：第 3 章存储管理收尾（段页式 / 段页式虚存）、第 4 章设备管理、第 5 章文件管理、第 6 章并发程序设计前半。
+来源：<code>index.md</code> 同目录扫描图（已采样精读 ~35 张关键页）。</p>
+</blockquote>
+<hr>
+<h2 id="13"><a class="toclink" href="#13">一、章节地图（中 1/3）</a></h2>
+<table>
+<thead>
+<tr>
+<th>PDF 页范围</th>
+<th>教材页</th>
+<th>章节</th>
+<th>关键内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>121-122</td>
+<td>110-111</td>
+<td>3.4.3 段页式存储管理</td>
+<td>段表 + 页表两级；地址结构「段号|页号|页内地址」</td>
+</tr>
+<tr>
+<td>123</td>
+<td>112</td>
+<td>3.4.3 段页式虚存</td>
+<td>缺段中断 + 缺页中断 + 越界中断 + 保护中断</td>
+</tr>
+<tr>
+<td>124-128</td>
+<td>113-117</td>
+<td>第 3 章本章小结 + 习题三</td>
+<td>含分页/虚存/LRU/FIFO/Clock/缺页率/局部性等典型应用题</td>
+</tr>
+<tr>
+<td>129</td>
+<td>118</td>
+<td>第四章 设备管理 起首</td>
+<td>概述 + 设备分层思想</td>
+</tr>
+<tr>
+<td>130-131</td>
+<td>119-120</td>
+<td>4.1.1 设备管理概述</td>
+<td>I/O 设备、设备分类</td>
+</tr>
+<tr>
+<td>132-134</td>
+<td>121-123</td>
+<td>4.1.2 I/O 控制方式</td>
+<td>轮询 / 中断 / DMA / 通道</td>
+</tr>
+<tr>
+<td>135-137</td>
+<td>124-126</td>
+<td>4.1.3 总线与 I/O</td>
+<td>单总线 / 三级总线 / 含南北桥 / 含 I/O 通道的多级总线</td>
+</tr>
+<tr>
+<td>138</td>
+<td>127</td>
+<td>4.1 体系结构演进</td>
+<td>多核 / Cache 层级</td>
+</tr>
+<tr>
+<td>139-140</td>
+<td>128-129</td>
+<td>4.2.1 I/O 软件实现层次</td>
+<td>4 层：中断 / 驱动 / 设备无关 / 用户空间</td>
+</tr>
+<tr>
+<td>141-142</td>
+<td>130-131</td>
+<td>4.2.2 I/O 软件实现</td>
+<td>中断处理 / 设备驱动</td>
+</tr>
+<tr>
+<td>143-144</td>
+<td>132-133</td>
+<td>4.2.2 续 + 4.2.3 缓冲区</td>
+<td>单缓冲 / 双缓冲 / 循环缓冲 / 缓冲池</td>
+</tr>
+<tr>
+<td>145-148</td>
+<td>134-137</td>
+<td>4.2.3 缓冲技术续 + 4.3 独占型设备</td>
+<td>静态/动态分配；设备类表/设备表</td>
+</tr>
+<tr>
+<td>149-150</td>
+<td>138-139</td>
+<td>4.4 共享型外围设备的驱动</td>
+<td>磁盘读写周期 + 公式</td>
+</tr>
+<tr>
+<td>151</td>
+<td>140</td>
+<td>4.4.2 磁盘驱动调度</td>
+<td>FCFS / SSTF / 单向扫描 / 双向扫描 / 电梯</td>
+</tr>
+<tr>
+<td>152-153</td>
+<td>141-142</td>
+<td>4.4.2 续 旋转调度</td>
+<td>循环排序 / 优化分布 / 集簇读写</td>
+</tr>
+<tr>
+<td>154-156</td>
+<td>143-145</td>
+<td>4.5 虚拟设备</td>
+<td>SPOOLing 系统：预输入 / 缓输出 / 井管理程序</td>
+</tr>
+<tr>
+<td>157-158</td>
+<td>146-147</td>
+<td>第 4 章本章小结</td>
+<td></td>
+</tr>
+<tr>
+<td>159-162</td>
+<td>148-151</td>
+<td>习题四</td>
+<td>中断频率、磁盘块号转换、磁盘调度、缓冲传输</td>
+</tr>
+<tr>
+<td>163-165</td>
+<td>152-154</td>
+<td>第五章 文件管理 起首</td>
+<td>文件 / 卷 / 块 / 记录定义</td>
+</tr>
+<tr>
+<td>166-168</td>
+<td>155-157</td>
+<td>5.1 文件系统概述 + 5.2 文件的组织</td>
+<td>文件分类 + 引入文件优点 + 存储介质</td>
+</tr>
+<tr>
+<td>169-170</td>
+<td>158-159</td>
+<td>5.2.2 文件结构 + 物理结构</td>
+<td>流式 / 记录式；顺序 / 连接 / 直接 / 索引</td>
+</tr>
+<tr>
+<td>171-173</td>
+<td>160-162</td>
+<td>5.2 续 + 5.3 文件目录</td>
+<td>DOS FAT / 散列法冲突 / 一级 / 二级 / 树形目录</td>
+</tr>
+<tr>
+<td>174-178</td>
+<td>163-167</td>
+<td>5.3 续 + 5.4 文件的共享、保护和保密</td>
+<td>路径名 / 硬链接 / 符号链接 / 存取控制</td>
+</tr>
+<tr>
+<td>179</td>
+<td>168</td>
+<td>5.4.3 文件保密</td>
+<td>加密文件系统</td>
+</tr>
+<tr>
+<td>180-184</td>
+<td>169-173</td>
+<td>5.5 文件的使用</td>
+<td>顺序/直接/索引存取；创建/打开/读写/关闭</td>
+</tr>
+<tr>
+<td>185-190</td>
+<td>174-179</td>
+<td>5.6 文件系统的实现</td>
+<td>文件分配（连续/链接/索引）；空闲管理（位示图/成组连接）；层次结构</td>
+</tr>
+<tr>
+<td>191-194</td>
+<td>180-183</td>
+<td>习题五</td>
+<td>FCB/目录/索引/路径名</td>
+</tr>
+<tr>
+<td>195-196</td>
+<td>184-185</td>
+<td>第五章本章小结</td>
+<td></td>
+</tr>
+<tr>
+<td>197-200</td>
+<td>186-189</td>
+<td>第六章 并发程序设计 起首 + 6.1</td>
+<td>顺序/多道程序设计</td>
+</tr>
+<tr>
+<td>201-204</td>
+<td>190-193</td>
+<td>6.2 临界区管理</td>
+<td>与时间相关错误：售票/借还主存</td>
+</tr>
+<tr>
+<td>205-208</td>
+<td>194-197</td>
+<td>6.2.3 临界区管理实现的硬件方式 + 6.3 PV</td>
+<td>关中断 / TS 指令 / Swap；信号量与 PV 原语</td>
+</tr>
+<tr>
+<td>209-218</td>
+<td>198-207</td>
+<td>6.3 PV 操作 + 经典问题</td>
+<td>互斥 / 同步 / 生产者-消费者 / 哲学家进餐 / 读者-写者</td>
+</tr>
+<tr>
+<td>219-226</td>
+<td>208-215</td>
+<td>6.4 管程</td>
+<td>霍尔管程 / 汉森管程</td>
+</tr>
+<tr>
+<td>227-235</td>
+<td>216-224</td>
+<td>6.5 进程通信</td>
+<td>直接 / 间接 / 共享存储 / 管道 / RPC</td>
+</tr>
+<tr>
+<td>236-240</td>
+<td>225-229</td>
+<td>6.6 死锁 起首</td>
+<td>死锁条件 / 银行家算法（开端）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-p121-128"><a class="toclink" href="#3-p121-128">二、第 3 章存储管理收尾（p121-128）</a></h2>
+<h3 id="343"><a class="toclink" href="#343">3.4.3 段页式存储管理</a></h3>
+<h4 id="1"><a class="toclink" href="#1">1) 基本思想</a></h4>
+<ul>
+<li>段页式 = 段式管理 + 页式管理。<strong>每一段不必占据连续的存储空间，而是存放在不连续的主存页框中</strong>。</li>
+<li>同样可以扩充成虚拟存储管理：只要装入进程的部分段、或这些段中的部分页面，进程就可以运行。</li>
+</ul>
+<h4 id="2"><a class="toclink" href="#2">2) 地址结构与转换</a></h4>
+<pre><code>逻辑地址：[段号 s | 页号 p | 页内地址 d]
+</code></pre>
+<p>地址转换流程（图 3-18）：</p>
+<ol>
+<li>先查<strong>快表</strong>（联想存储器），命中则形成 (页框号, 单元号) → 物理地址</li>
+<li>不命中则查<strong>段表</strong>（段内含「标志 / 页表限长 / 页表基址」）</li>
+<li>由段表找到该段<strong>页表</strong>，再查页表得页框号</li>
+<li>物理地址 = 页框号 × 页大小 + 单元号</li>
+<li>同时把 (段号, 页号, 页框号) 登记入快表</li>
+</ol>
+<h4 id="3-3-19"><a class="toclink" href="#3-3-19">3) 段页式虚拟存储（图 3-19 流程）</a></h4>
+<p>按逻辑地址查快表 → 否，查段表 → 段表是否在主存？否 → <strong>缺段中断</strong>；是 → 该页超出页表长？是 → <strong>越界中断</strong>；否 → 该页在主存？否 → <strong>缺页中断</strong>；是 → 形成物理地址。</p>
+<blockquote>
+<p>共四种中断：缺段、越界、缺页、保护。</p>
+</blockquote>
+<p><strong>对应学校 ch3（存储管理）末尾</strong></p>
+<hr>
+<h3 id="p123-124"><a class="toclink" href="#p123-124">第三章本章小结要点（p123-124）</a></h3>
+<ul>
+<li>存储管理基本功能：<strong>存储分配 / 地址转换 / 存储保护 / 存储共享 / 存储扩充</strong></li>
+<li>地址转换：通过静态或动态地址重定位将逻辑地址映射到物理地址</li>
+<li>五种主要管理方式：单连续 / 固定分区 / 可变分区 / 页式 / 段式 / 段页式</li>
+<li>虚拟存储管理：让进程的&rdquo;部分&rdquo;装入主存即可运行，扩充逻辑可用空间</li>
+<li>关键问题：缺页中断、抖动（thrashing）、页面置换（OPT/FIFO/LRU/LFU/Clock）、Belady 异常</li>
+</ul>
+<h3 id="p124-128"><a class="toclink" href="#p124-128">习题三关键题（p124-128 摘录）</a></h3>
+<blockquote>
+<p>这些题型在校考中高频出现，建议重点记。</p>
+</blockquote>
+<p><strong>应用题 (1)</strong> — 缓存/内存/外存平均访问时间</p>
+<blockquote>
+<p>设缓存命中率 <code>(n-1)/n</code>，内存命中率 <code>(m-1)/m</code>，缓存访问 A ns，内存装入缓存 B ns，外存装入内存 C ns。
+平均访问时间 T = A + (1/n)(B + (1/m)·C)</p>
+</blockquote>
+<p><strong>(2)</strong> — 局部性举例：双重 for 循环对 <code>a[i] = a[i] * j</code> 的空间/时间局部性分析</p>
+<p><strong>(19) FIFO/OPT/LRU/LFU/Clock 缺页比较</strong>
+- 给定页面走向 <code>1-2-3-1-4-5-1-2-1-4-5-3-4-5</code>，全部从空开始，3 个页框
+- 计算缺页中断次数与缺页率</p>
+<p><strong>(20) 页框数变化对 FIFO/OPT/LRU 的影响</strong>：3、4、5、6 个页框；走向 <code>1-2-3-4-2-1-5-6-2-1-2-3-7-6-3-2-1-2-3-6</code></p>
+<p><strong>(21) 给逻辑地址序列计算页面调度</strong>：地址流 <code>10、11、104、170、73、305、180、…</code>，页面大小 100B；FIFO/LRU；3 个页框</p>
+<p><strong>(22) 综合性能题（缺页率上限）</strong>：访问周期 1µs，未修改页缺页 2ms，已修改页缺页加写盘 8ms，70% 被替换的页修改过；要求平均存取时间 ≤ 2µs，求最大允许缺页率</p>
+<p><strong>(23) 给定 R/D 位、装入时间、最后访问时间，FIFO/LRU 选哪页换出</strong></p>
+<p><strong>(24) 数组遍历顺序对缺页的影响</strong>：<code>int A[100][100]</code> 按行存储，3 页内存，每页 200 整数；按行遍历 vs 按列遍历</p>
+<hr>
+<h2 id="4-p129-162"><a class="toclink" href="#4-p129-162">三、第 4 章 设备管理（p129-162）</a></h2>
+<h3 id="41"><a class="toclink" href="#41">4.1 设备管理基础</a></h3>
+<h4 id="411-p129-131"><a class="toclink" href="#411-p129-131">4.1.1 设备管理概述（p129-131）</a></h4>
+<ul>
+<li><strong>I/O 设备 = 外围设备 = 外部设备 = 外设</strong></li>
+<li>I/O 系统 = I/O 设备 + 接口电路 + 控制部件 + 通道 + 管理软件</li>
+<li>设备分类视角：</li>
+<li>速度（低/中/高）</li>
+<li>信息组织（字符/块）</li>
+<li>共享属性（独占型/共享型/虚拟型）</li>
+<li>用途（输入/输出/存储）</li>
+</ul>
+<h4 id="412-io-p132-134"><a class="toclink" href="#412-io-p132-134">4.1.2 I/O 控制方式（p132-134）</a></h4>
+<p>四种控制方式按 CPU 参与程度递减排列：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>工作机制</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>轮询（程序直接控制）</strong></td>
+<td>CPU 不停查询设备状态寄存器</td>
+<td>简单但 CPU 利用率低，&rdquo;忙等&rdquo;</td>
+</tr>
+<tr>
+<td><strong>中断方式</strong></td>
+<td>设备完成后向 CPU 发中断</td>
+<td>CPU 与 I/O 部分并行</td>
+</tr>
+<tr>
+<td><strong>DMA 方式</strong></td>
+<td>直接存储器访问；设备控制器直接读写主存</td>
+<td>一次传一块；CPU 仅在开始/结束参与</td>
+</tr>
+<tr>
+<td><strong>通道方式</strong></td>
+<td>引入&rdquo;通道&rdquo;专用 I/O 处理器，执行通道程序</td>
+<td>CPU 完全脱离 I/O 细节</td>
+</tr>
+</tbody>
+</table>
+<p>通道工作流程（p134）：
+1. CPU 遇 I/O 任务 → OS 组织通道程序 → 首地址存入<strong>通道地址字（CAW）</strong>
+2. 启动通道 → 通道从 CAW 取通道程序 → 控制 I/O 设备
+3. I/O 完成 → 通道发出中断 → CPU 处理中断
+4. <strong>通道状态字（CSW）</strong> 寄存器保存通道 I/O 进展状况</p>
+<p>通道分类：<strong>字节多路通道 / 选择通道 / 数组多路通道</strong></p>
+<h4 id="413-iop135-138"><a class="toclink" href="#413-iop135-138">4.1.3 总线与 I/O（p135-138）</a></h4>
+<ul>
+<li>单总线 → 三级总线 → 含南北桥的多级总线 → 含 I/O 通道的多级总线</li>
+<li>总线层级和 Cache 层级共同决定计算机性能差距</li>
+</ul>
+<hr>
+<h3 id="42"><a class="toclink" href="#42">4.2 设备管理软件</a></h3>
+<h4 id="421-io-p139-140"><a class="toclink" href="#421-io-p139-140">4.2.1 I/O 软件实现层次（p139-140）</a></h4>
+<p>I/O 软件设计四大目标/原则：
+1. <strong>设备无关性</strong>（编程时不关心物理设备）
+2. <strong>出错处理</strong>（尽量在低层处理，离硬件近）
+3. <strong>同步/异步传输</strong>（同步=阻塞；异步=CPU 继续干别的）
+4. <strong>缓冲技术</strong>（建立缓冲区匹配速度差）</p>
+<p>四层结构（自底向上）：</p>
+<pre><code>用户空间 I/O 软件（库函数 fwrite/fprintf；SPOOLing 软件；POSIX 库）
+─────────────────────────
+独立于设备的 I/O 软件（缓冲管理；命名；权限；分配/释放）
+─────────────────────────
+设备驱动程序（针对具体设备的代码；接收上层请求；操作设备寄存器）
+─────────────────────────
+中断处理程序（最底层；唤醒等待设备的进程）
+</code></pre>
+<h4 id="422-p141-142"><a class="toclink" href="#422-p141-142">4.2.2 设备驱动程序（p141-142）</a></h4>
+<p>驱动程序三大功能：
+1. <strong>设备初始化</strong>（系统启动或传输前预置状态）
+2. <strong>执行设备驱动例程</strong>（启动设备、传输数据；通道系统还要生成通道指令）
+3. <strong>调用与执行中断处理程序</strong>（处理设备/控制器/通道的中断）</p>
+<h4 id="423-io-p143-145"><a class="toclink" href="#423-io-p143-145">4.2.3 I/O 缓冲区（p143-145）</a></h4>
+<p>为何要缓冲？
+- CPU 与设备速度不匹配
+- 逻辑记录 ≠ 物理记录
+- 减少 I/O 中断次数 / 放宽 CPU 中断响应时间</p>
+<p>种类：
+- <strong>单缓冲</strong>（CPU 处理 + 设备 I/O 串行交替）
+- <strong>双缓冲</strong>（一边读一边处理，提高并行度）
+- <strong>循环缓冲</strong>（多个缓冲块循环使用）
+- <strong>缓冲池</strong>（系统级，按需分配）</p>
+<p>缓冲管理三件事：
+1. 文件打开时分配缓冲区
+2. 文件关闭时按 LRU 等策略释放/重用
+3. 提供高速缓存操作（写缓存、延迟写、读缓存、预读）</p>
+<hr>
+<h3 id="43-p139-141"><a class="toclink" href="#43-p139-141">4.3 独占型外围设备的分配（p139-141）</a></h3>
+<h4 id="431"><a class="toclink" href="#431">4.3.1 设备独立性</a></h4>
+<ul>
+<li><strong>设备独立性</strong>：用户应用与具体物理设备无关；增减设备无需改源码</li>
+<li>实现：用户用<strong>逻辑设备名</strong>，OS 维护&rdquo;逻辑名 ↔ 物理名&rdquo; 对照表</li>
+<li>优点：① 可移植 ② 容错（一台坏自动换） ③ 资源利用率高</li>
+</ul>
+<h4 id="432"><a class="toclink" href="#432">4.3.2 分配方式</a></h4>
+<ul>
+<li><strong>静态分配</strong>：作业执行前分配，结束后回收。简单、防死锁，但利用率低（如打印机被占着不打）</li>
+<li><strong>动态分配</strong>：用时分配，用完即收。利用率高，<strong>但有死锁风险</strong></li>
+</ul>
+<blockquote>
+<p>例：系统只有 1 台打印机 + 1 台磁带机，进程 P 占打印机想要磁带机，进程 Q 占磁带机想要打印机 → 死锁。需要预先检查避免循环等待。</p>
+</blockquote>
+<p>数据结构：<strong>设备类表 + 设备表</strong></p>
+<hr>
+<h3 id="44-p143-148"><a class="toclink" href="#44-p143-148">4.4 共享型外围设备的驱动（p143-148）</a></h3>
+<h4 id="441-p143-144"><a class="toclink" href="#441-p143-144">4.4.1 磁盘驱动（p143-144）</a></h4>
+<p>磁盘读写周期组成（图 4-12）：</p>
+<pre><code>等待设备 + 等待通道 + 寻道 + 旋转延迟 + 数据传输
+</code></pre>
+<p><strong>磁盘存取时间计算公式</strong>（核心考点）：</p>
+<pre><code>Ta = Ts + 1/(2r) + b/(rN)
+</code></pre>
+<ul>
+<li><code>Ts</code>：寻道时间（移臂）</li>
+<li><code>r</code>：旋转角速度（每秒转数）</li>
+<li><code>1/(2r)</code>：平均旋转等待时间（半周）</li>
+<li><code>b</code>：要读写的数据字节数</li>
+<li><code>N</code>：每磁道字节数</li>
+<li><code>b/(rN)</code>：传输时间</li>
+</ul>
+<h4 id="442"><a class="toclink" href="#442">4.4.2 磁盘驱动调度</a></h4>
+<h5 id="5"><a class="toclink" href="#5">移臂调度算法（5 种）</a></h5>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>思路</th>
+<th>评价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>先来先服务 FCFS</strong></td>
+<td>按请求到达顺序</td>
+<td>公平但移动距离大</td>
+</tr>
+<tr>
+<td><strong>最短查找时间优先 SSTF</strong>（最小短距法）</td>
+<td>选离当前磁头最近的请求</td>
+<td>综合寻道好；<strong>有&rdquo;饿死&rdquo;问题</strong>（边缘请求可能永远轮不到）</td>
+</tr>
+<tr>
+<td><strong>单向扫描 SCAN</strong></td>
+<td>移臂只朝一个方向扫，到头返回不服务</td>
+<td>适用大吞吐</td>
+</tr>
+<tr>
+<td><strong>双向扫描 LOOK/SCAN</strong></td>
+<td>双向扫描都服务</td>
+<td>优于单向</td>
+</tr>
+<tr>
+<td><strong>电梯调度（C-SCAN/LOOK 改进）</strong></td>
+<td>双向扫描，方向前方无请求时即时反向</td>
+<td>最常用、近似 SSTF 但公平</td>
+</tr>
+</tbody>
+</table>
+<h5 id="p145-147"><a class="toclink" href="#p145-147">旋转调度（p145-147）</a></h5>
+<p>为减小旋转延迟：
+1. <strong>先来先服务</strong>
+2. <strong>循环排序</strong>：按多个柱面访问请求排序
+3. <strong>旋转位置测定</strong>：硬件需测出磁头当前位置；否则平均要等半周</p>
+<p><strong>经典例题（p147）</strong>：10 条逻辑记录 A~J 存放在某旋转设备上，旋转一周 20ms，处理每块 4ms。
+- 按 A-B-C-D-E-F-G-H-I-J 顺序存：处理总时间 = 10 + 2 + 4 + 9×(16+2+4) = <strong>214 ms</strong>
+- 按 A-H-E-B-I-F-C-J-G-D 优化分布：= 10 + 10×(2+4) = <strong>70 ms</strong>（约前者 1/3）</p>
+<blockquote>
+<p>这种排列方式称为&rdquo;<strong>优化分布</strong>&ldquo;。</p>
+</blockquote>
+<p><strong>集簇读写</strong>：一次读多个扇区；一组逻辑数据放在同一柱面。</p>
+<hr>
+<h3 id="45-spoolingp148-152"><a class="toclink" href="#45-spoolingp148-152">4.5 虚拟设备 SPOOLing（p148-152）</a></h3>
+<h4 id="1_1"><a class="toclink" href="#1_1">1) 概念</a></h4>
+<ul>
+<li><strong>SPOOL</strong> = Simultaneous Peripheral Operations On-Line</li>
+<li>又称&rdquo;假脱机&rdquo;操作：用磁盘 + 缓冲区模拟独占型物理设备</li>
+<li>把独占设备改造成共享设备，提高利用率</li>
+<li>是一种&rdquo;<strong>速度匹配技术</strong>&ldquo;</li>
+</ul>
+<h4 id="2-4-14"><a class="toclink" href="#2-4-14">2) 系统组成（图 4-14）</a></h4>
+<pre><code>          ┌─────────────┐
+输入设备 →│预输入程序   │→ 磁盘输入井（输入缓冲区）
+          └─────────────┘
+                          ↓
+                    [井管理程序]
+                          ↓
+          ┌─────────────┐
+磁盘输出井←│缓输出程序   │→ 输出设备
+          └─────────────┘
+</code></pre>
+<p>需要的数据结构：
+- <strong>作业表</strong>：登记进入系统的作业信息（作业名、状态、预输入表位置、缓输出表位置）
+- <strong>预输入表</strong>：登记每个作业的输入文件（设备类、文件名、长度、存放位置）
+- <strong>缓输出表</strong>：登记每个作业的输出文件</p>
+<blockquote>
+<p>典型应用：打印机改造成&rdquo;虚拟打印机&rdquo;，多作业可同时&rdquo;打印&rdquo;，实际是写入磁盘缓输出井，由系统按序送往真实打印机。</p>
+</blockquote>
+<hr>
+<h3 id="4-p152-153"><a class="toclink" href="#4-p152-153">第 4 章本章小结（p152-153）</a></h3>
+<ul>
+<li>设备管理是 OS 中最庞杂、琐碎的部分</li>
+<li>I/O 设备 = 机械部件 + 电子部件（设备控制器）</li>
+<li>I/O 控制 4 种方式：轮询 / 中断 / DMA / 通道</li>
+<li>总线由单总线演进至含通道的多级总线</li>
+<li>I/O 软件 4 层 + 缓冲技术（单/双/循环）</li>
+<li>磁盘 = 直接存取存储设备；驱动调度 = 移臂 + 旋转</li>
+<li>虚拟设备技术：SPOOLing 为代表</li>
+</ul>
+<h3 id="p154-156"><a class="toclink" href="#p154-156">习题四关键应用题（p154-156）</a></h3>
+<blockquote>
+<p>重点记 (1)(3)(11)(12)(14)(15) — 校考核心题型。</p>
+</blockquote>
+<p><strong>(1) CPU 利用率</strong>：中断方式 1ms 处理 + 100Hz 中断频率 → 利用率 = 1 - 100×1ms/1s = 90%</p>
+<p><strong>(3) 磁盘块号转换公式</strong>（必背）</p>
+<pre><code>x = k×m×a + k×B + c       —— 逻辑块号 x 由柱面 a、磁头 B、磁道内块号 c 求出
+a = (x-1) / (k×m)           —— 反向：由 x 求柱面号
+b = ((x-1) % (k×m)) / k     —— 由 x 求磁头号
+c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
+</code></pre>
+<p>参数：n 柱面、m 磁头、k 物理块/磁道。</p>
+<p>例：n=200, m=20, k=10。
+- ① 柱面号 185、磁头号 12、块号 5 → x = 10×20×185 + 10×12 + 5 = <strong>37125</strong>
+- ② 逻辑块 1200 → a, b, c = ?
+- ③ 磁道内编号从 0 起的转换公式（自推）</p>
+<p><strong>(8) 最短查找时间优先</strong>：请求队列 8、18、27、129、110、186、78、147、41、10、64、12；磁头当前 100，求总移动柱面数</p>
+<p><strong>(10) 旋转圈数最少</strong>：5 个请求 (柱面/磁头/扇区) 表，磁头位 1 号柱面，求最优调度</p>
+<p><strong>(11) 含 40 磁道的盘面</strong>：编号 0-39，磁头位 11；请求依次 1, 36, 16, 34, 9, 12，分别用 FCFS / SSTF / 双向扫描算总移动磁道数</p>
+<p><strong>(12) 200 柱面磁盘</strong>：磁头 143、刚完成 125；请求顺序 86, 147, 91, 177, 94, 150, 102, 175, 130；分别用 FCFS / SSTF / 双向 / 电梯，求总移动 + 移动顺序</p>
+<p><strong>(14) 100 柱面磁头正向减小方向</strong>：请求 190, 10, 160, 80, 90, 125, 30, 20, 29, 140, 25；用 SSTF / 电梯计算</p>
+<p><strong>(6)(7) 单缓冲 vs 双缓冲传输总时间</strong>：T1=磁盘→缓冲，T2=缓冲→用户区（T2 &lt;&lt; T1），T3=CPU 处理；计算总时间。
+- 单缓冲：(T1 + T2 + T3) × n 或 max(T1+T2, T3) × n + &hellip;
+- 双缓冲：max(T1, T2+T3) × n + 首块开销</p>
+<hr>
+<h2 id="5-p163-196"><a class="toclink" href="#5-p163-196">四、第 5 章 文件管理（p163-196）</a></h2>
+<h3 id="51-p163-167"><a class="toclink" href="#51-p163-167">5.1 文件系统概述（p163-167）</a></h3>
+<h4 id="_1"><a class="toclink" href="#_1">文件四大概念</a></h4>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>卷（Volume）</strong></td>
+<td>一盘磁带、一张软盘、一张光盘片或一个硬盘分区</td>
+</tr>
+<tr>
+<td><strong>块（Block）</strong></td>
+<td>存储介质上由连续信息组成的区域，又称&rdquo;物理记录&rdquo;</td>
+</tr>
+<tr>
+<td><strong>记录（Record）</strong></td>
+<td>文件中可独立存取的最小单位（逻辑记录）</td>
+</tr>
+<tr>
+<td><strong>文件（File）</strong></td>
+<td>一组相关信息的集合，按某种结构组织</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>关系：1 卷含多块；1 文件由多记录组成；1 块可存放多记录（<strong>成组</strong>）或 1 记录跨多块（<strong>跨块</strong>）。</p>
+</blockquote>
+<h4 id="_2"><a class="toclink" href="#_2">文件命名</a></h4>
+<ul>
+<li>文件名 + 扩展名（用圆点分隔）</li>
+<li>MS-DOS：8.3 格式（8 字符名 + 3 字符扩展）</li>
+<li>早期 UNIX：14 字符</li>
+<li>Windows：最长 255 字符</li>
+<li>扩展名习惯：<code>.com .exe .lib .bat .obj .txt .asm .c</code></li>
+</ul>
+<h4 id="_3"><a class="toclink" href="#_3">文件分类</a></h4>
+<p>按用途：系统/库/用户文件
+按保护：只读/读写/不保护
+按数据类型：源程序文件/可执行文件
+按设备：磁盘/磁带/光盘/软盘
+按结构：逻辑结构 vs 物理结构</p>
+<h4 id="_4"><a class="toclink" href="#_4">引入文件的优点</a></h4>
+<ol>
+<li>用户使用方便（按名存取）</li>
+<li>文件安全可靠（系统提供保护）</li>
+<li>系统管理统一（所有外存设备的信息抽象成文件）</li>
+</ol>
+<h4 id="5-1"><a class="toclink" href="#5-1">文件系统的组成（图 5-1）</a></h4>
+<pre><code>文件系统
+├── 文件的组织
+│   ├── 组织方法：流式 / 记录式
+│   └── 物理结构：顺序 / 连接 / 直接 / 索引
+├── 文件的存取
+│   └── 顺序 / 直接 / 索引
+├── 文件的控制
+│   └── 逻辑控制子系统 / 物理控制子系统
+└── 文件的使用（系统调用）
+    └── 创建 / 撤销 / 打开 / 关闭 / 读写 / 定位
+</code></pre>
+<hr>
+<h3 id="52-p167-172"><a class="toclink" href="#52-p167-172">5.2 文件的组织（p167-172）</a></h3>
+<h4 id="521"><a class="toclink" href="#521">5.2.1 文件的存储</a></h4>
+<ul>
+<li>存储介质：磁带、光盘、磁盘</li>
+<li><strong>卷</strong> = 物理单位；<strong>块</strong> = 存储介质上由连续信息组成的区域</li>
+</ul>
+<h4 id="522"><a class="toclink" href="#522">5.2.2 文件的逻辑结构</a></h4>
+<ul>
+<li><strong>流式文件</strong>（无结构，UNIX/Linux）：字节流，无逻辑记录</li>
+<li><strong>记录式文件</strong>（有结构）：由若干逻辑记录组成</li>
+</ul>
+<h5 id="block-factor"><a class="toclink" href="#block-factor">记录的成组（block factor）</a></h5>
+<ul>
+<li>一个逻辑记录小于一个物理块时，把若干逻辑记录拼成一组写入一块</li>
+<li><strong>块因子</strong> = 一个物理块中的逻辑记录数</li>
+<li><strong>成组</strong>（写）+ <strong>分解</strong>（读）需要 OS 提供 I/O 缓冲区</li>
+</ul>
+<h4 id="523"><a class="toclink" href="#523">5.2.3 文件的物理结构</a></h4>
+<table>
+<thead>
+<tr>
+<th>结构</th>
+<th>思想</th>
+<th>优缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>顺序文件</strong>（连续文件）</td>
+<td>逻辑记录顺序 = 物理块顺序</td>
+<td>顺序读写快；难扩展</td>
+</tr>
+<tr>
+<td><strong>连接文件</strong>（串联）</td>
+<td>离散物理块；用连接字（指针）串起来</td>
+<td>易扩展；只能顺序存取</td>
+</tr>
+<tr>
+<td><strong>直接文件</strong>（散列文件）</td>
+<td>用散列法把关键字映射到物理地址</td>
+<td>极快随机存取；<strong>需处理冲突</strong></td>
+</tr>
+<tr>
+<td><strong>索引文件</strong></td>
+<td>索引项 → 物理块号；记录关键字 + 块号</td>
+<td>既支持顺序又支持随机；适合大文件</td>
+</tr>
+</tbody>
+</table>
+<p>DOS 的 <strong>FAT 文件系统</strong> 是连接文件改良：把每块的连接字抽出来集中放在文件分配表中。</p>
+<h4 id="_5"><a class="toclink" href="#_5">散列法冲突处理</a></h4>
+<ul>
+<li>一种散列算法的好坏 = 不同关键字映射到相同地址的概率</li>
+<li>常见解决：开放地址 / 链地址 / 再散列</li>
+</ul>
+<hr>
+<h3 id="53-p172-178"><a class="toclink" href="#53-p172-178">5.3 文件目录（p172-178）</a></h3>
+<h4 id="1-fcb"><a class="toclink" href="#1-fcb">1) 文件控制块 FCB</a></h4>
+<ul>
+<li>每个文件对应一个 FCB（保存文件属性）</li>
+<li>内容：文件名、类型、长度、物理位置、存取权限、时间戳…</li>
+</ul>
+<h4 id="2_1"><a class="toclink" href="#2_1">2) 文件目录</a></h4>
+<ul>
+<li><strong>文件目录</strong> = FCB 的集合</li>
+<li><strong>目录文件</strong> = 把目录信息也存为文件</li>
+<li>一级目录、二级目录、<strong>树形（多级）目录</strong></li>
+</ul>
+<h4 id="3-5-8unix"><a class="toclink" href="#3-5-8unix">3) 树形层次目录（图 5-8，UNIX 示例）</a></h4>
+<pre><code>            /
+   ┌───┬───┴───┬───┬───┐
+  bin unix   user etc tmp dev
+       │      │    │
+      lib    user  bin
+            ┌─┴─┐
+           liu sun fei
+</code></pre>
+<ul>
+<li><strong>根目录</strong>（/）→ <strong>子目录</strong> → 文件</li>
+<li>路径名：根目录到文件的所有目录用 <code>/</code>（UNIX）或 <code>\</code>（Windows）分隔</li>
+<li><strong>绝对路径名</strong>：从根目录开始</li>
+<li><strong>相对路径名</strong>：从当前目录开始</li>
+</ul>
+<h4 id="4-mount"><a class="toclink" href="#4-mount">4) 嫁接（mount）</a></h4>
+<ul>
+<li>UNIX：通过 <code>mount</code> 把子树挂载到现有树的某个节点；最终形成一棵大树</li>
+<li>Windows：每个分区独立有自己的盘符 → &ldquo;森林&rdquo;结构</li>
+</ul>
+<hr>
+<h3 id="54-p176-179"><a class="toclink" href="#54-p176-179">5.4 文件的共享、保护和保密（p176-179）</a></h3>
+<h4 id="541"><a class="toclink" href="#541">5.4.1 文件共享</a></h4>
+<h5 id="1_2"><a class="toclink" href="#1_2">1) 静态共享</a></h5>
+<ul>
+<li>多用户共享同一文件 → 文件的多个目录项指向同一 FCB</li>
+</ul>
+<h5 id="2_2"><a class="toclink" href="#2_2">2) 动态共享</a></h5>
+<ul>
+<li>进程 A 与 B 通过不同<strong>系统打开文件表</strong>指向<strong>同一主存活动文件表</strong></li>
+<li>各自维护独立读写指针，互不干扰</li>
+</ul>
+<h5 id="3-unix"><a class="toclink" href="#3-unix">3) 符号链接共享（UNIX）</a></h5>
+<ul>
+<li><strong>硬链接（hard link）</strong>：把文件名直接链接到索引结点（i-node）。</li>
+<li>缺点：不能跨文件系统；不能链接目录</li>
+<li><strong>软链接 / 符号链接（symbolic link）</strong>：只含目标路径名，不指向 i-node。</li>
+<li>优点：跨文件系统、可链目录、可跨网络</li>
+<li>缺点：搜索路径开销大</li>
+</ul>
+<h4 id="542"><a class="toclink" href="#542">5.4.2 文件保护</a></h4>
+<ul>
+<li>控制存取权限：读 / 写 / 执行</li>
+<li>UNIX 模型：拥有者 / 组 / 其他用户 × rwx</li>
+</ul>
+<h4 id="543"><a class="toclink" href="#543">5.4.3 文件保密</a></h4>
+<ul>
+<li>加密文件系统</li>
+</ul>
+<hr>
+<h3 id="55-p180-184"><a class="toclink" href="#55-p180-184">5.5 文件的使用（p180-184）</a></h3>
+<h4 id="551"><a class="toclink" href="#551">5.5.1 文件的存取方法</a></h4>
+<table>
+<thead>
+<tr>
+<th>存取方法</th>
+<th>特点</th>
+<th>适配的物理结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>顺序存取</strong></td>
+<td>按记录顺序逐一读写；维护读/写指针</td>
+<td>任何结构</td>
+</tr>
+<tr>
+<td><strong>直接存取</strong></td>
+<td>按相对块号直接读写；常用于磁盘文件</td>
+<td>连续 / 索引</td>
+</tr>
+<tr>
+<td><strong>索引存取</strong></td>
+<td>用索引表先查记录键再访问</td>
+<td>索引文件</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>连接文件<strong>只能</strong>顺序存取（因为没有索引和连续地址）。</p>
+</blockquote>
+<h4 id="552"><a class="toclink" href="#552">5.5.2 文件的使用（系统调用）</a></h4>
+<table>
+<thead>
+<tr>
+<th>调用</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>创建（create）</strong></td>
+<td>新建文件目录项 + 分配第一物理块 + 在活动文件表中申请表项 + 返回<strong>文件句柄</strong></td>
+</tr>
+<tr>
+<td><strong>撤销（delete）</strong></td>
+<td>释放空间 + 删目录项</td>
+</tr>
+<tr>
+<td><strong>打开（open）</strong></td>
+<td>检查权限；活动文件表登记；返回文件句柄</td>
+</tr>
+<tr>
+<td><strong>关闭（close）</strong></td>
+<td>写回脏数据；释放活动文件表项</td>
+</tr>
+<tr>
+<td><strong>读（read）/ 写（write）</strong></td>
+<td>通过文件句柄进行</td>
+</tr>
+<tr>
+<td><strong>定位（seek/lseek）</strong></td>
+<td>移动读写指针</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="56-p185-190"><a class="toclink" href="#56-p185-190">5.6 文件系统的实现（p185-190）</a></h3>
+<h4 id="561"><a class="toclink" href="#561">5.6.1 文件存储空间管理</a></h4>
+<h5 id="_6"><a class="toclink" href="#_6">文件分配方式</a></h5>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>实现</th>
+<th>优缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>连续分配</strong></td>
+<td>文件占连续物理块；FCB 记起始 + 长度</td>
+<td>顺序/随机都快；<strong>外部碎片</strong>；动态扩展难</td>
+</tr>
+<tr>
+<td><strong>链接分配</strong></td>
+<td>块间用指针串起来（FAT 是改良）</td>
+<td>易扩展；只能顺序；指针占空间</td>
+</tr>
+<tr>
+<td><strong>索引分配</strong></td>
+<td>单独的索引块存所有数据块号</td>
+<td>支持随机；大文件需多级索引</td>
+</tr>
+<tr>
+<td><strong>混合（簇为单位）</strong></td>
+<td>簇 = 多个连续扇区组成的分配单位</td>
+<td>综合优点；<strong>簇越大碎片浪费越大</strong></td>
+</tr>
+</tbody>
+</table>
+<h5 id="_7"><a class="toclink" href="#_7">空闲块管理</a></h5>
+<p><strong>1) 位示图法</strong>（p187-188）</p>
+<ul>
+<li>用一张二进制位图，每位对应一物理块；1=占用，0=空闲</li>
+<li>优点：开销极小（每块仅 1 位）；可全装入内存；配合位操作指令快速分配</li>
+<li>例：1KB/块，位示图开销仅占 0.012%</li>
+</ul>
+<p><strong>2) 空闲块成组连接法</strong>（p188-189）</p>
+<ul>
+<li>把空闲块分成多组，每组用一个<strong>专用块</strong>登记下一组的空闲块号</li>
+<li>例（Linux）：338 个空闲块分 4 组（编号 12-349），前 39 块在专用块，每 100 块一组，每组首块登下一组</li>
+<li><strong>分配算法</strong>：</li>
+</ul>
+<pre><code>IF 空闲块数 == 1 THEN
+    IF 第 1 个单元 == 0 THEN 等待
+    ELSE 复制第 1 个单元对应块到专用块并分配
+ELSE 分配第（空闲块数）个单元对应块；空闲块数减 1
+</code></pre>
+<ul>
+<li><strong>归还算法</strong>：</li>
+</ul>
+<pre><code>IF 空闲块数 &lt; 100 THEN
+    专用块的（空闲块数）个单元置归还号
+    （空闲块数）++
+ELSE
+    复制专用块的空闲块数到归还块第 1 单元
+    空闲块数置 1
+    第 1 单元置归还号
+</code></pre>
+<h4 id="562-5-14"><a class="toclink" href="#562-5-14">5.6.2 文件系统的实现层次（图 5-14）</a></h4>
+<pre><code>用户接口  → 接收系统调用，进行语法检查
+逻辑文件控制子系统  → 路径名搜索目录、建活动文件表、转逻辑记录到物理块号
+文件保护子系统  → 验证存取权限
+物理文件控制子系统  → 缓冲区管理、相对块号转实际块号、调用 I/O
+I/O 控制子系统  → 执行物理 I/O
+</code></pre>
+<hr>
+<h3 id="_8"><a class="toclink" href="#_8">第五章本章小结要点</a></h3>
+<ul>
+<li>文件 = 一组相关信息按某种结构组织</li>
+<li>4 个核心概念：卷 / 块 / 记录 / 文件</li>
+<li>物理结构：顺序、连接、直接、索引</li>
+<li>目录结构：一级、二级、树形</li>
+<li>共享：硬链接、软链接、动态共享活动文件表</li>
+<li>实现：FCB、空闲管理（位示图/成组连接）、5 层结构</li>
+</ul>
+<h3 id="p191-194"><a class="toclink" href="#p191-194">习题五关键题（p191-194）</a></h3>
+<p><strong>思考题精选</strong>：
+- (1) 给卷/块/记录/文件定义并说明关系
+- (4) 文件的物理结构有哪几种组织方式？
+- (5) 记录成组分解操作的优点
+- (6) 不同访问/更新模式选何种文件组织
+- (8) 直接文件解决冲突的方法
+- (16) 文件系统的副本技术（备份）</p>
+<p><strong>应用题（必练）</strong>：
+- <strong>(1) 成组方式存放定长记录</strong>：给定文件块数和块因子，求总记录数
+- <strong>(17) 磁盘块号转换</strong>：参数 n=200, m=20, k=10；① 第 56 柱面第 6 磁道第 3 扇区是第几字第几位 ② 回收某物理块时位示图修改
+- <strong>(18) 层次文件系统的目录共享</strong>：给目录树（如题图 5-2），分析能否建/重命名/共享/限制访问
+- <strong>(19) 多级索引计算最大文件页数 + 读某页最少启动磁盘次数</strong>：每磁盘块 512B，地址 4B；前 10 个直接、后 3 个分别一级/二级/三级索引</p>
+<hr>
+<h2 id="6-p197-240"><a class="toclink" href="#6-p197-240">五、第 6 章 并发程序设计（p197-240，前半）</a></h2>
+<h3 id="61-p197-200"><a class="toclink" href="#61-p197-200">6.1 顺序与并发程序设计（p197-200）</a></h3>
+<h4 id="_9"><a class="toclink" href="#_9">顺序程序设计的特性</a></h4>
+<ol>
+<li><strong>顺序性</strong>：严格按序执行</li>
+<li><strong>封闭性</strong>：独占资源，状态只由自身决定</li>
+<li><strong>确定性</strong>：结果与执行速度/时段无关，仅与初始输入有关</li>
+<li><strong>可再现性</strong>：同样输入必产生同样过程和结果</li>
+</ol>
+<blockquote>
+<p>优点：编程调试方便；缺点：系统效率低。</p>
+</blockquote>
+<h4 id="_10"><a class="toclink" href="#_10">多道程序设计</a></h4>
+<p>例（图 6-1）：<code>while(true) {input; process; output;}</code> 顺序结构 → 处理器利用率仅 35%。</p>
+<p>把程序拆为三部分：</p>
+<pre><code>while(true) { input; send; }
+while(true) { receive; process; send; }
+while(true) { receive; output; }
+</code></pre>
+<p>→ I/O 设备和 CPU 并行 → 系统效率大幅提升。</p>
+<h4 id="_11"><a class="toclink" href="#_11">并发程序的特征（与顺序对应）</a></h4>
+<ol>
+<li><strong>失去封闭性</strong>：进程间资源共享 → 互相影响</li>
+<li><strong>失去可再现性</strong>：执行结果可能与速度有关 → &ldquo;<strong>与时间相关的错误</strong>&ldquo;</li>
+<li><strong>失去确定性</strong>：可能出现竞态条件</li>
+</ol>
+<hr>
+<h3 id="62-p201-205"><a class="toclink" href="#62-p201-205">6.2 临界区管理（p201-205）</a></h3>
+<h4 id="621"><a class="toclink" href="#621">6.2.1 与时间相关的错误</a></h4>
+<h5 id="1_3"><a class="toclink" href="#1_3">例 1：飞机票售票问题</a></h5>
+<pre><code>T1: X1 = A[j];              /* X1 = m, m&gt;0 */
+T2: X2 = A[j];              /* X2 = m */
+T2: X2--; A[j] = X2; 输出一张票;   /* A[j] = m-1 */
+T1: X1--; A[j] = X1; 输出一张票;   /* A[j] = m-1，错误！应为 m-2 */
+</code></pre>
+<p>两个进程同时给同一座位的两位旅客售票 → 出现同张票卖给两人。</p>
+<h5 id="2_3"><a class="toclink" href="#2_3">例 2：永远等待问题（借还主存）</a></h5>
+<pre><code class="language-c">int X = memory;
+void borrow(int B) {
+    while(B &gt; X) {进程进入等待主存资源队列;}
+    X = X - B;
+    修改主存分配表; 进程获得主存资源;
+}
+void return(int B) {
+    X = X + B;
+    修改主存分配表;
+    释放等待主存资源进程;
+}
+</code></pre>
+<p>错误情景：进程 P 比较 B&gt;X 后被抢占；进程 Q 调用 return() 把 X 增大；但 P 还没进等待队列，Q 的&rdquo;释放等待进程&rdquo;等于空操作；之后 P 才进队列，从此<strong>永远等待</strong>。</p>
+<h4 id="622"><a class="toclink" href="#622">6.2.2 临界区与互斥</a></h4>
+<ul>
+<li><strong>临界资源</strong>：必须互斥访问的共享资源</li>
+<li><strong>临界区</strong>：访问临界资源的代码段</li>
+<li>临界区设计原则：
+  1. <strong>互斥进入</strong>：同一时刻只允许一个进程
+  2. <strong>空闲让进</strong>：无进程在临界区时，请求者立即进入
+  3. <strong>有限等待</strong>：等待时间有上限
+  4. <strong>让权等待</strong>：等待时不应占用 CPU</li>
+</ul>
+<h4 id="623-p205"><a class="toclink" href="#623-p205">6.2.3 临界区管理的硬件实现（p205）</a></h4>
+<h5 id="1_4"><a class="toclink" href="#1_4">1) 关中断</a></h5>
+<ul>
+<li>进入临界区前关中断，退出后开中断</li>
+<li>因为单 CPU 进程切换由中断驱动，关中断 = 不被切换</li>
+<li><strong>缺点</strong>：① 临界区代码不能太长 ② 不适用多 CPU ③ 给用户用太危险</li>
+</ul>
+<h5 id="2-ts"><a class="toclink" href="#2-ts">2) 测试并设置指令 TS</a></h5>
+<pre><code class="language-c">bool TS(bool x) {
+    if(x == false) {
+        x = true;
+        return true;
+    } else {
+        return false;
+    }
+}
+</code></pre>
+<ul>
+<li>是<strong>原子</strong>指令</li>
+<li>互斥模板：<code>while(!TS(lock));</code> 进临界区；<code>lock = false;</code> 出</li>
+<li><strong>缺点</strong>：忙等</li>
+</ul>
+<h5 id="3-swap"><a class="toclink" href="#3-swap">3) 对换指令 Swap</a></h5>
+<p>类似 TS，原子地交换两个变量。</p>
+<hr>
+<h3 id="63-pv-p206-218"><a class="toclink" href="#63-pv-p206-218">6.3 PV 操作（p206-218）</a></h3>
+<h4 id="631-pv-p206-208"><a class="toclink" href="#631-pv-p206-208">6.3.1 信号量与 PV 原语（p206-208）</a></h4>
+<ul>
+<li>信号量 <code>s</code>：含 <code>value</code> 整数 + 等待队列 <code>list</code></li>
+<li>信号量分类：整型 / 记录型 / AND型 / 信号量集</li>
+</ul>
+<pre><code class="language-c">procedure P(semaphore s) {
+    s.value = s.value - 1;
+    if(s.value &lt; 0) W(s.list);   /* 阻塞调用者 */
+}
+
+procedure V(semaphore s) {
+    s.value = s.value + 1;
+    if(s.value &lt;= 0) R(s.list);  /* 唤醒队列首进程 */
+}
+</code></pre>
+<ul>
+<li>PV 操作必须是<strong>不可中断的原语</strong></li>
+<li>等待队列采用 FIFO 策略</li>
+</ul>
+<h5 id="_12"><a class="toclink" href="#_12">推论</a></h5>
+<ol>
+<li>若 <code>s.value &gt; 0</code>：等于实际可用资源数</li>
+<li>若 <code>s.value &lt; 0</code>：其绝对值等于等待队列中进程数</li>
+<li>P 操作通常意味&rdquo;申请资源&rdquo;；V 操作意味&rdquo;释放资源&rdquo;</li>
+</ol>
+<h4 id="632-pv-p209"><a class="toclink" href="#632-pv-p209">6.3.2 PV 解决进程互斥（p209）</a></h4>
+<pre><code class="language-c">semaphore mutex;
+mutex = 1;
+cobegin
+    process Pi() {  /* i = 1, ..., n */
+        ...
+        P(mutex);
+        { 临界区 }
+        V(mutex);
+        ...
+    }
+coend
+</code></pre>
+<ul>
+<li>n 个进程互斥时，<code>mutex</code> 取值范围 <code>[-(n-1), 1]</code></li>
+<li>当 mutex = -(n-1)：1 个在临界区内，n-1 个在等待队列</li>
+</ul>
+<h5 id="_13"><a class="toclink" href="#_13">应用：飞机票售票（修正版）</a></h5>
+<pre><code class="language-c">int A[m];
+semaphore s;
+s = 1;
+cobegin
+    process Pi() {
+        int Xi;
+        ...
+        P(s);
+        Xi = A[j];
+        if(Xi &gt;= 1) {
+            Xi--;
+            A[j] = Xi;
+            输出一张票;
+        }
+        V(s);
+        ...
+    }
+coend
+</code></pre>
+<h4 id="633-pv-"><a class="toclink" href="#633-pv-">6.3.3 PV 解决进程同步（生产者-消费者）</a></h4>
+<h5 id="_14"><a class="toclink" href="#_14">单缓冲区（一生产者一消费者）</a></h5>
+<ul>
+<li>设两同步信号量 <code>sget</code>（缓冲区有产品数）、<code>sput</code>（缓冲区空位数）</li>
+<li>生产者：<code>P(sput); 放产品; V(sget);</code></li>
+<li>消费者：<code>P(sget); 取产品; V(sput);</code></li>
+</ul>
+<h5 id="k-p214"><a class="toclink" href="#k-p214">多缓冲区（k 个，循环队列）（p214）</a></h5>
+<pre><code class="language-c">int B[k];
+semaphore sput, sget;
+sput = k;     /* 空位数 */
+sget = 0;     /* 产品数 */
+int putptr = 0, getptr = 0;
+
+cobegin
+    process producer_i() {
+        L1: produce a product;
+        P(sput);
+        B[putptr] = product;
+        putptr = (putptr + 1) mod k;
+        V(sget);
+        goto L1;
+    }
+    process consumer_j() {
+        L2: P(sget);
+        product = B[getptr];
+        getptr = (getptr + 1) mod k;
+        V(sput);
+        consume a product;
+        goto L2;
+    }
+coend
+</code></pre>
+<p>注意：<code>putptr</code> 仅生产者用；<code>getptr</code> 仅消费者用；它们<strong>不是共享变量</strong>，只有 <code>B[k]</code> 是共享变量。</p>
+<h5 id="_15"><a class="toclink" href="#_15">多生产者多消费者</a></h5>
+<p>还要加一个 <code>mutex</code> 信号量保护 <code>B</code>、<code>putptr</code>、<code>getptr</code>。</p>
+<h4 id="634-p215-218"><a class="toclink" href="#634-p215-218">6.3.4 经典同步问题（p215-218）</a></h4>
+<ul>
+<li><strong>哲学家进餐</strong>：5 哲学家 5 筷子；防死锁策略：① 至多 4 人同时拿 ② 编号奇偶不同顺序 ③ 同时拿两根筷子（AND 信号量）</li>
+<li><strong>读者-写者</strong>：多读者可并发；写者独占</li>
+<li>读者优先 / 写者优先 / 公平</li>
+<li><strong>理发师问题</strong>：n 把椅子；同步 <code>customers</code>、<code>barbers</code>、<code>mutex</code></li>
+</ul>
+<hr>
+<h3 id="64-p219-225"><a class="toclink" href="#64-p219-225">6.4 管程（p219-225）</a></h3>
+<h4 id="1_5"><a class="toclink" href="#1_5">1) 管程的提出动机</a></h4>
+<ul>
+<li>PV 操作分散在程序各处 → 易错（顺序错、漏 V、漏 P）</li>
+<li>管程把&rdquo;共享变量 + 操作过程&rdquo;封装起来，编译器保证互斥</li>
+</ul>
+<h4 id="2_4"><a class="toclink" href="#2_4">2) 管程的组成</a></h4>
+<pre><code>type 管程 = monitor {
+    共享变量;
+    条件变量;
+    访问过程 1();
+    访问过程 2();
+    ...
+    initialize_code;
+}
+</code></pre>
+<ul>
+<li><strong>互斥</strong>：编译器自动保证一次只能一个进程在管程内</li>
+<li><strong>条件变量</strong>操作：<code>wait(c)</code>、<code>signal(c)</code></li>
+</ul>
+<h4 id="3-hoare"><a class="toclink" href="#3-hoare">3) 霍尔（Hoare）管程</a></h4>
+<ul>
+<li>实现需 <code>mutex</code>（互斥进入，初值 1）+ <code>next</code>（被释放进程阻塞自己，初值 0）+ <code>next_count</code></li>
+<li><code>signal</code> 唤醒等待进程后，调用 <code>signal</code> 的进程要阻塞在 <code>next</code> 上</li>
+<li>优点：被唤醒进程能立即拿到 mutex 执行</li>
+</ul>
+<pre><code class="language-c">typedef struct interf {
+    semaphore mutex;
+    semaphore next;
+    int next_count;
+}
+</code></pre>
+<h4 id="4-hansen"><a class="toclink" href="#4-hansen">4) 汉森（Hansen）管程</a></h4>
+<ul>
+<li><code>signal</code> 必须是过程体的最后一个操作 → 简化但限制大</li>
+</ul>
+<h4 id="5-"><a class="toclink" href="#5-">5) 管程实现读者-写者</a></h4>
+<pre><code class="language-c">procedure end_read() {
+    rc = rc - 1;
+    if(rc == 0) signal(W, Wc, IM);
+}
+
+procedure end_write() {
+    wc = wc + 1;
+    if(rc &gt; 0 || wc &gt; 1) wait(W, Wc, IM);
+}
+</code></pre>
+<hr>
+<h3 id="65-p226-235"><a class="toclink" href="#65-p226-235">6.5 进程通信（p226-235，前段）</a></h3>
+<h4 id="651"><a class="toclink" href="#651">6.5.1 通信级别</a></h4>
+<ul>
+<li><strong>低级通信</strong>：信号量 + PV，只能传少量信息</li>
+<li><strong>高级通信</strong>：进程间通信机制（IPC）传递大量数据</li>
+</ul>
+<h4 id="652"><a class="toclink" href="#652">6.5.2 进程直接通信</a></h4>
+<ul>
+<li>必须显式指定发/收方</li>
+<li>原语：<code>send(目标, 消息)</code> / <code>receive(源, 消息)</code></li>
+</ul>
+<h4 id="653"><a class="toclink" href="#653">6.5.3 进程间接通信（信箱）</a></h4>
+<ul>
+<li>通过中间实体——<strong>信箱</strong></li>
+<li>进程发消息到信箱；进程从信箱取消息</li>
+<li>解耦发送方/接收方</li>
+</ul>
+<h4 id="654"><a class="toclink" href="#654">6.5.4 共享存储系统</a></h4>
+<ul>
+<li>多个进程映射同一物理页面到各自虚地址空间</li>
+<li>通信效率最高，但需 PV 同步保护</li>
+</ul>
+<h4 id="655"><a class="toclink" href="#655">6.5.5 基于流的通信（管道、套接字）</a></h4>
+<pre><code>发送进程 1 ─write(字节流)→ 管道/多路转接器/套接字 ─read(字节流)→ 接收进程 1
+发送进程 M ─write(字节流)→                                  ─read(字节流)→ 接收进程 N
+</code></pre>
+<ul>
+<li>字节流；按 FIFO；自带缓冲；自动同步（满阻塞写，空阻塞读）</li>
+</ul>
+<h4 id="656-rpc"><a class="toclink" href="#656-rpc">6.5.6 RPC（远程过程调用）</a></h4>
+<ul>
+<li>把单机过程调用拓展到分布式环境</li>
+<li>客户机存根 client stub + 服务器存根 server stub</li>
+<li>流程：客户调用 → client stub 打包参数 → send → 服务器 stub 收 → 解包调真过程 → 结果回包 → 返回</li>
+</ul>
+<hr>
+<h3 id="66-p236-240"><a class="toclink" href="#66-p236-240">6.6 死锁（开端，p236-240 早段）</a></h3>
+<blockquote>
+<p>此处只覆盖到死锁概念与必要条件、银行家算法开篇；<strong>详见后段笔记</strong>。</p>
+</blockquote>
+<h4 id="_16"><a class="toclink" href="#_16">死锁定义</a></h4>
+<blockquote>
+<p>一组进程中每个进程都在等待<strong>只能由该组其他进程才能引发</strong>的事件，这种永久等待状态称为死锁。</p>
+</blockquote>
+<h4 id="_17"><a class="toclink" href="#_17">死锁四必要条件</a></h4>
+<ol>
+<li><strong>互斥使用</strong></li>
+<li><strong>占有并等待</strong>（hold and wait）</li>
+<li><strong>不可剥夺</strong>（no preemption）</li>
+<li><strong>循环等待</strong>（circular wait）</li>
+</ol>
+<p>四条件<strong>同时满足才会</strong>死锁。打破任一条件即可避免死锁。</p>
+<hr>
+<h2 id="_18"><a class="toclink" href="#_18">六、跨章对比与关键思维</a></h2>
+<h3 id="1_6"><a class="toclink" href="#1_6">1) 三大基础抽象的统一</a></h3>
+<table>
+<thead>
+<tr>
+<th>抽象</th>
+<th>物理实体</th>
+<th>抽象后</th>
+<th>实现章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>进程</td>
+<td>CPU 时间</td>
+<td>多 CPU 错觉</td>
+<td>第 2 章</td>
+</tr>
+<tr>
+<td>虚存</td>
+<td>主存</td>
+<td>大于物理内存的内存空间</td>
+<td>第 3 章</td>
+</tr>
+<tr>
+<td>文件 / 虚设备</td>
+<td>磁盘块 / 独占设备</td>
+<td>命名抽象 / 共享设备</td>
+<td>第 4-5 章</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2_5"><a class="toclink" href="#2_5">2) &ldquo;缓冲匹配速度差&rdquo;的反复出现</a></h3>
+<ul>
+<li>I/O 缓冲区（4.2.3）：CPU - 设备</li>
+<li>文件系统缓冲（5.6）：内存 - 磁盘</li>
+<li>SPOOLing 输入井 / 输出井（4.5）：作业 - 独占设备</li>
+</ul>
+<h3 id="3"><a class="toclink" href="#3">3) 互斥实现路径</a></h3>
+<pre><code>关中断（最原始） → TS 指令 / Swap（硬件原子） → PV 操作（OS 原语） → 管程（语言级）
+</code></pre>
+<p>每往上一层抽象都更易用、更安全，但需要更多基础支撑。</p>
+<h3 id="4"><a class="toclink" href="#4">4) 必背计算公式</a></h3>
+<pre><code>磁盘存取时间        Ta = Ts + 1/(2r) + b/(rN)
+块号正向转换        x = k×m×a + k×B + c
+块号反向转换        a = (x-1)/(km), b = ((x-1) mod km)/k, c = ((x-1) mod km) mod k + 1
+平均访存时间        T = A + (1/n)×(B + (1/m)×C)   （3 级存储）
+互斥信号量取值范围  mutex ∈ [-(n-1), 1]
+缺页率上限          T_avg ≤ 给定上限 → 反推 p
+</code></pre>
+<hr>
+<h2 id="_19"><a class="toclink" href="#_19">七、对应关系总览</a></h2>
+<blockquote>
+<p>标注本笔记各节对应学校 OS 课程的章节。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>本笔记节</th>
+<th>对应学校章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>二、第 3 章存储管理收尾</td>
+<td>ch3 存储管理（段页式 + 虚存）</td>
+</tr>
+<tr>
+<td>三、第 4 章设备管理</td>
+<td>ch4 设备管理（I/O 控制 / 缓冲 / SPOOLing / 磁盘调度）</td>
+</tr>
+<tr>
+<td>四、第 5 章文件管理</td>
+<td>ch5 文件管理（FCB / 目录 / 链接 / 空闲管理）</td>
+</tr>
+<tr>
+<td>五、第 6 章并发程序设计前半</td>
+<td>ch6 进程同步与互斥（PV / 管程 / IPC 起头）</td>
+</tr>
+<tr>
+<td>六、跨章对比与关键思维</td>
+<td>综合，复习用</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="_20"><a class="toclink" href="#_20">八、疑点与待补</a></h2>
+<ol>
+<li><strong>银行家算法的完整步骤</strong>在本段末仅起头，详细推导需在后段笔记补全</li>
+<li><strong>p138 (img-138) 第 4 章封面页</strong>未读，但章节起首在 p129 已展开</li>
+<li>文件系统的 <strong>iNode 详细结构</strong> 教材未必详细给出，可能在课后教辅</li>
+<li>习题部分的题目较多但<strong>没有提供答案</strong>；考试前需另找参考解答</li>
+<li><strong>TS 指令实现的 lock = false 解锁</strong>与 PV 区别：TS 是忙等；PV 是阻塞，区别要在校考中强调</li>
+</ol>
+<hr>
+<blockquote>
+<p><strong>采样统计</strong>：精读了约 35 张关键页：
+p121-123, 125, 128, 130, 133, 136, 139, 140, 143, 146, 150, 152, 155, 156, 158, 163, 165, 166, 170, 172, 176, 180, 185, 190, 194, 195, 198, 202, 205, 208, 212, 216, 219, 225, 232, 237。</p>
+<p><strong>跳过策略</strong>：纯过渡页、纯习题应用题（已采样章末习题首页）、重复内容页、二维码页（微视频页）。</p>
+</blockquote>
+<hr>
+<h2 id="p121-240"><a class="toclink" href="#p121-240">九、图清理报告（p121-240）</a></h2>
+<ul>
+<li><strong>范围</strong>：PDF 页 121-240（120 张候选），文件名格式 <code>img-{N}-{P}.jpg</code>（N=P+1）。</li>
+<li><strong>删除</strong>：79 张（纯文字段落、习题题面、过渡页、微视频二维码）— notes-part2 已用文字完整覆盖，无图片嵌入引用。</li>
+<li><strong>保留</strong>：41 张作为档案</li>
+<li>35 张精读关键页：p121-123, 125, 128, 130, 133, 136, 139, 140, 143, 146, 150, 152, 155, 156, 158, 163, 165, 166, 170, 172, 176, 180, 185, 190, 194, 195, 198, 202, 205, 208, 212, 216, 219, 225, 232, 237</li>
+<li>章首/小结：p138（ch4 封面）、p153（ch4 小结首页）、p197（ch6 封面）</li>
+<li>范围相邻：p119, p120（与上段衔接）</li>
+<li><strong>抽样验证</strong>：p125（习题三题面 / 纯文字）、p145（4.2.3 缓冲区段首带二维码）、p160（SPOOLing 系统结构图，但 p150 已保留同主题）、p175（文件组织段落文字）、p190（第 5 章本章小结纯文字）、p220（PV 售票代码，但 p219 已保留管程同区段）— 全部确认可删。</li>
+<li><strong>体积</strong>：128.2MB → 99.8MB，节省 28.3MB（删除幅度 22%；本批 121-240 范围内 79/120 = 66% 删除率）。</li>
+</ul>
+  </article>
+</main>
+<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3><div class="toc">
+<ul>
+<li><a href="#13">一、章节地图（中 1/3）</a></li>
+<li><a href="#3-p121-128">二、第 3 章存储管理收尾（p121-128）</a><ul>
+<li><a href="#343">3.4.3 段页式存储管理</a></li>
+<li><a href="#p123-124">第三章本章小结要点（p123-124）</a></li>
+<li><a href="#p124-128">习题三关键题（p124-128 摘录）</a></li>
+</ul>
+</li>
+<li><a href="#4-p129-162">三、第 4 章 设备管理（p129-162）</a><ul>
+<li><a href="#41">4.1 设备管理基础</a></li>
+<li><a href="#42">4.2 设备管理软件</a></li>
+<li><a href="#43-p139-141">4.3 独占型外围设备的分配（p139-141）</a></li>
+<li><a href="#44-p143-148">4.4 共享型外围设备的驱动（p143-148）</a></li>
+<li><a href="#45-spoolingp148-152">4.5 虚拟设备 SPOOLing（p148-152）</a></li>
+<li><a href="#4-p152-153">第 4 章本章小结（p152-153）</a></li>
+<li><a href="#p154-156">习题四关键应用题（p154-156）</a></li>
+</ul>
+</li>
+<li><a href="#5-p163-196">四、第 5 章 文件管理（p163-196）</a><ul>
+<li><a href="#51-p163-167">5.1 文件系统概述（p163-167）</a></li>
+<li><a href="#52-p167-172">5.2 文件的组织（p167-172）</a></li>
+<li><a href="#53-p172-178">5.3 文件目录（p172-178）</a></li>
+<li><a href="#54-p176-179">5.4 文件的共享、保护和保密（p176-179）</a></li>
+<li><a href="#55-p180-184">5.5 文件的使用（p180-184）</a></li>
+<li><a href="#56-p185-190">5.6 文件系统的实现（p185-190）</a></li>
+<li><a href="#_8">第五章本章小结要点</a></li>
+<li><a href="#p191-194">习题五关键题（p191-194）</a></li>
+</ul>
+</li>
+<li><a href="#6-p197-240">五、第 6 章 并发程序设计（p197-240，前半）</a><ul>
+<li><a href="#61-p197-200">6.1 顺序与并发程序设计（p197-200）</a></li>
+<li><a href="#62-p201-205">6.2 临界区管理（p201-205）</a></li>
+<li><a href="#63-pv-p206-218">6.3 PV 操作（p206-218）</a></li>
+<li><a href="#64-p219-225">6.4 管程（p219-225）</a></li>
+<li><a href="#65-p226-235">6.5 进程通信（p226-235，前段）</a></li>
+<li><a href="#66-p236-240">6.6 死锁（开端，p236-240 早段）</a></li>
+</ul>
+</li>
+<li><a href="#_18">六、跨章对比与关键思维</a><ul>
+<li><a href="#1_6">1) 三大基础抽象的统一</a></li>
+<li><a href="#2_5">2) &ldquo;缓冲匹配速度差&rdquo;的反复出现</a></li>
+<li><a href="#3">3) 互斥实现路径</a></li>
+<li><a href="#4">4) 必背计算公式</a></li>
+</ul>
+</li>
+<li><a href="#_19">七、对应关系总览</a></li>
+<li><a href="#_20">八、疑点与待补</a></li>
+<li><a href="#p121-240">九、图清理报告（p121-240）</a></li>
+</ul>
+</div>
+</aside></div>
+<a class="back-to-top" href="#main" aria-label="返回顶部"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#up"/></svg></a>
+<footer class="page-footer">
+  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+</footer>
+<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+  <div class="theme-picker-head">
+    <h3 class="theme-picker-title">选择主题</h3>
+    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
+  </div>
+  <div class="theme-picker-actions">
+    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
+    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  </div>
+  <div class="theme-picker-grid" data-theme-grid></div>
+</aside>
+<div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
+
+<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body></html>

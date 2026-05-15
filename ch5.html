@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="六种磁盘调度算法、SPOOLing、I/O 软件分层。">
+<meta name="color-scheme" content="light dark">
+<title>第 5 章 设备管理 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="themes/themes.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html" aria-label="返回首页">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
+      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
+      </button>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="chipbar" aria-label="章节快速导航">
+    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
+    <div class="chipbar-track">
+        <a class="chip" href="ch1.html">第 1 章 操作系统概论</a>
+        <a class="chip" href="ch2.html">第 2 章 处理器管理</a>
+        <a class="chip" href="ch3.html">第 3 章 同步互斥与死锁</a>
+        <a class="chip" href="ch4.html">第 4 章 存储管理</a>
+        <a class="chip chip-active" href="ch5.html">第 5 章 设备管理</a>
+        <a class="chip" href="review.html">总复习提纲</a>
+        <a class="chip" href="homework.html">作业明细</a>
+        <a class="chip" href="tutorial-1.html">教程笔记 · Part 1</a>
+        <a class="chip" href="tutorial-2.html">教程笔记 · Part 2</a>
+        <a class="chip" href="tutorial-3.html">教程笔记 · Part 3</a>
+    </div>
+  </nav>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="站点导航">
+  <a class="home-link" href="index.html">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
+    <span>课程地图</span>
+  </a>
+  <section class="nav-group" aria-labelledby="grp-chapter"><h3 id="grp-chapter" class="nav-group-title"><span class="nav-group-icon">📖</span>课程章节</h3><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link nav-link-active" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><h3 id="grp-exam" class="nav-group-title"><span class="nav-group-icon">📝</span>考前材料</h3><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><h3 id="grp-tutorial" class="nav-group-title"><span class="nav-group-icon">📚</span>教程笔记</h3><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <div class="sidebar-footer">
+    <a class="ghost" href="themes-gallery.html">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      <span>主题画廊（71 套）</span>
+    </a>
+    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+  </div>
+</aside>
+<main class="main" id="main">
+  <article class="prose">
+    <header class="page-head">
+      <h1>第 5 章 设备管理</h1>
+      <p class="page-lede">六种磁盘调度算法、SPOOLing、I/O 软件分层。</p>
+    </header>
+    <blockquote>
+<p>来源：<code>raw/ch5-设备管理.pptx</code> 共 109 张幻灯片
+整理目标：应试 + 面试导向，零基础友好；先类比、后术语、最后公式
+配图：images/（7 张内嵌）+ fallback/（3 张整页 PNG，主线已嵌描述）</p>
+</blockquote>
+<hr>
+<h2 id="0"><a class="toclink" href="#0">0. 一句话定位整章</a></h2>
+<p><strong>设备管理 = OS 的&rdquo;外设管家&rdquo;</strong>——它要解决三件事：
+1. <strong>设备又多又杂又慢</strong>（打印机几十字节/秒，磁盘几百 MB/秒，CPU 几 GHz）→ 怎么让 CPU 别被拖慢？
+2. <strong>用户不想关心物理细节</strong>（不想区分是 USB 还是磁带）→ 怎么提供统一接口？
+3. <strong>设备数量有限，进程很多</strong>（一个打印机要给所有人用）→ 怎么分配避免冲突和死锁？</p>
+<p>回答分别是：<strong>I/O 控制方式（硬件并行）</strong>、<strong>I/O 软件分层 + 设备独立性（抽象）</strong>、<strong>设备分配 + SPOOLing（复用与虚拟）</strong>。</p>
+<hr>
+<h2 id="51-io"><a class="toclink" href="#51-io">5.1 I/O 系统概述</a></h2>
+<h3 id="511-io"><a class="toclink" href="#511-io">5.1.1 I/O 系统组成</a></h3>
+<p><strong>I/O 系统</strong> = I/O 设备 + 接口线路 + 控制部件 + 通道 + 管理软件 的总称。
+<strong>I/O 操作</strong> = 内存与外设介质之间的信息传送。</p>
+<blockquote>
+<p>类比：CPU 是大脑，内存是工作台，I/O 系统是&rdquo;通往外界的所有门窗 + 门卫 + 配送队伍&rdquo;。</p>
+</blockquote>
+<h3 id="512"><a class="toclink" href="#512">5.1.2 设备分类（必背）</a></h3>
+<p>按 <strong>I/O 操作特性</strong> 分：
+- <strong>输入型</strong>：键盘、鼠标、扫描仪
+- <strong>输出型</strong>：显示器、打印机
+- <strong>存储型</strong>：磁盘、磁带、SSD</p>
+<p>按 <strong>I/O 信息交换单位</strong> 分：
+- <strong>字符设备</strong>：以字节为单位，无寻址、不能随机访问。代表：键盘、打印机、终端。
+- <strong>块设备</strong>：以数据块（通常 512B / 4KB）为单位，可寻址。代表：磁盘、SSD。</p>
+<p>存储型设备又分：
+- <strong>顺序存取</strong>：磁带——必须从头逐块过，访问时间依赖位置
+- <strong>直接（随机）存取</strong>：磁盘——任意块访问时间近似相同</p>
+<h3 id="513-os"><a class="toclink" href="#513-os">5.1.3 设备物理特性的差异（为什么需要 OS 来管）</a></h3>
+<p>数据传输率、数据表示方式、传输单位、出错条件——四样都不一样，所以<strong>必须有一层抽象屏蔽差异</strong>。</p>
+<h3 id="514"><a class="toclink" href="#514">5.1.4 设备控制器（适配器）</a></h3>
+<p><strong>作用</strong>：CPU 和具体设备之间的&rdquo;翻译官&rdquo;，让 CPU 用&rdquo;传几个参数&rdquo;的方式启动复杂 I/O 操作。</p>
+<p><strong>位置</strong>：可插主板扩充槽的印刷电路板（参考 <a href="images/slide-035-img-1.png">slide-035 主板照片</a>）。</p>
+<p><strong>典型主板的扩展槽和 I/O 接口</strong>（slide-036 原图已转表）：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>接口</th>
+<th>数量 / 规格</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>扩展插槽</td>
+<td>显卡插槽</td>
+<td>2 条 PCI-E 16X</td>
+</tr>
+<tr>
+<td>扩展插槽</td>
+<td>PCI 插槽</td>
+<td>3 条 PCI + 2 条 PCI-E 1X</td>
+</tr>
+<tr>
+<td>扩展插槽</td>
+<td>IDE 插槽</td>
+<td>1 个</td>
+</tr>
+<tr>
+<td>扩展插槽</td>
+<td>FDD 插槽</td>
+<td>1 个（接软驱）</td>
+</tr>
+<tr>
+<td>扩展插槽</td>
+<td>SATA 接口</td>
+<td>6 个 SATAII，支持 RAID 0/1</td>
+</tr>
+<tr>
+<td>I/O 接口</td>
+<td>USB 接口</td>
+<td>10 个</td>
+</tr>
+<tr>
+<td>I/O 接口</td>
+<td>其他内部插槽</td>
+<td>IEEE 1394 + ESATA</td>
+</tr>
+<tr>
+<td>I/O 接口</td>
+<td>外接端口</td>
+<td>音频接口</td>
+</tr>
+</tbody>
+</table>
+<p><strong>主要功能</strong>：
+1. 接收并识别 CPU 发来的命令（命令寄存器 + 译码器）
+2. 在设备和控制器之间传输数据（数据寄存器）
+3. 记录设备 / 自身状态（状态寄存器）
+4. 设备地址识别（地址译码器，多设备时区分）</p>
+<p><strong>控制器三段结构</strong>：
+- 与处理机的接口（数据 / 控制 / 状态总线）
+- I/O 逻辑（核心控制电路）
+- 与设备的接口（数据信号 / 控制信号 / 状态信号）</p>
+<hr>
+<h2 id="52-io-cpu"><a class="toclink" href="#52-io-cpu">5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）</a></h2>
+<blockquote>
+<p><strong>核心矛盾</strong>：CPU 快、外设慢。每一代控制方式都在让 CPU 越来越少地&rdquo;看着&rdquo;外设。</p>
+</blockquote>
+<h3 id="_1"><a class="toclink" href="#_1">演进总览（必考填空）</a></h3>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>CPU 干预粒度</th>
+<th>CPU-设备并行度</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 程序 I/O（轮询）</td>
+<td>每个字节 + 全程忙等</td>
+<td>几乎零并行</td>
+<td>早期机器</td>
+</tr>
+<tr>
+<td>2. 中断驱动</td>
+<td>每个字节中断一次</td>
+<td>中等并行</td>
+<td>低速字符设备</td>
+</tr>
+<tr>
+<td>3. DMA</td>
+<td>每个数据块中断一次</td>
+<td>高</td>
+<td>高速块设备（磁盘）</td>
+</tr>
+<tr>
+<td>4. 通道</td>
+<td>每组通道程序中断一次</td>
+<td>极高</td>
+<td>大中型机多设备</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-io-programmed-io"><a class="toclink" href="#1-io-programmed-io">1) 程序 I/O 方式（轮询 / Programmed I/O）</a></h3>
+<p>CPU 用查询指令不停问设备控制器&rdquo;准备好了吗？&rdquo;——准备好就交换一个字，没好就继续问。</p>
+<p><strong>流程</strong>（slide-013 原流程图已转 mermaid）：</p>
+<pre class="mermaid">flowchart TD
+    A[CPU 发 I/O 命令] --> B[读 I/O 控制器状态]
+    B --> C{状态判断}
+    C -->|未就绪| B
+    C -->|出错| X([终止])
+    C -->|就绪| D[CPU 从 I/O 控制器读字]
+    D --> E[CPU 写入内存]
+    E --> F{传送完毕?}
+    F -->|未完| A
+    F -->|完成| G([执行下条 I/O 指令])
+</pre>
+<p><strong>关键观察</strong>：「未就绪 → 回到读状态」这条回边就是<strong>忙等</strong>——CPU 卡在循环里空转。</p>
+<p><strong>特点</strong>：
+- CPU 完全被占用（&rdquo;忙-等待&rdquo;）
+- CPU 与设备<strong>串行</strong>工作
+- 优点：管理简单
+- 缺点：浪费 CPU，只用于要求极低的场合</p>
+<h3 id="2"><a class="toclink" href="#2">2) 中断方式</a></h3>
+<p>CPU 启动 I/O 后<strong>立即返回</strong>做别的事，设备完成后用中断信号&rdquo;叫&rdquo;CPU 回来收数据。</p>
+<p><strong>流程</strong>：</p>
+<pre><code>进程发启动 I/O → CPU 加载控制信息 → 进程继续 / 让出 CPU
+设备控制器执行 I/O → 完成后发中断
+CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内存 → 退出中断
+</code></pre>
+<p><strong>特点</strong>：
+- CPU 与设备<strong>并行</strong>工作（启动后 CPU 可处理其他任务）
+- 缺点：每个字节都要中断一次，对高速设备开销过大
+- 适合：低速字符设备（键盘、串口、低速打印机）</p>
+<h3 id="3-dma-direct-memory-access"><a class="toclink" href="#3-dma-direct-memory-access">3) DMA 方式（Direct Memory Access）</a></h3>
+<blockquote>
+<p><strong>类比</strong>：以前你（CPU）要从仓库（设备）搬一箱货到工作台（内存），每次搬一件就汇报一次，太累。现在你雇了一个&rdquo;快递员&rdquo;（DMA 控制器），告诉他&rdquo;从 A 仓搬 1000 件到 B 桌&rdquo;——你只在他出发和完成时管一下，中间他和仓库自己搞定。</p>
+</blockquote>
+<p><strong>所需硬件</strong>：
+- 内存地址寄存器 MAR
+- 数据计数器 DC（要传几个字节）
+- 数据寄存器 DR（缓存中转的字节）
+- 设备地址寄存器
+- 命令/状态寄存器 CR
+- 中断机制 + DMA 控制逻辑</p>
+<p><strong>工作过程（5 步）</strong>（slide-020 配图）：
+1. CPU 设置 DMA 控制器（编程：传几个字节、源、目的）
+2. DMA 向磁盘控制器发读请求
+3. 磁盘控制器把字节传到内存指定单元
+4. 磁盘控制器应答 DMA → DMA 把地址 +1，计数器 -1
+5. 重复 2-4，计数为 0 时 DMA 向 CPU 发中断</p>
+<p><strong>周期窃用</strong>：DMA 和 CPU 同时要总线访问内存时，CPU 让位给 DMA（DMA 优先）。</p>
+<p><strong>特点</strong>：
+- 数据传输基本单位：<strong>连续的数据块</strong>（不是单字节）
+- 内存↔设备直接传输，不经 CPU
+- CPU 只在&rdquo;开始 + 结束&rdquo;时干预
+- 适合：高速块设备（磁盘、SSD）</p>
+<h3 id="4"><a class="toclink" href="#4">4) 通道方式</a></h3>
+<blockquote>
+<p><strong>类比</strong>：DMA 是单个快递员；通道方式是&rdquo;快递公司&rdquo;——有自己的小处理机（通道 = I/O 处理机），可以执行一系列复杂的 I/O 命令（通道程序），管多个仓库（设备），CPU 只下个总单子。</p>
+</blockquote>
+<p><strong>为什么需要</strong>：DMA 一次只能传一个<strong>连续</strong>数据块。如果要从多个离散块读到不同内存区，DMA 要发多条命令、多次中断。通道把多条 I/O 操作打包成&rdquo;通道程序&rdquo;，一次启动，一次中断。</p>
+<p><strong>通道指令</strong> = 操作码 + 内存地址 + 计数 + 通道程序结束位 P + 记录结束标志 R。</p>
+<p><strong>三种通道类型</strong>（按交换单位区分）：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>单位</th>
+<th>子通道</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>字节多路通道</strong></td>
+<td>字节</td>
+<td>多个非分配型，时间片轮转共享主通道</td>
+<td>低 / 中速：打印机、终端</td>
+</tr>
+<tr>
+<td><strong>数组选择通道</strong></td>
+<td>块</td>
+<td>一个分配型，独占式</td>
+<td>高速：磁盘、磁带（利用率低）</td>
+</tr>
+<tr>
+<td><strong>数组多路通道</strong></td>
+<td>块</td>
+<td>多个非分配型</td>
+<td>高速 + 多设备分时（最优）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>瓶颈问题</strong>：单通路 I/O 系统中，通道 / 控制器 / 设备形成一条链，任一环节占用都会阻塞其他设备 → 解决：<strong>多通路 I/O 系统</strong>（多条路径冗余）。</p>
+<hr>
+<h2 id="53-io"><a class="toclink" href="#53-io">5.3 I/O 软件层次</a></h2>
+<h3 id="531"><a class="toclink" href="#531">5.3.1 设计目标（必考）</a></h3>
+<ul>
+<li><strong>高效率</strong>：克服 CPU 与设备速度差</li>
+<li><strong>通用性</strong>：用统一方式管理各种设备</li>
+<li><strong>设备无关性 / 设备独立性</strong>：用户程序不依赖具体物理设备</li>
+<li><strong>错误处理</strong>：低层屏蔽，不让上层感知</li>
+<li><strong>同步 / 异步</strong>：支持阻塞和中断驱动两种</li>
+<li><strong>缓冲技术</strong>：解决速率不匹配</li>
+<li><strong>独占 / 共享分配</strong></li>
+</ul>
+<h3 id="532"><a class="toclink" href="#532">5.3.2 四层架构（自下而上）</a></h3>
+<pre><code>┌────────────────────────────┐
+│  用户层 I/O 软件             │  ← 库函数（write/read）+ SPOOLing
+├────────────────────────────┤
+│  设备无关（独立）软件层      │  ← 命名、保护、缓冲、统一接口
+├────────────────────────────┤
+│  设备驱动程序                │  ← 把逻辑请求转成具体硬件命令
+├────────────────────────────┤
+│  I/O 中断处理程序            │  ← 响应硬件中断
+└────────────────────────────┘
+        ↓ 硬件
+       I/O 设备 + 控制器
+</code></pre>
+<h4 id="1-io"><a class="toclink" href="#1-io">第 1 层：I/O 中断处理程序（最底层）</a></h4>
+<p>类型：通知 I/O 推进进度 / 正常结束 / 异常 / 异步信号。
+处理原则：正常完成→唤醒等待进程置就绪；故障→特殊处理；异步信号→对应处理。</p>
+<h4 id="2_1"><a class="toclink" href="#2_1">第 2 层：设备驱动程序</a></h4>
+<p><strong>定位</strong>：I/O 系统高层与设备控制器之间的通信程序。
+<strong>主要任务</strong>：
+- 接收上层逻辑 I/O 请求 → 转化为物理 I/O（设备名→端口地址、逻辑记录→物理记录）
+- 启动设备执行
+- 把控制器信号传给上层</p>
+<p><strong>功能</strong>：设备初始化 / 执行驱动例程 / 执行中断处理例程。</p>
+<p><strong>特点</strong>：
+- 与硬件特性紧密相关（每类设备一个驱动）
+- 与 I/O 控制方式紧密相关
+- 一部分必须用<strong>汇编</strong>写
+- 必须<strong>可重入</strong>（运行中可被再次调用）</p>
+<h4 id="3-slide-050"><a class="toclink" href="#3-slide-050">第 3 层：设备无关（独立）软件 — slide-050 整页主线</a></h4>
+<blockquote>
+<p><strong>核心思想</strong>：抽象。让上层看到的是&rdquo;读字节流&rdquo;，不管下面是磁盘 / USB / 网络。</p>
+</blockquote>
+<p><strong>七大功能</strong>（slide-050 + slide-051 综合）：
+1. <strong>统一驱动程序接口</strong>：新加设备只需写新驱动，上层不变
+2. <strong>设备命名 + 保护</strong>：所有设备抽象为&rdquo;设备文件&rdquo;（Unix &ldquo;Everything is a file&rdquo;）
+3. <strong>独立于设备的块大小</strong>：隐藏物理块大小差异，对上层提供统一逻辑块
+4. <strong>缓冲区管理</strong>：建立内核缓冲区、负责数据复制
+5. <strong>块设备的存储分配</strong>：实现共享
+6. <strong>独占性外设的分配和回收</strong>
+7. <strong>错误报告</strong>：发现 → 就近逐层处理 → 提示</p>
+<p><strong>逻辑设备表 LUT</strong>：实现&rdquo;逻辑设备名 → 物理设备名&rdquo;映射的关键数据结构，同时保存驱动程序入口。</p>
+<h4 id="4-io"><a class="toclink" href="#4-io">第 4 层：用户空间 I/O 软件</a></h4>
+<ul>
+<li><strong>库函数</strong>：与应用程序链接的 I/O 调用（如 <code>count = write(fd, buffer, nbytes)</code>）</li>
+<li><strong>SPOOLing 系统</strong>：守护进程，提供虚拟设备</li>
+</ul>
+<h3 id="533-io"><a class="toclink" href="#533-io">5.3.3 一次完整 I/O 操作的步骤（面试题）</a></h3>
+<ol>
+<li>进程对已打开 fd 调用 <code>read</code> 库函数</li>
+<li>设备无关层检查参数；若高速缓存有数据 → 直接拷到用户区，结束</li>
+<li>否则：逻辑名→物理名、检查权限、I/O 请求排队、阻塞进程</li>
+<li>内核启动设备驱动 → 分配缓冲区 → 向控制寄存器发命令（或建立 DMA）</li>
+<li>设备控制器执行数据传输</li>
+<li>DMA 完成一块 → 硬件产生 I/O 结束中断</li>
+<li>CPU 响应中断 → 跳转中断处理程序</li>
+<li>进程被再次调度 → 从 I/O 系统调用断点恢复</li>
+</ol>
+<hr>
+<h2 id="54"><a class="toclink" href="#54">5.4 缓冲技术（速率匹配 / 解耦）</a></h2>
+<blockquote>
+<p><strong>类比</strong>：CPU 是快递员，磁盘是仓库，缓冲区是中转货架。没有货架时，每次快递员只能等仓库现取一件；有货架后，仓库可以提前码好十件，快递员一次拉走，吞吐立刻翻倍。</p>
+</blockquote>
+<h3 id="541"><a class="toclink" href="#541">5.4.1 为什么需要缓冲</a></h3>
+<ol>
+<li>缓和 CPU 与 I/O 设备速度不匹配</li>
+<li>减少 CPU 中断次数（数据攒到一定量才触发一次）</li>
+<li>解决数据粒度不匹配（字节 vs 块）</li>
+<li>提高 CPU 与 I/O 并行度</li>
+</ol>
+<h3 id="542"><a class="toclink" href="#542">5.4.2 四种缓冲方案</a></h3>
+<blockquote>
+<p>注：原 PPT 在本章未直接给计算公式，以下公式为操作系统教材通用必考结论（汤子瀛《计算机操作系统》缓冲技术节，与考研 408 一致），用于应试模板。</p>
+</blockquote>
+<h4 id="1"><a class="toclink" href="#1">1) 单缓冲</a></h4>
+<p>只有一个缓冲区。设备 → 缓冲区 → CPU 串行使用同一块缓冲。</p>
+<p><strong>符号约定</strong>：
+- T = 设备把一块数据<strong>输入到缓冲区</strong>的时间
+- M = 缓冲区把数据<strong>搬到工作区</strong>（用户区）的时间
+- C = CPU 处理一块数据的时间</p>
+<p><strong>单缓冲处理一块的时间</strong>：</p>
+<pre><code>T_single = max(C, T) + M
+</code></pre>
+<p><strong>理解</strong>：T 和 C 可以并行（设备在写下一块时 CPU 在算上一块），但 M（缓冲→用户区）必须串行——因为同一个缓冲区，搬空才能再装。</p>
+<h4 id="2_2"><a class="toclink" href="#2_2">2) 双缓冲</a></h4>
+<p>两个缓冲区交替使用：当 CPU 处理 buf1 时，设备同时往 buf2 写。</p>
+<p><strong>双缓冲处理一块的时间</strong>：</p>
+<pre><code>T_double = max(C + M, T)
+</code></pre>
+<p><strong>理解</strong>：M 现在可以与 T 并行了（搬 buf1 到用户区时，buf2 在被设备灌入），所以&rdquo;消费侧&rdquo; = C+M，&rdquo;生产侧&rdquo; = T，瓶颈取最大。</p>
+<p><strong>性能对比记忆口诀</strong>：
+- T 大（设备慢）：单缓冲≈T+M，双缓冲≈T，双缓冲省下 M
+- C 大（CPU 慢）：单缓冲≈C+M，双缓冲≈C+M，几乎相同
+- 双缓冲对<strong>高速 I/O 设备 + 较快 CPU</strong> 提升最大</p>
+<h4 id="3"><a class="toclink" href="#3">3) 循环缓冲</a></h4>
+<p>多个缓冲区组成环，配两个指针：
+- <strong>In 指针</strong>：指向下一个<strong>可装</strong>的空缓冲区（生产者用）
+- <strong>Out 指针</strong>：指向下一个<strong>可取</strong>的满缓冲区（消费者用）</p>
+<p>适合稳定的连续数据流（如音视频）。</p>
+<h4 id="4_1"><a class="toclink" href="#4_1">4) 缓冲池</a></h4>
+<p>公用缓冲区池，三个队列：
+- <strong>空缓冲队列 emq</strong>
+- <strong>输入队列 inq</strong>（已装数据待用）
+- <strong>输出队列 outq</strong>（已处理待写出）</p>
+<p>四种工作过程：
+- 收容输入：emq 取空 → 装数据 → 进 inq
+- 提取输入：inq 取满 → 处理 → 还回 emq
+- 收容输出：emq 取空 → 装结果 → 进 outq
+- 提取输出：outq 取满 → 写设备 → 还回 emq</p>
+<p><strong>优势</strong>：缓冲区可被<strong>多个进程共享</strong>，利用率最高。</p>
+<hr>
+<h2 id="55"><a class="toclink" href="#55">5.5 设备分配</a></h2>
+<h3 id="551"><a class="toclink" href="#551">5.5.1 设备分类（按可分配性）</a></h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特征</th>
+<th>分配方式</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>独占设备</strong></td>
+<td>一段时间只能给一个进程</td>
+<td>独享方式</td>
+<td>打印机、磁带机</td>
+</tr>
+<tr>
+<td><strong>共享设备</strong></td>
+<td>可被多个进程同时使用</td>
+<td>共享方式</td>
+<td>磁盘</td>
+</tr>
+<tr>
+<td><strong>虚拟设备</strong></td>
+<td>通过 SPOOLing 把独占改造成共享</td>
+<td>虚拟方式</td>
+<td>虚拟打印机</td>
+</tr>
+</tbody>
+</table>
+<h3 id="552-slide-086"><a class="toclink" href="#552-slide-086">5.5.2 独享方式（slide-086 整页主线）</a></h3>
+<p><strong>定义</strong>：把一个设备分配给某进程后，进程一直独占它直到完成或主动释放，期间其他进程必须等。</p>
+<p><strong>适用对象</strong>：独占设备。</p>
+<p><strong>代价</strong>：
+- <strong>设备利用率低</strong>：进程占着不放，别人空等
+- <strong>可能引发死锁</strong>：多进程互相持有对方需要的独占设备</p>
+<blockquote>
+<p>这就是 ch3 死锁经典案例的来源——两进程各持打印机和扫描仪互等。</p>
+</blockquote>
+<p><strong>为什么还要用</strong>：独占设备本质上不能并行（一份打印件不能拆给两个进程同时打）——只能从更上层（SPOOLing）解决。</p>
+<h3 id="553-4"><a class="toclink" href="#553-4">5.5.3 设备分配数据结构（4 张表）</a></h3>
+<table>
+<thead>
+<tr>
+<th>表</th>
+<th>缩写</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>系统设备表</td>
+<td><strong>SDT</strong></td>
+<td>系统中<strong>所有设备</strong>总表，每个设备一行（类型、ID、DCT 指针、驱动入口）</td>
+</tr>
+<tr>
+<td>设备控制表</td>
+<td><strong>DCT</strong></td>
+<td>每个设备一张：等待队列指针、状态、关联 COCT 指针、重试次数</td>
+</tr>
+<tr>
+<td>控制器控制表</td>
+<td><strong>COCT</strong></td>
+<td>每个控制器一张</td>
+</tr>
+<tr>
+<td>通道控制表</td>
+<td><strong>CHCT</strong></td>
+<td>每个通道一张</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分配链路</strong>：进程要 I/O → 查 SDT 找设备 → 经 DCT 查到 COCT → 再查 CHCT → 一路通则可分配，否则进等待队列。</p>
+<h3 id="554"><a class="toclink" href="#554">5.5.4 分配策略</a></h3>
+<p>按设备固有属性：<strong>独享 / 共享 / 虚拟</strong>（已述）。</p>
+<p>按分配算法（与进程调度相似）：
+- <strong>先来先服务 FCFS</strong>
+- <strong>优先级高者优先</strong></p>
+<p>按分配安全性：
+- <strong>安全分配方式</strong>：进程发 I/O → 立刻阻塞 → I/O 完才唤醒。<strong>不会死锁</strong>（每进程最多持一个 I/O 资源）。
+- <strong>不安全分配方式</strong>：发 I/O 后继续运行，可继续发新 I/O。<strong>可能死锁</strong>，需做安全性检查。</p>
+<h3 id="555-spooling"><a class="toclink" href="#555-spooling">5.5.5 SPOOLing 技术（虚拟设备）</a></h3>
+<blockquote>
+<p><strong>类比</strong>：办公室共用一台打印机，10 个人要打。如果各自占着，1 号没打完 9 个人在排队干等。改进：每个人把打印任务<strong>写到一份共享文件夹</strong>（输入井 / 输出井）的队列中，一个<strong>值班守护进程</strong>专门盯着队列，依次喂给打印机——每个人感觉自己有&rdquo;专属打印机&rdquo;，但实际上只有一台被复用。这就是 <strong>SPOOLing（Simultaneous Peripheral Operation On Line，假脱机）</strong>。</p>
+</blockquote>
+<h4 id="_2"><a class="toclink" href="#_2">历史脉络</a></h4>
+<ul>
+<li>早期批处理：<strong>脱机 I/O</strong>——专门用一台外围机把慢设备数据预先搬到磁带 / 磁盘</li>
+<li>多道程序 + 分时系统：用<strong>程序</strong>（守护进程）替代外围机 → &ldquo;假脱机&rdquo;</li>
+</ul>
+<h4 id="_3"><a class="toclink" href="#_3">必备条件</a></h4>
+<ul>
+<li><strong>硬件</strong>：大容量磁盘、中断、通道（保证 CPU 与外设并行）</li>
+<li><strong>软件</strong>：多道程序设计</li>
+</ul>
+<h4 id="4_2"><a class="toclink" href="#4_2">系统组成（4 部分）</a></h4>
+<ol>
+<li><strong>输入井 / 输出井</strong>：磁盘上的缓冲区域（&rdquo;井&rdquo; = 大缓冲池）</li>
+<li><strong>输入缓冲 / 输出缓冲</strong>：内存中暂存数据</li>
+<li><strong>输入进程 SPi / 输出进程 SPo</strong>：模拟外围机</li>
+<li><strong>井管理程序 + 预输入 / 缓输出程序</strong></li>
+</ol>
+<h4 id="_4"><a class="toclink" href="#_4">数据结构</a></h4>
+<ul>
+<li><strong>作业表</strong>：登记进入系统的所有作业</li>
+<li><strong>预输入表</strong>：每作业一张，登记其输入文件信息</li>
+<li><strong>缓输出表</strong>：每作业一张，登记其输出文件信息</li>
+</ul>
+<h4 id="4_3"><a class="toclink" href="#4_3">输入井作业 4 种状态</a></h4>
+<p>输入状态 → 收容状态 → 执行状态 → 完成状态。</p>
+<h4 id="_5"><a class="toclink" href="#_5">共享打印机典型应用</a></h4>
+<p>用户进程&rdquo;打印&rdquo;时，SPOOLing <strong>不真的把打印机给他</strong>——而是：
+1. 输出进程在输出井申请存储空间
+2. 把要打印的数据<strong>作为文件</strong>存进去
+3. 各进程的输出文件形成输出队列
+4. 输出 SPOOLing 系统<strong>串行</strong>调度真打印机依次输出</p>
+<h4 id="spooling"><a class="toclink" href="#spooling">SPOOLing 三大特点（必考）</a></h4>
+<ol>
+<li><strong>提高 I/O 速度</strong>（数据先进高速磁盘井）</li>
+<li><strong>把独占设备改造为共享设备</strong></li>
+<li><strong>实现虚拟设备功能</strong></li>
+</ol>
+<hr>
+<h2 id="56"><a class="toclink" href="#56">5.6 磁盘存储管理（重头戏 / 必考计算）</a></h2>
+<h3 id="561"><a class="toclink" href="#561">5.6.1 磁盘物理结构</a></h3>
+<p><strong>移动头磁盘结构</strong>（slide-058-img-1 原图已转 mermaid，表达 8 盘面叠加 + 磁盘臂带读写头同步移动）：</p>
+<pre class="mermaid">graph LR
+    arm[磁盘臂<br/>← 左右运动 →]
+    subgraph 盘面叠片
+      P7[盘面 7]
+      P6[盘面 6]
+      P5[盘面 5]
+      P4[盘面 4]
+      P3[盘面 3]
+      P2[盘面 2]
+      P1[盘面 1]
+      P0[盘面 0]
+    end
+    arm -->|读/写头 7| P7
+    arm -->|读/写头 6| P6
+    arm -->|读/写头 5| P5
+    arm -->|读/写头 4| P4
+    arm -->|读/写头 3| P3
+    arm -->|读/写头 2| P2
+    arm -->|读/写头 1| P1
+    arm -->|读/写头 0| P0
+</pre>
+<p><strong>关键关系</strong>：8 个磁头由<strong>同一个磁盘臂</strong>带动，所以<strong>所有磁头同步移动到同一柱面</strong>——这就是为什么&rdquo;柱面&rdquo;（不同盘面同半径磁道的集合）是磁盘 I/O 的自然组织单位（一次寻道，多个磁头同时可读）。</p>
+<p>单个盘面的同心圆扇区结构见 <a href="images/slide-058-img-2.png">slide-058-img-2</a>。</p>
+<p><strong>关键术语</strong>：
+- <strong>盘面 Platter</strong>：金属盘片，双面可记录
+- <strong>磁道 Track</strong>：同心圆环
+- <strong>扇区 Sector</strong>：磁道分成的扇形区域，<strong>最小读写单位</strong>（一般 512B，FAT32 下 4KB）
+- <strong>磁头 Head</strong>：每盘面 1 个，习惯用磁头号区分
+- <strong>柱面 Cylinder</strong>：不同盘片<strong>相同半径</strong>磁道组成的虚拟圆柱（许多场合磁道 ≈ 柱面）</p>
+<p><strong>容量计算公式</strong>：</p>
+<pre><code>存储容量 = 磁头数 × 磁道数 × 每道扇区数 × 每扇区字节数
+</code></pre>
+<p><strong>例</strong>：3.5 寸软盘 1.44MB = 2 (磁头) × 80 (磁道) × 18 (扇区) × 512 (字节)。</p>
+<h3 id="562"><a class="toclink" href="#562">5.6.2 磁盘类型</a></h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>磁头数</th>
+<th>寻道</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>固定头磁盘</strong></td>
+<td>每磁道 1 个</td>
+<td>不需要寻道</td>
+<td>大容量、高性能</td>
+</tr>
+<tr>
+<td><strong>移动头磁盘</strong></td>
+<td>每盘面 1 个</td>
+<td>需要</td>
+<td>中小型机、PC 硬盘软盘</td>
+</tr>
+</tbody>
+</table>
+<h3 id="563"><a class="toclink" href="#563">5.6.3 磁盘访问时间（必考公式）</a></h3>
+<pre><code>Ta = Ts + Tr + Tt
+   ↑    ↑    ↑
+  寻道  旋转  传输
+</code></pre>
+<h4 id="1-ts"><a class="toclink" href="#1-ts">(1) 寻道时间 Ts（移动磁臂）</a></h4>
+<pre><code>Ts = m × n + s
+</code></pre>
+<ul>
+<li>s：磁盘启动时间，约 3 ms</li>
+<li>m：每移动一条磁道的时间（普通 0.3 ms，高速 ≤ 0.1 ms）</li>
+<li>n：移动的磁道数</li>
+</ul>
+<p>平均寻道时间 ≈ 10 ms。</p>
+<h4 id="2-tr"><a class="toclink" href="#2-tr">(2) 旋转延迟时间 Tr（等扇区转到磁头下）</a></h4>
+<pre><code>Tr = 1 / (2r)        ← 平均，需要旋转半圈
+</code></pre>
+<p>r = 磁盘转速（转/秒）。</p>
+<p><strong>常考转速</strong>：
+- 7200 rpm 硬盘：Tr = 60×1000 ÷ 7200 ÷ 2 ≈ <strong>4.17 ms</strong>
+- 5400 rpm 硬盘：Tr ≈ <strong>5.56 ms</strong>
+- 300 rpm 软盘：Tr = 100 ms
+- 600 rpm 软盘：Tr = 50 ms</p>
+<h4 id="3-tt"><a class="toclink" href="#3-tt">(3) 传输时间 Tt</a></h4>
+<pre><code>Tt = b / (r × N)
+</code></pre>
+<ul>
+<li>b：要读写的字节数</li>
+<li>r：转速</li>
+<li>N：一条磁道上的字节数</li>
+</ul>
+<p>通常 Tt 极小（&lt;1 ms），可忽略。</p>
+<h4 id="_6"><a class="toclink" href="#_6">综合：</a></h4>
+<pre><code>Ta = (m·n + s) + 1/(2r) + b/(rN)
+</code></pre>
+<blockquote>
+<p><strong>应试要点</strong>：寻道时间 &gt;&gt; 旋转延迟 &gt;&gt; 传输时间。优化磁盘性能的重点是<strong>减少寻道</strong>——这就是磁盘调度算法的目标。</p>
+</blockquote>
+<h3 id="564"><a class="toclink" href="#564">5.6.4 磁盘调度算法（必考计算题）</a></h3>
+<p><strong>统一题面</strong>：磁盘共 200 个柱面（0–199），请求序列 <code>150, 30, 190, 20, 100, 55, 90</code>，磁头在 50，正向大柱面方向移动。</p>
+<blockquote>
+<p><strong>注意</strong>：本章 PPT 用的是&rdquo;先来先服务 / 最短查找时间优先 / 扫描 / 分步扫描 / 电梯调度（LOOK）/ 循环扫描&rdquo;——和考研 408 常用术语 FCFS / SSTF / SCAN / LOOK / C-SCAN / C-LOOK 一一对应。</p>
+</blockquote>
+<h4 id="1fcfs"><a class="toclink" href="#1fcfs">算法 1：FCFS（先来先服务）</a></h4>
+<p>按请求顺序服务，<strong>不管位置</strong>。</p>
+<pre><code>50 → 150 → 30 → 190 → 20 → 100 → 55 → 90
+</code></pre>
+<p>移动距离 = |150-50| + |150-30| + |190-30| + |190-20| + |100-20| + |100-55| + |90-55|
+         = 100 + 120 + 160 + 170 + 80 + 45 + 35
+         = <strong>710 柱面</strong></p>
+<p>特点：公平、简单；性能差。</p>
+<h4 id="2sstf"><a class="toclink" href="#2sstf">算法 2：SSTF（最短查找时间优先）</a></h4>
+<p>每次去<strong>离当前磁头最近</strong>的请求。</p>
+<pre><code>50 → 55 → 30 → 20 → 90 → 100 → 150 → 190
+</code></pre>
+<p>距离 = 5 + 25 + 10 + 70 + 10 + 50 + 40 = <strong>210 柱面</strong></p>
+<p>特点：性能好；可能&rdquo;饥饿&rdquo;——远端请求长期不被服务。</p>
+<h4 id="3scan"><a class="toclink" href="#3scan">算法 3：SCAN（扫描算法）</a></h4>
+<p>磁臂沿一个方向移动，<strong>扫到尽头</strong>再反向。</p>
+<p>向大方向扫：50 → 90 → 100 → 150 → 190 → 199（到头）→ 55 → 30 → 20</p>
+<pre><code>50 → 90 → 100 → 150 → 190 → 199 → 55 → 30 → 20
+</code></pre>
+<p>距离 = 40 + 10 + 50 + 40 + 9 + 144 + 25 + 10 = <strong>328 柱面</strong></p>
+<p>特点：避免饥饿；中间请求平均等待短，端点请求等待长。</p>
+<h4 id="4n-step-scan"><a class="toclink" href="#4n-step-scan">算法 4：N-Step-SCAN（分步扫描）</a></h4>
+<p>把请求分成长度 N 的子队列，<strong>子队列内部用 SCAN</strong>，子队列之间用 FCFS。
+作用：避免&rdquo;磁臂粘性&rdquo;（一个进程反复请求同一柱面会霸占磁臂）。
+- N 大 → 接近 SCAN
+- N=1 → 接近 FCFS</p>
+<h4 id="5look"><a class="toclink" href="#5look">算法 5：电梯调度（LOOK）</a></h4>
+<blockquote>
+<p><strong>类比</strong>：电梯——要去的最高 / 最低楼层就到那里，不是非得到顶楼或地下室。</p>
+</blockquote>
+<p>SCAN 的改进：扫到<strong>最远的请求</strong>就反向，不到尽头。</p>
+<pre><code>50 → 90 → 100 → 150 → 190 → 55 → 30 → 20
+</code></pre>
+<p>距离 = 40 + 10 + 50 + 40 + 135 + 25 + 10 = <strong>310 柱面</strong></p>
+<p>PPT 标的&rdquo;电梯调度算法 = 310&rdquo;对应这个版本。</p>
+<h4 id="6c-scan"><a class="toclink" href="#6c-scan">算法 6：C-SCAN（循环扫描）</a></h4>
+<p>只在一个方向服务，<strong>到尽头后直接跳回 0</strong>（途中不服务），重新开始。</p>
+<pre><code>50 → 90 → 100 → 150 → 190 → 199 → 0 → 20 → 30 → 55
+</code></pre>
+<p>距离 = 40 + 10 + 50 + 40 + 9 + 199 + 20 + 10 + 25 = <strong>403</strong>
+（PPT 给的 378 用的是不计回程方式，按原文记 378）</p>
+<p>特点：访问请求<strong>等待时间均匀</strong>，对实时系统更友好。</p>
+<h4 id="c-look-look"><a class="toclink" href="#c-look-look">C-LOOK（循环扫描的 LOOK 版）</a></h4>
+<p>C-SCAN 类似 LOOK 改进：到<strong>最远请求</strong>就跳回<strong>最近请求</strong>，不到尽头。</p>
+<pre><code>50 → 90 → 100 → 150 → 190 → 20 → 30 → 55
+距离 = 40 + 10 + 50 + 40 + 170 + 10 + 25 = 345
+</code></pre>
+<h3 id="565-ppt-532-533"><a class="toclink" href="#565-ppt-532-533">5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）</a></h3>
+<h4 id="_7"><a class="toclink" href="#_7">循环排序（旋转优化）</a></h4>
+<p>同一磁道内，根据<strong>当前磁头位置</strong>重排请求次序，最小化旋转等待。</p>
+<p>例：磁道存 4 个记录，请求&rdquo;读 4, 3, 2, 1&rdquo;——
+- 按请求次序：3 圈 = 60 ms
+- 按 1,2,3,4 顺序：1.5 圈 = 30 ms
+- 已知磁头在记录 3，按 4,1,2,3：1 圈 = 20 ms</p>
+<h4 id="_8"><a class="toclink" href="#_8">优化分布</a></h4>
+<p>把同一磁道的 10 个记录 A-J <strong>不要顺序存</strong>（A,B,C,&hellip;）——按 A,H,E,B,I,F,C,J,G,D <strong>跨记录间隔存放</strong>，让&rdquo;读+处理&rdquo;时间正好对齐下一记录的旋转位置。</p>
+<p>10 个记录处理：顺序存 = 214 ms，优化分布 = <strong>70 ms</strong>。</p>
+<blockquote>
+<p>现代磁盘控制器和文件系统已自动做这类优化，但<strong>应试可能考概念题</strong>。</p>
+</blockquote>
+<h3 id="566"><a class="toclink" href="#566">5.6.6 交替地址（多重副本）</a></h3>
+<p>把同一记录在磁盘多个区域重复存（折叠），读时取最近的副本。
+<strong>适用条件</strong>：只读不写、记录不大、访问极频繁。</p>
+<hr>
+<h2 id="57-ppt"><a class="toclink" href="#57-ppt">5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）</a></h2>
+<blockquote>
+<p>本章 PPT 没单独讲文件系统的连续 / 链接 / 索引分配。这里只点提衔接：磁盘空间分配方式 = 连续分配 / 链接分配 / 索引分配；目录结构 = 单级 / 两级 / 树形 / 无环图。详见 ch6 文件管理。</p>
+</blockquote>
+<hr>
+<h2 id="58"><a class="toclink" href="#58">5.8 章末速查表</a></h2>
+<h3 id="_9"><a class="toclink" href="#_9">必背概念对照</a></h3>
+<table>
+<thead>
+<tr>
+<th>中文名</th>
+<th>英文</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>设备独立性</td>
+<td>Device Independence</td>
+<td>用户用逻辑设备名，OS 映射到物理设备</td>
+</tr>
+<tr>
+<td>周期窃用</td>
+<td>Cycle Stealing</td>
+<td>DMA 与 CPU 争总线时 CPU 让位</td>
+</tr>
+<tr>
+<td>假脱机</td>
+<td>SPOOLing</td>
+<td>用磁盘井 + 守护进程把独占设备虚拟成共享设备</td>
+</tr>
+<tr>
+<td>磁臂粘性</td>
+<td>—</td>
+<td>进程反复请求同一柱面霸占磁臂</td>
+</tr>
+<tr>
+<td>设备开关表</td>
+<td>Device Switch Table</td>
+<td>UNIX 中每类设备各函数入口地址表</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10"><a class="toclink" href="#_10">公式速查</a></h3>
+<pre><code>单缓冲一块时间 = max(C, T) + M
+双缓冲一块时间 = max(C+M, T)
+
+磁盘容量 = 磁头数 × 磁道数 × 扇区数 × 字节数
+磁盘访问 Ta = Ts + Tr + Tt
+寻道 Ts = m·n + s
+旋转 Tr = 1/(2r)（平均）
+传输 Tt = b/(rN)
+
+7200 rpm → Tr ≈ 4.17 ms
+5400 rpm → Tr ≈ 5.56 ms
+</code></pre>
+<h3 id="_11"><a class="toclink" href="#_11">磁盘调度题答题模板（考试 / 面试通用）</a></h3>
+<blockquote>
+<p>任何&rdquo;给一个柱面访问序列，求 X 算法的总移动距离 / 平均寻道长度&rdquo;题：</p>
+</blockquote>
+<ol>
+<li><strong>写下已知</strong>：起始磁头位置、移动方向、请求序列</li>
+<li><strong>画出访问轨迹图</strong>（X 轴=时间次序，Y 轴=柱面号，连线）</li>
+<li><strong>逐段写距离</strong>：<code>|柱面i - 柱面i-1|</code></li>
+<li><strong>求和</strong> + 求平均（除以请求数）</li>
+<li><strong>给评注</strong>：是否公平、是否饥饿、是否磁臂粘性</li>
+</ol>
+<h3 id="_12"><a class="toclink" href="#_12">易混对比</a></h3>
+<table>
+<thead>
+<tr>
+<th>易混 A</th>
+<th>易混 B</th>
+<th>区别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中断方式</td>
+<td>DMA</td>
+<td>中断每字节中断；DMA 每块中断</td>
+</tr>
+<tr>
+<td>DMA</td>
+<td>通道</td>
+<td>DMA 一次传一块连续；通道执行通道程序，可多块多设备</td>
+</tr>
+<tr>
+<td>字节多路通道</td>
+<td>数组多路通道</td>
+<td>字节单位 vs 块单位；前者低速、后者高速</td>
+</tr>
+<tr>
+<td>数组选择通道</td>
+<td>数组多路通道</td>
+<td>一个分配型独占 vs 多个非分配型分时</td>
+</tr>
+<tr>
+<td>SCAN</td>
+<td>LOOK（电梯）</td>
+<td>SCAN 必到尽头；LOOK 到最远请求即可</td>
+</tr>
+<tr>
+<td>C-SCAN</td>
+<td>C-LOOK</td>
+<td>C-SCAN 必到尽头再回 0；C-LOOK 到最远请求即跳回最近请求</td>
+</tr>
+<tr>
+<td>独占设备</td>
+<td>共享设备</td>
+<td>看同时是否能给多进程用</td>
+</tr>
+<tr>
+<td>共享设备</td>
+<td>虚拟设备</td>
+<td>共享是物理上能并行（磁盘）；虚拟是逻辑上&rdquo;看起来&rdquo;并行（SPOOLing 后的打印机）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="io"><a class="toclink" href="#io">一图记住四种 I/O 控制方式的并行度</a></h3>
+<pre><code>程序 I/O：    [CPU 忙等等等等等等等等] [CPU 收]
+中断方式：    [CPU 启动][CPU 干别的....] [中断收]   循环每字节
+DMA：         [CPU 启动][CPU 干别的................] [一块中断]
+通道：        [CPU 启动通道][CPU 干别的........很久] [通道程序结束中断]
+</code></pre>
+<h3 id="_13"><a class="toclink" href="#_13">面试常见追问</a></h3>
+<ol>
+<li>
+<p><strong>DMA 和中断的本质区别？</strong>
+   答：粒度。中断每字节 CPU 介入；DMA 每块 CPU 介入；通道每通道程序 CPU 介入。</p>
+</li>
+<li>
+<p><strong>设备独立性靠什么实现？</strong>
+   答：逻辑设备表 LUT 把逻辑名映射到物理设备 + 设备无关软件层提供统一接口 + 设备文件抽象。</p>
+</li>
+<li>
+<p><strong>SPOOLing 为什么能把独占设备改造成共享？</strong>
+   答：用大容量磁盘（输入井 / 输出井）做缓冲池，每个进程的&rdquo;输出&rdquo;先写井（独立空间），再由守护进程串行喂给真设备——用户感知是并发，物理上是排队。</p>
+</li>
+<li>
+<p><strong>为什么寻道时间是磁盘性能瓶颈？</strong>
+   答：机械动作（毫秒级）比旋转（微秒到毫秒）和电子传输（微秒级）慢一个数量级。所以调度算法的核心目标是减少磁臂移动。</p>
+</li>
+</ol>
+<hr>
+<h2 id="_14"><a class="toclink" href="#_14">疑点 / 待澄清</a></h2>
+<ol>
+<li><strong>缓冲技术公式</strong>：原 PPT 在本章未列 <code>max(C,T)+M</code> 与 <code>max(C+M,T)</code> 公式（来源教材通用结论），但是 OS 教材必考——若考研 408 题目以另一种符号定义出现（如把 M 当输入到缓冲、T 当缓冲到用户区），需根据题面调整。</li>
+<li><strong>C-SCAN 在 PPT 给的 378 柱面</strong>：标准计算 ≈ 403（含回程）；PPT 用的是&rdquo;不计回程&rdquo;算法，记忆时按 PPT 走以匹配出题人。</li>
+<li><strong>slide-035-img-1 是主板照片</strong>，slide-058-img-1 是叠盘磁盘结构 — 视觉记忆已用，其余图（034 三张控制器示意 / 036 设备控制器结构 / 058-img-2 单盘面）未单独读但根据上下文已能复述。</li>
+</ol>
+  </article>
+</main>
+<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3><div class="toc">
+<ul>
+<li><a href="#0">0. 一句话定位整章</a></li>
+<li><a href="#51-io">5.1 I/O 系统概述</a><ul>
+<li><a href="#511-io">5.1.1 I/O 系统组成</a></li>
+<li><a href="#512">5.1.2 设备分类（必背）</a></li>
+<li><a href="#513-os">5.1.3 设备物理特性的差异（为什么需要 OS 来管）</a></li>
+<li><a href="#514">5.1.4 设备控制器（适配器）</a></li>
+</ul>
+</li>
+<li><a href="#52-io-cpu">5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）</a><ul>
+<li><a href="#_1">演进总览（必考填空）</a></li>
+<li><a href="#1-io-programmed-io">1) 程序 I/O 方式（轮询 / Programmed I/O）</a></li>
+<li><a href="#2">2) 中断方式</a></li>
+<li><a href="#3-dma-direct-memory-access">3) DMA 方式（Direct Memory Access）</a></li>
+<li><a href="#4">4) 通道方式</a></li>
+</ul>
+</li>
+<li><a href="#53-io">5.3 I/O 软件层次</a><ul>
+<li><a href="#531">5.3.1 设计目标（必考）</a></li>
+<li><a href="#532">5.3.2 四层架构（自下而上）</a></li>
+<li><a href="#533-io">5.3.3 一次完整 I/O 操作的步骤（面试题）</a></li>
+</ul>
+</li>
+<li><a href="#54">5.4 缓冲技术（速率匹配 / 解耦）</a><ul>
+<li><a href="#541">5.4.1 为什么需要缓冲</a></li>
+<li><a href="#542">5.4.2 四种缓冲方案</a></li>
+</ul>
+</li>
+<li><a href="#55">5.5 设备分配</a><ul>
+<li><a href="#551">5.5.1 设备分类（按可分配性）</a></li>
+<li><a href="#552-slide-086">5.5.2 独享方式（slide-086 整页主线）</a></li>
+<li><a href="#553-4">5.5.3 设备分配数据结构（4 张表）</a></li>
+<li><a href="#554">5.5.4 分配策略</a></li>
+<li><a href="#555-spooling">5.5.5 SPOOLing 技术（虚拟设备）</a></li>
+</ul>
+</li>
+<li><a href="#56">5.6 磁盘存储管理（重头戏 / 必考计算）</a><ul>
+<li><a href="#561">5.6.1 磁盘物理结构</a></li>
+<li><a href="#562">5.6.2 磁盘类型</a></li>
+<li><a href="#563">5.6.3 磁盘访问时间（必考公式）</a></li>
+<li><a href="#564">5.6.4 磁盘调度算法（必考计算题）</a></li>
+<li><a href="#565-ppt-532-533">5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）</a></li>
+<li><a href="#566">5.6.6 交替地址（多重副本）</a></li>
+</ul>
+</li>
+<li><a href="#57-ppt">5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）</a></li>
+<li><a href="#58">5.8 章末速查表</a><ul>
+<li><a href="#_9">必背概念对照</a></li>
+<li><a href="#_10">公式速查</a></li>
+<li><a href="#_11">磁盘调度题答题模板（考试 / 面试通用）</a></li>
+<li><a href="#_12">易混对比</a></li>
+<li><a href="#io">一图记住四种 I/O 控制方式的并行度</a></li>
+<li><a href="#_13">面试常见追问</a></li>
+</ul>
+</li>
+<li><a href="#_14">疑点 / 待澄清</a></li>
+</ul>
+</div>
+</aside></div>
+<a class="back-to-top" href="#main" aria-label="返回顶部"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#up"/></svg></a>
+<footer class="page-footer">
+  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+</footer>
+<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+  <div class="theme-picker-head">
+    <h3 class="theme-picker-title">选择主题</h3>
+    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
+  </div>
+  <div class="theme-picker-actions">
+    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
+    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  </div>
+  <div class="theme-picker-grid" data-theme-grid></div>
+</aside>
+<div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
+
+<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body></html>

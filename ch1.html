@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。">
+<meta name="color-scheme" content="light dark">
+<title>第 1 章 操作系统概论 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="themes/themes.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html" aria-label="返回首页">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
+      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
+      </button>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="chipbar" aria-label="章节快速导航">
+    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
+    <div class="chipbar-track">
+        <a class="chip chip-active" href="ch1.html">第 1 章 操作系统概论</a>
+        <a class="chip" href="ch2.html">第 2 章 处理器管理</a>
+        <a class="chip" href="ch3.html">第 3 章 同步互斥与死锁</a>
+        <a class="chip" href="ch4.html">第 4 章 存储管理</a>
+        <a class="chip" href="ch5.html">第 5 章 设备管理</a>
+        <a class="chip" href="review.html">总复习提纲</a>
+        <a class="chip" href="homework.html">作业明细</a>
+        <a class="chip" href="tutorial-1.html">教程笔记 · Part 1</a>
+        <a class="chip" href="tutorial-2.html">教程笔记 · Part 2</a>
+        <a class="chip" href="tutorial-3.html">教程笔记 · Part 3</a>
+    </div>
+  </nav>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="站点导航">
+  <a class="home-link" href="index.html">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
+    <span>课程地图</span>
+  </a>
+  <section class="nav-group" aria-labelledby="grp-chapter"><h3 id="grp-chapter" class="nav-group-title"><span class="nav-group-icon">📖</span>课程章节</h3><ul class="nav-list"><li><a class="nav-link nav-link-active" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><h3 id="grp-exam" class="nav-group-title"><span class="nav-group-icon">📝</span>考前材料</h3><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><h3 id="grp-tutorial" class="nav-group-title"><span class="nav-group-icon">📚</span>教程笔记</h3><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <div class="sidebar-footer">
+    <a class="ghost" href="themes-gallery.html">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      <span>主题画廊（71 套）</span>
+    </a>
+    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+  </div>
+</aside>
+<main class="main" id="main">
+  <article class="prose">
+    <header class="page-head">
+      <h1>第 1 章 操作系统概论</h1>
+      <p class="page-lede">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</p>
+    </header>
+    <blockquote>
+<p>来源: <code>index.md</code>（167 张幻灯片）+ 1 张保留图（CPU 利用率曲线）+ 4 张 mermaid 化结构图
+配图说明: 装饰漫画/重复结构图已删除；关键关系图（四特性、微内核分层、SMP、分时主机-终端）转 mermaid 直接渲染；CPU 利用率曲线（数值密集）保留为 jpg
+阅读对象: 华中科技大学电信本科生，零基础学 OS，目标过期末 + 求职面试
+写作风格: 先日常类比 → 再技术定义 → 关键考点用 ** 突出</p>
+</blockquote>
+<hr>
+<h2 id="11"><a class="toclink" href="#11">1.1 什么是操作系统</a></h2>
+<h3 id="_1"><a class="toclink" href="#_1">一句话定义</a></h3>
+<p><strong>操作系统 (Operating System, OS) 是管理系统资源、控制程序执行、改善人机界面、提供各种服务，并为用户方便有效地使用计算机提供良好运行环境的一种系统软件。</strong></p>
+<p>教材里另一种更短的说法：<strong>用以控制和管理系统资源、方便用户使用计算机的程序集合。</strong></p>
+<h3 id="_2"><a class="toclink" href="#_2">日常类比</a></h3>
+<p>把一台计算机想象成一座大型餐厅：
+- <strong>硬件</strong> = 厨房的灶台、冰箱、刀具（物理设备，本身不会自己工作）
+- <strong>应用软件</strong> = 各种菜品订单（QQ、微信、Chrome、游戏，都是&rdquo;想完成的事&rdquo;）
+- <strong>操作系统</strong> = 餐厅经理 + 服务员</p>
+<p>订单不会直接冲进后厨抢锅；它通过经理（OS）登记、排队、分配灶台。<strong>用户和应用从不直接碰硬件，必须经过 OS 这个中介。</strong></p>
+<h3 id="os"><a class="toclink" href="#os">OS 在计算机系统中的位置（重要分层图）</a></h3>
+<pre><code>            用户
+             ↓
+        应用软件     （Chrome / 微信 / Word ...）
+             ↓
+        操作系统     ← 三类接口对上：系统调用 / 命令 / GUI
+             ↓
+        计算机硬件   （CPU / 内存 / 键盘 / 鼠标 / 磁盘）
+</code></pre>
+<p>OS 是<strong>承上启下</strong>的双向桥梁：
+- <strong>对上</strong> 给应用提供统一接口，让应用不用关心硬件细节（比如不管你是固态盘还是机械盘，应用统一调 <code>write()</code>）
+- <strong>对下</strong> 统一管硬件资源，让多个应用能&rdquo;和平共享&rdquo;同一套硬件而不打架</p>
+<h3 id="os_1"><a class="toclink" href="#os_1">OS 的四种观察视角（考点：背熟这四个观点）</a></h3>
+<p>教材给出<strong>四个观察视角</strong>，考试常出&rdquo;OS 的作用 / 角色&rdquo;简答题：</p>
+<table>
+<thead>
+<tr>
+<th>观点</th>
+<th>角色</th>
+<th>强调什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>服务用户观点</strong></td>
+<td>用户接口 + 公共服务程序</td>
+<td>提供友善人机接口</td>
+</tr>
+<tr>
+<td><strong>进程交互观点</strong></td>
+<td>进程执行的控制者和协调者</td>
+<td>管并发、互斥、通信、死锁</td>
+</tr>
+<tr>
+<td><strong>系统实现观点</strong></td>
+<td>扩展机 / 虚拟机</td>
+<td>把裸机改造成更好用的机器</td>
+</tr>
+<tr>
+<td><strong>资源管理观点</strong></td>
+<td>资源管理者和控制者</td>
+<td>分配/回收/调度软硬件资源</td>
+</tr>
+</tbody>
+</table>
+<p>也可以记成两个角色：<strong>对内是&rdquo;管理员&rdquo;</strong>（管资源、调度进程），<strong>对外是&rdquo;服务员&rdquo;</strong>（给用户和应用提供接口）。</p>
+<hr>
+<h2 id="12-os"><a class="toclink" href="#12-os">1.2 OS 的功能与特性</a></h2>
+<h3 id="_3"><a class="toclink" href="#_3">五大功能（考点）</a></h3>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>主要内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>处理器管理</strong></td>
+<td>进程控制/同步/互斥/通信/死锁、线程管理、调度（高/中/低三级）</td>
+</tr>
+<tr>
+<td><strong>存储管理</strong></td>
+<td>内存分配、地址转换、存储保护、内存共享、存储扩充（虚存）</td>
+</tr>
+<tr>
+<td><strong>设备管理</strong></td>
+<td>中断处理、缓冲区管理、设备独立性、分配回收、设备驱动调度、虚拟设备</td>
+</tr>
+<tr>
+<td><strong>文件管理</strong></td>
+<td>文件的逻辑/物理组织、存取方法、目录管理、共享和安全、存储空间管理</td>
+</tr>
+<tr>
+<td><strong>网络与通信管理</strong></td>
+<td>网络资源管理、数据通信、应用服务、网络管理</td>
+</tr>
+</tbody>
+</table>
+<p>第 2~6 章会一一展开。</p>
+<h3 id="_4"><a class="toclink" href="#_4">四大特性（考点 + 关系图）</a></h3>
+<p>幻灯片 51 用一张图说明四特性的因果关系：<strong>并发是前提</strong>，由它派生出虚拟、共享、异步三性。</p>
+<pre class="mermaid">flowchart LR
+    C[并发<br/>concurrency]
+    V[虚拟<br/>一个物理资源 → 多个逻辑资源]
+    S[共享<br/>资源可被多进程访问]
+    A[异步<br/>事件发生时机随机]
+    C -->|前提| V
+    C -->|前提| S
+    C -->|前提| A
+</pre>
+<p>逐个看：</p>
+<p><strong>1. 并发性 (concurrency)</strong> — 两个或两个以上事件<strong>在同一时间间隔内</strong>发生</p>
+<ul>
+<li>类比：你左手写作业、右手吃饭、嘴里聊天，三件事在&rdquo;这 5 分钟内&rdquo;都在推进——这就是并发</li>
+<li><strong>并发 ≠ 并行</strong>：并行 (parallelism) 要求<strong>同一时刻</strong>真的同时发生（必须有多个物理 CPU）；并发只要求<strong>时间间隔重叠</strong>，单 CPU 通过时间片切换也能做到</li>
+<li><strong>关系</strong>：并行是并发的特例，并发是并行的扩展。&rdquo;并行的一定并发，并发的不一定并行&rdquo;</li>
+</ul>
+<p><strong>2. 共享性 (sharing)</strong> — 系统资源被多个并发进程使用</p>
+<ul>
+<li>两种共享方式：</li>
+<li><strong>透明共享</strong> (资源隔离 + 授权访问) — 如内存：每个进程感觉独占，互不干扰</li>
+<li><strong>显式共享</strong> (临界资源 + 独占访问) — 如打印机：同一时刻只能一个进程用</li>
+<li>衍生问题：分配策略、信息保护、存取控制（第 3、4、5 章细讲）</li>
+</ul>
+<p><strong>3. 虚拟性 (virtual)</strong> — 一个物理实体映射成若干逻辑实体（分时或分空间）</p>
+<ul>
+<li>CPU → 每个进程的&rdquo;虚处理器&rdquo;（感觉自己独占 CPU）</li>
+<li>内存 → &ldquo;虚拟存储器&rdquo;（每个进程独占自己的地址空间）</li>
+<li>屏幕 → 多窗口 / 虚拟终端</li>
+</ul>
+<p><strong>4. 异步性 (asynchrony)</strong> — 事件发生时机具有随机性</p>
+<ul>
+<li>进程何时执行、何时暂停、推进速度多快——都是随机的</li>
+<li>中断、异常、用户按键、I/O 完成，时机都不可预测</li>
+<li>OS 的核心任务：<strong>捕捉任何随机事件，正确处理任何事件序列</strong>，否则产生&rdquo;与时间有关的错误&rdquo;（time-related bug，难调试）</li>
+</ul>
+<hr>
+<h2 id="13"><a class="toclink" href="#13">1.3 资源管理三大技术：复用 / 虚拟 / 抽象</a></h2>
+<p>这是 1.1 节的<strong>精髓</strong>，几乎每年考。三种技术解决的问题不同：</p>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>解决什么问题</th>
+<th>一句话理解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>复用 (multiplexing)</strong></td>
+<td>物理资源数量不足</td>
+<td>让有限的资源被多个进程<strong>共享</strong>使用</td>
+</tr>
+<tr>
+<td><strong>虚拟 (virtualization)</strong></td>
+<td>数量不足 + 提高服务能力</td>
+<td>&ldquo;无中生有&rdquo;——物理 1 个变逻辑 N 个</td>
+</tr>
+<tr>
+<td><strong>抽象 (abstraction)</strong></td>
+<td>系统复杂、易用性差</td>
+<td>屏蔽细节，提供简单统一的接口</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1"><a class="toclink" href="#1">(1) 复用：分割共享一个物理资源</a></h3>
+<p>两种子方式：</p>
+<ul>
+<li><strong>空分复用</strong> — 把资源切成多个小单元，每个进程拿一块。例：内存被切成多个分区，A 进程占 100~200MB，B 占 200~400MB</li>
+<li><strong>时分复用</strong> — 资源整体作为分配单元，按时间段轮流占用：</li>
+<li><strong>时分独占式</strong>：进程拿到后用完一个完整周期才释放（如磁带——你要从头读到尾）</li>
+<li><strong>时分共享式</strong>：进程随时可能被剥夺（如 CPU、磁盘——典型的抢占式）</li>
+</ul>
+<p>类比：教室是空分复用（每个人占一张桌子）；公共篮球场是时分复用（你打半小时下场让别人）。</p>
+<h3 id="2"><a class="toclink" href="#2">(2) 虚拟：创造&rdquo;虚假但好用&rdquo;的资源</a></h3>
+<p>通过转化、模拟、整合，把物理上的 1 个资源变成逻辑上的 N 个（或反过来）。</p>
+<p><strong>虚拟 vs 复用 的区别</strong>：复用是切分<strong>已存在的物理资源</strong>；虚拟是<strong>虚构假想的同类资源</strong>。</p>
+<p>经典例子：
+- <strong>虚拟设备</strong> (SPOOLing 假脱机)
+- <strong>虚拟主存</strong> (你写程序感觉有 4GB 内存，实际可能只有 2GB 物理内存 + 用磁盘当替补)
+- <strong>虚拟文件</strong>
+- <strong>虚拟屏幕</strong> (终端复用 / 多窗口)
+- <strong>虚拟信道</strong></p>
+<h3 id="3"><a class="toclink" href="#3">(3) 抽象：屏蔽硬件细节，提供易用接口</a></h3>
+<p><strong>抽象不解决&rdquo;数量&rdquo;问题，解决&rdquo;易用性&rdquo;问题。</strong> 通过软件包装硬件，让用户/程序员不需要懂硬件就能用。</p>
+<p>类比：你按手机相机 App 的拍照按钮，背后涉及 CMOS 传感器、ISP 处理、文件存储——但你只看到一个&rdquo;咔嚓&rdquo;按钮。这就是抽象。</p>
+<p><strong>单级抽象例子</strong>：把磁盘 I/O 包装成一个 <code>write()</code> 系统调用：</p>
+<pre><code class="language-c">void write(char *block, int length, int device, int track, int sector) {
+    load(block, length, device);   // 装载数据
+    seek(device, track);            // 定位磁道
+    out(device, sector);            // 输出到扇区
+}
+</code></pre>
+<p>调用者不再关心磁道、扇区，只要给数据、长度、设备号。</p>
+<p><strong>多级抽象例子</strong>：<code>fprintf()</code> 调用 <code>write()</code>，再往下一层调底层 I/O——一层层往上，每层都更易用：</p>
+<pre><code class="language-c">int fprintf(fileID, &quot;%s&quot;, datum) {
+    ...
+    write(...);   // 内部还是依赖底层 write
+    ...
+}
+</code></pre>
+<h3 id="4"><a class="toclink" href="#4">(4) 三技术的组合使用</a></h3>
+<p>实际系统对一类资源往往<strong>多种技术叠加</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>用了哪些技术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>虚拟设备</td>
+<td>抽象 + 虚拟</td>
+</tr>
+<tr>
+<td>虚拟主存</td>
+<td>复用 + 虚拟</td>
+</tr>
+<tr>
+<td>虚拟屏幕</td>
+<td>抽象 + 虚拟</td>
+</tr>
+</tbody>
+</table>
+<h3 id="os_2"><a class="toclink" href="#os_2">OS 三大基础抽象（考点）</a></h3>
+<p>OS 提供<strong>三个最核心的抽象</strong>，分别对应三种硬件资源：</p>
+<table>
+<thead>
+<tr>
+<th>抽象</th>
+<th>对应硬件</th>
+<th>给用户的&rdquo;假象&rdquo;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>进程 (process)</strong></td>
+<td>处理器 (CPU)</td>
+<td>每个进程感觉自己独享一颗 CPU</td>
+</tr>
+<tr>
+<td><strong>虚存 (virtual memory)</strong></td>
+<td>内存 + 外存</td>
+<td>每个进程感觉自己独占一段连续的大地址空间，不受物理内存限制</td>
+</tr>
+<tr>
+<td><strong>文件 (file)</strong></td>
+<td>磁盘等设备</td>
+<td>用户感觉信息总能方便地存取，不用关心字节落在哪个物理块</td>
+</tr>
+</tbody>
+</table>
+<p><strong>包含关系</strong>（重要，幻灯片 40）：从外向内逐层封装</p>
+<pre><code>   文件抽象 ⊃ 虚存抽象 ⊃ 进程抽象
+   (设备)     (内存)     (CPU)
+</code></pre>
+<p>文件依赖虚存（要把数据加载到地址空间），虚存依赖进程（要在某个执行上下文里访问）。</p>
+<h3 id="os_3"><a class="toclink" href="#os_3">OS 虚拟机概念</a></h3>
+<p><strong>OS 虚拟机 = 裸机 + 操作系统</strong></p>
+<p>裸机只懂机器语言，几乎不可用。加上 OS 后，程序员看到一台&rdquo;功能更强、更易用、更安全&rdquo;的机器，包含：</p>
+<ul>
+<li>虚处理器</li>
+<li>虚拟内存</li>
+<li>虚拟辅存（磁盘抽象）</li>
+<li>虚拟设备</li>
+</ul>
+<p><strong>注意</strong>：这里说的&rdquo;OS 虚拟机&rdquo;是<strong>抽象层级上的虚拟机</strong>（OS 提供给应用的&rdquo;放大版机器&rdquo;），跟&rdquo;VMware/VirtualBox 那种虚拟机软件&rdquo;不是一回事——后者是 1.5 节会讲的&rdquo;虚拟机结构 OS&rdquo;。</p>
+<hr>
+<h2 id="14-os-os"><a class="toclink" href="#14-os-os">1.4 OS 接口：用户怎么和 OS 打交道</a></h2>
+<p>OS 提供<strong>两类接口</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>调用者</th>
+<th>实现形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>程序接口</strong></td>
+<td>运行中的程序</td>
+<td><strong>系统调用 (system call)</strong> 集合</td>
+</tr>
+<tr>
+<td><strong>操作接口</strong></td>
+<td>用户（人）</td>
+<td>操作命令、GUI、作业控制语言 (JCL)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="141"><a class="toclink" href="#141">1.4.1 程序接口与系统调用</a></h3>
+<p><strong>核心定义</strong>：内核提供一系列实现预定功能的<strong>内核函数</strong>，通过一组叫<strong>系统调用</strong>的接口暴露给用户程序。</p>
+<p><strong>关键性质</strong>：<strong>系统调用是应用程序获得 OS 服务的唯一途径</strong>。</p>
+<p>类比：去政府办事大厅，你不能自己跑进档案库翻文件（直接碰硬件），必须通过窗口（系统调用）让工作人员（内核）替你办——这样既保证安全（内核检查权限），又屏蔽细节（你不用懂内部流程）。</p>
+<p><strong>系统调用的作用</strong>：
+1. 内核基于权限和规则裁决资源访问 → 安全性
+2. 封装资源抽象、提供一致接口 → 编程方便、避免错误</p>
+<p><strong>系统调用 vs 函数调用</strong>（考点）：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>函数调用</th>
+<th>系统调用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>调用形式</td>
+<td>跳转语句含目标地址</td>
+<td>仅给&rdquo;功能号&rdquo;，按号查表</td>
+</tr>
+<tr>
+<td>代码位置</td>
+<td>调用者和被调用者在同一程序</td>
+<td>处理代码在 OS 中（用户程序之外）</td>
+</tr>
+<tr>
+<td>提供方</td>
+<td>编译系统提供，可变</td>
+<td>OS 提供，固定不变</td>
+</tr>
+<tr>
+<td>是否进核态</td>
+<td>否</td>
+<td><strong>是</strong>（要从用户态陷入核心态）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>系统调用处理流程</strong>（流程图记忆）：</p>
+<pre><code>用户程序
+  ↓ 陷入指令 (trap)
+[系统调用陷入机构]
+  ↓ 保护 CPU 现场
+  ↓ 取系统功能号
+  ↓ 查入口地址表 → 找到对应处理子程序
+[系统调用处理子程序]
+  ↓ 完成具体功能
+  ↓ 恢复现场
+  ↓ 返回用户程序
+</code></pre>
+<p><strong>参数传递三种方式</strong>：
+1. <strong>直接参数</strong>：访管/陷入指令自带参数
+2. <strong>寄存器传递</strong>：CPU 通用寄存器存参数
+3. <strong>专用堆栈区域</strong>：在主存开辟堆栈传参</p>
+<p><strong>API、库函数、系统调用的关系</strong>：
+- 应用程序很少直接用系统调用（太底层、复杂、跨平台困难）
+- 通常用<strong>库函数</strong>（如 C 标准库 <code>printf</code>），库函数内部再调系统调用
+- <strong>POSIX 标准</strong> 规定了系统调用接口，让应用可移植</p>
+<p>调用链：<code>应用 → 库函数 (API) → 系统调用 → 内核</code></p>
+<p><strong>系统调用分类</strong>（6 类）：进程/作业管理、文件操作、设备管理、主存管理、信息维护、进程通信。</p>
+<h3 id="142"><a class="toclink" href="#142">1.4.2 操作接口与系统程序</a></h3>
+<p><strong>作业控制方式</strong>两种：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>谁来控制</th>
+<th>实现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>联机作业控制</strong></td>
+<td>用户实时交互</td>
+<td>操作控制命令（命令行/批命令/图形化）</td>
+</tr>
+<tr>
+<td><strong>脱机作业控制</strong></td>
+<td>提前写好作业说明书</td>
+<td><strong>作业控制语言 JCL</strong> (Job Control Language)</td>
+</tr>
+</tbody>
+</table>
+<p>JCL 时代典型例子（IBM 370）——一段作业说明书像这样：</p>
+<pre><code>// HAROLD JOB,WILSON,MSGLEVEL=(2,0),PRTY=6,CLASS=B
+// COMP EXEC PGM=IEYFORT          ← 用 Fortran 编译器
+// SYSPRINT DD SYSOUT=A
+// SYSIN DD*
+   &lt;SOURCE PROGRAM CARDS&gt;          ← 源代码
+/*
+// GO EXEC PGM=FORTLINK            ← 链接
+...
+</code></pre>
+<p>整本&rdquo;作业说明书 + 源代码 + 数据&rdquo;打包提交，系统自动跑完。<strong>这是早期批处理的工作方式</strong>——后面 1.6 节会讲为什么需要这个。</p>
+<p><strong>命令解释程序</strong> (shell)：
+- 简单命令：shell 自带处理代码（如 <code>cd</code>、<code>echo</code>）
+- 复杂命令：调用独立的&rdquo;实用程序&rdquo;文件（如 <code>ls</code>、<code>grep</code>）
+- Linux shell 就是典型例子</p>
+<p><strong>系统程序 / 实用程序 (Utilities)</strong>：不属于内核，但必不可少。分类：
+- 文件管理（cp、rm、ls）
+- 状态信息（ps、top）
+- 程序设计语言支持（gcc、make）
+- 程序装入和执行支持（ld、strip）
+- 通信（ssh、wget）
+- 其它工具</p>
+<hr>
+<h2 id="15-os-vs"><a class="toclink" href="#15-os-vs">1.5 OS 结构：单内核 vs 微内核</a></h2>
+<h3 id="151-os"><a class="toclink" href="#151-os">1.5.1 四种 OS 结构</a></h3>
+<p>教材列出 4 种结构，但<strong>只有单内核和微内核是当今主流</strong>，前两种主要是历史：</p>
+<table>
+<thead>
+<tr>
+<th>结构</th>
+<th>特点</th>
+<th>典型代表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 单体（整体）式</td>
+<td>早期 OS，模块间随意调用</td>
+<td>早期 DOS</td>
+</tr>
+<tr>
+<td>2. 层次式</td>
+<td>严格分层，下层服务上层</td>
+<td>THE 系统</td>
+</tr>
+<tr>
+<td>3. 虚拟机结构</td>
+<td>在硬件上加 VM 层，每个 VM 跑独立 OS</td>
+<td>IBM CP/CMS, VMware</td>
+</tr>
+<tr>
+<td>4. <strong>微内核</strong></td>
+<td>内核只留最基本功能，其他放用户态</td>
+<td>Mach, QNX, HarmonyOS</td>
+</tr>
+</tbody>
+</table>
+<h3 id="152-kernel"><a class="toclink" href="#152-kernel">1.5.2 内核 (kernel) 概念</a></h3>
+<p><strong>定义</strong>：内核是作为可信软件，提供进程并发执行的基本功能和基本操作的一组程序模块。</p>
+<p><strong>性质</strong>：
+- 驻留<strong>内核空间</strong>，运行于<strong>核心态</strong>（特权模式）
+- 能访问全部硬件和主存
+- <strong>唯一能执行特权指令的程序</strong></p>
+<p><strong>内核功能（4 项，考点）</strong>：
+1. 中断处理
+2. 时钟管理
+3. 短程调度（短程 = 进程级调度）
+4. 原语管理（不可中断的操作）</p>
+<p><strong>内核属性（4 条）</strong>：
+- 由中断驱动
+- 不可抢占（执行时不会被其他进程打断，但可被中断打断）
+- 可在屏蔽中断状态下执行
+- 可使用特权指令</p>
+<p><strong>内核分两类</strong>：单内核（宏内核） vs 微内核——这是重点。</p>
+<h3 id="153-monolithic-kernel"><a class="toclink" href="#153-monolithic-kernel">1.5.3 单内核（宏内核, Monolithic Kernel）</a></h3>
+<p>把内核<strong>整体作为一个大进程</strong>，所有内核服务运行在<strong>同一个地址空间</strong>，互相<strong>直接调用函数</strong>。</p>
+<p>代表：<strong>Linux</strong>、传统 UNIX。</p>
+<p>涵盖范围广：进程管理、内存管理、文件系统、设备驱动、网络协议栈——<strong>全部塞进内核</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模块间直接调函数，<strong>效率高</strong></td>
+<td>模块间无隔离，一个 bug 可能拖垮整个内核</td>
+</tr>
+<tr>
+<td>实现简单</td>
+<td>稳定性差、可维护性差</td>
+</tr>
+</tbody>
+</table>
+<p>类比：一家什么都自己做的小餐馆，老板兼厨师兼服务员，效率高但一个人病了店就关了。</p>
+<h3 id="154-microkernel"><a class="toclink" href="#154-microkernel">1.5.4 微内核 (Microkernel)</a></h3>
+<p>内核<strong>只保留最基本功能</strong>：进程调度、内存管理、IPC（进程间通信）。</p>
+<p>文件系统、设备驱动、网络协议栈——<strong>全部移到用户态</strong>，作为&rdquo;服务进程&rdquo;运行。进程间通过<strong>消息传递 (IPC)</strong> 通信。</p>
+<p>代表：<strong>Windows NT、Mac OS X (Darwin/Mach)、HarmonyOS、Minix、QNX</strong>。</p>
+<p><strong>结构图</strong>（基于幻灯片 88 内嵌图）：</p>
+<pre class="mermaid">flowchart TB
+    subgraph user["用户态"]
+        U1[用户进程1]
+        U2[用户进程2]
+        FS[文件服务器]
+        PS[进程服务器]
+        MS[主存服务器]
+        DOTS[...]
+    end
+    subgraph kernel["核心态"]
+        MK[微内核 · 消息传递]
+    end
+    HW[计算机硬件]
+    user -.IPC.-> MK
+    MK --> HW
+    U1 -- 发消息 --> MK
+    MK -- 转发 --> FS
+</pre>
+<p><strong>调用流程</strong>：用户进程要读文件 → 通过微内核发消息给&rdquo;文件服务器&rdquo; → 文件服务器处理 → 经微内核回消息。</p>
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模块化高，一个服务挂了不影响其他</td>
+<td>大量消息传递，<strong>性能开销大</strong></td>
+</tr>
+<tr>
+<td>安全性高、易扩展、易维护</td>
+<td>实现复杂</td>
+</tr>
+</tbody>
+</table>
+<p>类比：一家分工明确的连锁餐厅，前台只做接待（微内核），厨房、库房、清洁各自独立（用户态服务进程）；某天清洁出问题，餐厅照常开业。但每件事要经多次电话传递，效率不如夫妻店。</p>
+<h3 id="155-os"><a class="toclink" href="#155-os">1.5.5 OS 运行模型</a></h3>
+<p>OS 程序怎么在 CPU 上跑？两种模型：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>嵌入应用进程中运行</strong></td>
+<td>OS 代码&rdquo;借&rdquo;应用进程的执行流（系统调用进核态后，仍是这个进程在跑 OS 代码）</td>
+</tr>
+<tr>
+<td><strong>作为独立进程运行</strong></td>
+<td>OS 服务作为单独进程存在（典型微内核做法）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="16-os"><a class="toclink" href="#16-os">1.6 OS 发展历史</a></h2>
+<h3 id="_5"><a class="toclink" href="#_5">时间线</a></h3>
+<table>
+<thead>
+<tr>
+<th>时代</th>
+<th>年代</th>
+<th>硬件</th>
+<th>工作方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一代</td>
+<td>1946-1955</td>
+<td>真空管</td>
+<td><strong>无 OS</strong>（手工操作）</td>
+</tr>
+<tr>
+<td>第二代</td>
+<td>1955-1965</td>
+<td>晶体管</td>
+<td><strong>执行系统</strong>（早期单道批处理）</td>
+</tr>
+<tr>
+<td>第三代</td>
+<td>1965-1980</td>
+<td>集成电路</td>
+<td><strong>多道程序设计</strong></td>
+</tr>
+<tr>
+<td>第四代</td>
+<td>1980-至今</td>
+<td>大规模 IC</td>
+<td><strong>分时系统</strong>，并行/分布/网络/智能化</td>
+</tr>
+</tbody>
+</table>
+<p>每个阶段诞生的关键技术，都为了解决上一阶段的痛点。</p>
+<h3 id="161-194650s"><a class="toclink" href="#161-194650s">1.6.1 人工操作阶段（电子管，1946~50s）</a></h3>
+<p><strong>工作方式</strong>：用户既是程序员又是操作员；用机器语言；通过纸带/卡片输入。</p>
+<p><strong>两个致命问题</strong>：
+- <strong>用户独占全机</strong> → 资源利用率极低
+- <strong>CPU 等用户</strong>（计算前后都要人工装卸纸带） → CPU 大量闲置</p>
+<p>幻灯片 107 的卡通画就是这个时代的写照：人坐在机器前，手工准备纸带、装入、取出。</p>
+<h3 id="162-50s-60s"><a class="toclink" href="#162-50s-60s">1.6.2 执行系统阶段（晶体管，50s 末~60s 中）</a></h3>
+<p><strong>关键技术：脱机输入输出</strong></p>
+<p>把作业用磁带打包成&rdquo;作业批&rdquo;，由<strong>监督程序 (Monitor)</strong> 自动一个个跑，省去人工干预。</p>
+<p><strong>优点</strong>：自动化批处理 → 改善 CPU 和 I/O 设备利用率，提高吞吐量。</p>
+<p><strong>缺点</strong>：
+- 磁带还是要人工装卸
+- 作业还得人工分类
+- 监督程序容易被用户程序破坏（那时还没有内存保护）</p>
+<h3 id="163-os-60s"><a class="toclink" href="#163-os-60s">1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）</a></h3>
+<p><strong>关键技术：通道 + 中断</strong></p>
+<ul>
+<li><strong>通道</strong>：独立于 CPU 的 I/O 控制器，启动后能自己干活，<strong>实现 CPU 与 I/O 并行</strong></li>
+<li><strong>中断</strong>：CPU 处理完外部事件后，能自动回到原位继续——<strong>让 CPU 能被随时&rdquo;打断切换&rdquo;</strong></li>
+</ul>
+<p>有了这两件神器，<strong>多道程序设计</strong>才成为可能（这是后续所有 OS 概念的源头）。</p>
+<h3 id="_6"><a class="toclink" href="#_6">多道程序设计（核心概念，考点中的考点）</a></h3>
+<p><strong>定义</strong>：允许多个程序<strong>同时进入主存</strong>并启动计算的方法。</p>
+<p><strong>起因</strong>：<strong>高速 CPU 与低速 I/O 设备不匹配</strong>——单道时 CPU 大量等 I/O，浪费严重。</p>
+<p><strong>根本目的</strong>：
+- 提高 CPU 利用率
+- 提高内存利用率
+- 提高 I/O 利用率
+- 增加系统吞吐量</p>
+<p><strong>多道运行特征（背诵）</strong>：
+- <strong>多道</strong>：内存中同时存放几个作业
+- <strong>宏观上并行</strong>：都处于运行状态，都没运行完
+- <strong>微观上串行</strong>：单 CPU 上各作业交替使用 CPU</p>
+<h4 id="vs"><a class="toclink" href="#vs">单道 vs 多道 对比（考点必出）</a></h4>
+<p>把时间轴画出来一目了然（fallback slide-113 描述）：</p>
+<p><strong>单道批处理（程序排队）</strong>：</p>
+<pre><code>时间轴 →
+A: [CPU][I/O][CPU][I/O][CPU]
+B:                              [CPU][I/O][CPU]
+C:                                                  [CPU][I/O]
+                                              ↑ 大量空白时间
+</code></pre>
+<p>A 等 I/O 时整机闲置，B、C 在排队。</p>
+<p><strong>多道批处理（程序并发）</strong>：</p>
+<pre><code>时间轴 →
+A: [CPU][I/O      ][CPU][I/O      ][CPU]
+B:      [CPU][I/O      ][CPU][I/O      ]
+C:           [CPU][I/O      ][CPU][I/O ]
+       CPU 几乎被填满
+</code></pre>
+<p>A 等 I/O 时 CPU 切去跑 B，B 等 I/O 时切去跑 C——<strong>CPU 永不闲置</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>单道批处理</th>
+<th>多道批处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主要解决</td>
+<td>CPU/内存/I/O <strong>利用率不足</strong></td>
+<td>I/O 时 CPU <strong>闲置</strong></td>
+</tr>
+<tr>
+<td>内存中作业数</td>
+<td>1</td>
+<td>多</td>
+</tr>
+<tr>
+<td>CPU 利用率</td>
+<td>低</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+<p><strong>记忆点</strong>：单道是&rdquo;程序排队&rdquo;；多道是&rdquo;程序并发&rdquo;。<strong>多道引入的关键就是&rdquo;当一个程序阻塞在 I/O 时，CPU 切到另一个就绪程序&rdquo;——这就是后续&rdquo;进程&rdquo;&ldquo;调度&rdquo;概念的源头</strong>。</p>
+<h4 id="cpu"><a class="toclink" href="#cpu">CPU 利用率公式（必背）</a></h4>
+<p>设单个程序等待 I/O 的时间占运行时间比例为 p，主存中有 n 道程序时：</p>
+<pre><code>所有程序都在等 I/O 的概率 = p^n
+CPU 利用率 = 1 − p^n
+</code></pre>
+<p><strong>典型例题</strong>（幻灯片 125）：
+- 计算机 1MB 主存，OS 占 200KB，剩余空间允许 4 道程序共享
+- 若 80% 时间用于 I/O 等待 (p=0.8)
+- CPU 利用率 = 1 − 0.8⁴ = <strong>59%</strong>
+- 加 1MB 内存后能跑 9 道：CPU 利用率 = 1 − 0.8⁹ = <strong>87%</strong>
+- 第二个 1MB 提升 47% 的 CPU 利用率——<strong>多道+扩内存性价比极高</strong></p>
+<p><img alt="CPU 利用率随道数变化曲线" src="content/images/ch1-cpu-utilization.jpg" loading="lazy"></p>
+<p>幻灯片 123 这张图是 CPU 利用率随道数变化的曲线：
+- 横轴：多道程序道数（1~10）
+- 纵轴：CPU 利用率（%）
+- 三条曲线分别是 20%、50%、80% I/O 等待——<strong>I/O 等待越多，越需要更多道才能拉满 CPU</strong></p>
+<p>读图要点：
+- p=20%（I/O 等待少）：n=2 已经接近饱和
+- p=50%：n=4~5 才能拉满
+- p=80%：n=10 都没拉满（曲线还在涨）</p>
+<h4 id="_7"><a class="toclink" href="#_7">多道程序设计的代价</a></h4>
+<blockquote>
+<p><strong>优点：提高 CPU/内存/I/O 利用率，提高吞吐量。
+缺点：单个作业的周转时间变长。</strong></p>
+</blockquote>
+<p>类比：一个人专心做一件事 30 分钟搞定；同时做三件事可能每件 1 小时——总产出多了，但每件慢了。</p>
+<h4 id="vs_1"><a class="toclink" href="#vs_1">多道程序 vs 多重处理</a></h4>
+<ul>
+<li><strong>多道程序设计</strong> = 软件层面的&rdquo;同时多个程序在主存&rdquo;，<strong>单 CPU 也能做</strong></li>
+<li><strong>多重处理 (multi-processor)</strong> = 硬件层面有<strong>多个物理 CPU</strong>，能真正并行</li>
+</ul>
+<p><strong>关系</strong>：多重处理系统<strong>必须采用</strong>多道程序设计才能发挥威力；但多道不需要多重处理。</p>
+<h4 id="3_1"><a class="toclink" href="#3_1">实现多道要解决的 3 个问题</a></h4>
+<ol>
+<li><strong>存储保护与程序浮动</strong>（多个程序在内存里不能互相破坏）</li>
+<li><strong>处理器的管理和调度</strong>（怎么决定哪个程序何时拿 CPU）</li>
+<li><strong>系统资源的管理和调度</strong></li>
+</ol>
+<p>——这三个问题的解决方案就构成了<strong>现代 OS 的雏形</strong>。</p>
+<h3 id="164-70s"><a class="toclink" href="#164-70s">1.6.4 分时系统（70s）</a></h3>
+<p><strong>为什么需要分时？</strong> 批处理两大痛点：
+- 用户交互性差（要等整个作业跑完才能调试）
+- 短作业周转慢（要排队等长作业跑完）</p>
+<p><strong>分时操作系统 (Time-Sharing OS)</strong>：用分时技术实现多道程序设计。一台主机连多个终端，<strong>每个用户感觉自己独占主机</strong>。</p>
+<p><strong>核心机制</strong>（fallback slide-134 描述的架构图）：</p>
+<pre class="mermaid">flowchart LR
+    Host[主机<br/>CPU + 内存]
+    T1[终端 1]
+    T2[终端 2]
+    T3[终端 3]
+    Tn[终端 n]
+    Host --- T1
+    Host --- T2
+    Host --- T3
+    Host --- Tn
+</pre>
+<p>CPU 时间片按 <code>1 → 2 → 3 → ... → n → 1</code> 轮转分给各终端，<strong>响应时间 ≈ 时间片 × 终端数</strong>。</p>
+<p>CPU 时间被切成<strong>时间片</strong>，按<strong>轮转方式</strong>分配给各终端。如果终端数不太多、时间片够小，每个用户都感觉独占——这就是&rdquo;分时&rdquo;的来历。</p>
+<p><strong>记忆公式</strong>：响应时间 ≈ 时间片 × 终端数</p>
+<p><strong>分时四大特征（考点必背）</strong>：
+- <strong>同时性</strong> — 多用户同时使用
+- <strong>独立性</strong> — 每个用户感觉独占
+- <strong>及时性</strong> — 响应迅速（秒级以内）
+- <strong>交互性</strong> — 用户能边算边看边改</p>
+<p><strong>代表系统</strong>：CTSS、TSS、Multics、<strong>UNIX</strong>。</p>
+<h4 id="vs_2"><a class="toclink" href="#vs_2">分时 vs 批处理（考点对比）</a></h4>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>批处理</th>
+<th>分时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>目标</strong></td>
+<td>高吞吐量</td>
+<td>快响应</td>
+</tr>
+<tr>
+<td><strong>作业性质</strong></td>
+<td>长作业、计算密集</td>
+<td>短作业、交互密集</td>
+</tr>
+<tr>
+<td><strong>资源使用率</strong></td>
+<td>高</td>
+<td>略低</td>
+</tr>
+<tr>
+<td><strong>作业控制方式</strong></td>
+<td>JCL 提前写好</td>
+<td>用户实时交互</td>
+</tr>
+</tbody>
+</table>
+<h3 id="165"><a class="toclink" href="#165">1.6.5 实时系统</a></h3>
+<p><strong>实时操作系统 (RTOS)</strong>：对外部事件<strong>在规定时间内</strong>完成响应。</p>
+<p>类比：分时系统像饭馆——慢点没关系；实时系统像 ICU 监护仪——超时一秒可能出人命。</p>
+<p><strong>三种典型 RTOS</strong>：
+- 过程控制系统（生产线、自动驾驶）
+- 信息查询系统（情报检索）
+- 事务处理系统（银行业务）</p>
+<p><strong>处理流程</strong>：数据采集 → 加工处理 → 操作控制 → 反馈处理。</p>
+<h3 id="166"><a class="toclink" href="#166">1.6.6 进一步发展：网络/分布式/并行/嵌入式/云</a></h3>
+<p><strong>网络操作系统</strong>：在 OS 基础上加网络通信和服务功能（数据传输、资源管理、文件共享、网络管理、互操作）。</p>
+<p><strong>并行操作系统</strong> (multi-processor)：1975 前后出现。配多个 CPU，分两类：
+- <strong>SMP（对称多处理）</strong> — 每个 CPU 跑相同 OS，地位平等。<strong>现代多核 CPU 都是 SMP</strong>
+- <strong>AMP（非对称多处理）</strong> — 主从架构，主 CPU 调度从 CPU</p>
+<p>幻灯片 145 的图：3 个 CPU 各自带 registers + cache，共享同一块 memory——<strong>这就是 SMP 的标准结构</strong>。</p>
+<pre class="mermaid">flowchart TB
+    subgraph CPU0
+        R0[registers]
+        C0[cache]
+        R0 --- C0
+    end
+    subgraph CPU1
+        R1[registers]
+        C1[cache]
+        R1 --- C1
+    end
+    subgraph CPU2
+        R2[registers]
+        C2[cache]
+        R2 --- C2
+    end
+    MEM[(共享 memory)]
+    C0 --- MEM
+    C1 --- MEM
+    C2 --- MEM
+</pre>
+<p><strong>分布式操作系统</strong>：松散耦合系统。每台机器有自己的本地存储，通过网络通信。</p>
+<p><strong>分布式 OS vs 网络 OS（考点对比）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>分布式 OS</th>
+<th>网络 OS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>耦合程度</strong></td>
+<td>紧耦合，OS 同质</td>
+<td>松耦合，可异构（协议同质）</td>
+</tr>
+<tr>
+<td><strong>并行性</strong></td>
+<td>进程可在各机间迁移</td>
+<td>各机进程独立</td>
+</tr>
+<tr>
+<td><strong>透明性</strong></td>
+<td>资源调度对用户透明</td>
+<td>要明确指定资源在哪台机</td>
+</tr>
+<tr>
+<td><strong>健壮性</strong></td>
+<td>要求强容错（运行时重构）</td>
+<td>较弱</td>
+</tr>
+</tbody>
+</table>
+<p><strong>嵌入式操作系统</strong>：运行在嵌入式设备上，受<strong>大小、内存、能源</strong>严格限制。代表：TinyOS（伯克利智能传感器）、智能卡 OS、各种 IoT OS。</p>
+<p><strong>普适计算</strong>：M. Weiser 提出，让计算融入生活空间，由数字化设备 + 传感器 + I/O + 无线网络组成的 Smart Space。</p>
+<p><strong>云计算 (Cloud Computing)</strong>：Google 提出，是并行计算+分布式计算+网格计算的商业实现。
+- 狭义：IT 基础设施按需获取
+- 广义：服务按需获取
+- 核心：把处理能力集中到&rdquo;云&rdquo;，终端简化为输入输出设备</p>
+<p><strong>框计算 (Box Computing)</strong>：李彦宏 2009 年提出，强调前端用户需求；与云计算的&rdquo;后台资源整合&rdquo;是两端的设计哲学。</p>
+<hr>
+<h2 id="17-os"><a class="toclink" href="#17-os">1.7 常见 OS 类型一览</a></h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>代表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>桌面 OS</strong></td>
+<td>MS-DOS, Windows 3.x/95/XP/Vista/7/8/10/11, Mac OS, Linux</td>
+</tr>
+<tr>
+<td><strong>服务器 OS</strong></td>
+<td>Windows NT/200X/Server, UNIX, Novell Netware, OS/2, Linux</td>
+</tr>
+<tr>
+<td><strong>嵌入式 OS</strong></td>
+<td>Windows CE/Mobile, PalmOS, uCLinux, uC/OS-II, VxWorks, pSOS, QNX, Symbian, <strong>Android</strong></td>
+</tr>
+<tr>
+<td><strong>WebOS</strong></td>
+<td>Google Chrome OS（基于 Linux 内核）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="18"><a class="toclink" href="#18">1.8 章末考试要点速查</a></h2>
+<h3 id="_8"><a class="toclink" href="#_8">必背名词解释</a></h3>
+<ol>
+<li><strong>操作系统</strong>：管理资源、控制程序、改善人机界面、提供服务的系统软件</li>
+<li><strong>多道程序设计</strong>：允许多个程序同时进入主存并启动计算的方法</li>
+<li><strong>并发 vs 并行</strong>：同时间间隔 vs 同时刻；并行是并发的特例</li>
+<li><strong>系统调用</strong>：应用程序获得 OS 服务的<strong>唯一</strong>途径，用户态陷入核心态的接口</li>
+<li><strong>内核</strong>：运行于核心态、能执行特权指令的可信软件模块</li>
+<li><strong>单内核 vs 微内核</strong>：所有服务在内核 vs 仅基本服务在内核+其余在用户态</li>
+<li><strong>分时系统</strong>：通过时间片轮转让多用户共享主机的 OS</li>
+<li><strong>实时系统</strong>：在规定时间内完成响应的 OS</li>
+<li><strong>OS 虚拟机</strong>：裸机 + OS，对应用呈现的&rdquo;放大版&rdquo;机器</li>
+</ol>
+<h3 id="_9"><a class="toclink" href="#_9">必背概念辨析</a></h3>
+<table>
+<thead>
+<tr>
+<th>易混对</th>
+<th>区分要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>并发 vs 并行</td>
+<td>时间间隔 vs 时刻</td>
+</tr>
+<tr>
+<td>复用 vs 虚拟</td>
+<td>切分已有 vs 虚构同类</td>
+</tr>
+<tr>
+<td>抽象 vs 虚拟</td>
+<td>解决易用性 vs 解决数量</td>
+</tr>
+<tr>
+<td>系统调用 vs 函数调用</td>
+<td>跨态切换 vs 同态调用；功能号 vs 直接地址</td>
+</tr>
+<tr>
+<td>单内核 vs 微内核</td>
+<td>单地址空间 vs 多服务进程 + IPC</td>
+</tr>
+<tr>
+<td>多道程序 vs 多重处理</td>
+<td>软件层多程序 vs 硬件层多 CPU</td>
+</tr>
+<tr>
+<td>分时 vs 批处理</td>
+<td>响应快 vs 吞吐高</td>
+</tr>
+<tr>
+<td>分布式 OS vs 网络 OS</td>
+<td>紧耦合同质 vs 松耦合异构</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10"><a class="toclink" href="#_10">必背计算</a></h3>
+<p><strong>CPU 利用率公式</strong>：1 − pⁿ（p=I/O 等待比例，n=多道道数）</p>
+<p>会算：给 p、n 求利用率；给目标利用率求 n。</p>
+<h3 id="_11"><a class="toclink" href="#_11">必背关系图</a></h3>
+<ol>
+<li><strong>四特性关系</strong>：并发是前提，派生虚拟、共享、异步</li>
+<li><strong>三抽象包含关系</strong>：文件 ⊃ 虚存 ⊃ 进程</li>
+<li><strong>OS 分层位置</strong>：用户 → 应用 → <strong>OS</strong> → 硬件</li>
+<li><strong>系统调用流程</strong>：陷入指令 → 保护现场 → 查表 → 处理 → 恢复现场 → 返回</li>
+</ol>
+<h3 id="_12"><a class="toclink" href="#_12">高频简答题套路</a></h3>
+<ul>
+<li>&ldquo;OS 的定义和作用？&rdquo; → 一句话定义 + 四观点（服务用户/进程交互/系统实现/资源管理）</li>
+<li>&ldquo;OS 五大功能？&rdquo; → 处理器/存储/设备/文件/网络</li>
+<li>&ldquo;OS 四大特性？&rdquo; → 并发（前提）、虚拟、共享、异步</li>
+<li>&ldquo;为什么需要多道程序设计？&rdquo; → CPU/I/O 速度不匹配 → 提高利用率</li>
+<li>&ldquo;单道 vs 多道？&rdquo; → 排队 vs 并发；解决利用率不足 vs CPU 闲置</li>
+<li>&ldquo;系统调用与函数调用区别？&rdquo; → 三点（形式/位置/提供方）+ 跨态</li>
+<li>&ldquo;单内核与微内核的优缺点？&rdquo; → 效率 vs 稳定性</li>
+<li>&ldquo;分时与批处理区别？&rdquo; → 4 维度（目标/作业性质/利用率/控制方式）</li>
+<li>&ldquo;分布式 OS vs 网络 OS？&rdquo; → 4 维度（耦合/并行/透明/健壮）</li>
+</ul>
+<hr>
+<h2 id="_13"><a class="toclink" href="#_13">附录：对应原始幻灯片范围映射表</a></h2>
+<table>
+<thead>
+<tr>
+<th>本笔记小节</th>
+<th>原始幻灯片范围</th>
+<th>配图处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.1 什么是 OS</td>
+<td>slide 1~27</td>
+<td>OS 分层位置已 ASCII 化</td>
+</tr>
+<tr>
+<td>1.2 功能与特性</td>
+<td>slide 43~59</td>
+<td>四特性关系 → mermaid（在 1.2 节）</td>
+</tr>
+<tr>
+<td>1.3 三大资源管理技术</td>
+<td>slide 28~42</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1.4 OS 接口</td>
+<td>slide 60~81</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1.5 OS 结构</td>
+<td>slide 82~102</td>
+<td>微内核分层 → mermaid（在 1.5.4 节）</td>
+</tr>
+<tr>
+<td>1.6 OS 发展历史</td>
+<td>slide 103~166</td>
+<td>CPU 利用率曲线保留（slide-123 jpg）；分时主机-终端、SMP 三 CPU 共享内存 → mermaid</td>
+</tr>
+<tr>
+<td>1.7 常见 OS 类型</td>
+<td>slide 167</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1.8 考试要点速查</td>
+<td>（提炼自全章）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>图片清理说明</strong>（5/15）：原 53 张内嵌图 + 5 张 fallback 中，删除 57 张装饰漫画/低密度图（slide-114 卡片处理 23 张子图全是 &lt; 500B 占位符；slide-107 人工操作卡通；slide-141 网络装饰；slide-151~166 普适计算/云计算装饰图集；fallback slide-012/017/113/134/141 已主线 ASCII 化或 mermaid 化）；保留 1 张（slide-123 CPU 利用率曲线，数值密集难 mermaid 化）；4 张关键结构图转 mermaid（slide-051 四特性关系、slide-088 微内核分层、slide-145 SMP、fallback slide-134 分时主机-终端）。目录体积 6.1M → 180K。</p>
+</blockquote>
+<hr>
+<h2 id="_14"><a class="toclink" href="#_14">写作中遗留的疑问点</a></h2>
+<ol>
+<li><strong>OS 虚拟机 vs 虚拟机结构 OS</strong> —— 这是两个不同概念，但教材都用&rdquo;虚拟机&rdquo;一词，初学时易混。本笔记在 1.3 末尾做了提示，但课程后续是否会更明确区分需要留意。</li>
+<li><strong>图 slide-051</strong>（四特性关系图）我读出来是&rdquo;并发→虚拟/共享/异步&rdquo;的&rdquo;前提&rdquo;关系；但教材文字（幻灯片 50）只是平铺四特性。这种因果归纳是图作者的整理，考试若问&rdquo;四特性的关系&rdquo;建议按图回答，以&rdquo;并发是前提&rdquo;破题。</li>
+<li><strong>slide-019</strong> 的复杂研究方法图（系统/用户角度 + 静态/动态观察方法 + 4 观点）信息密度高，本笔记简化为&rdquo;四观点&rdquo;。如果考试出&rdquo;如何研究 OS&rdquo;这类宏观题，再回查原图。</li>
+</ol>
+  </article>
+</main>
+<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3><div class="toc">
+<ul>
+<li><a href="#11">1.1 什么是操作系统</a><ul>
+<li><a href="#_1">一句话定义</a></li>
+<li><a href="#_2">日常类比</a></li>
+<li><a href="#os">OS 在计算机系统中的位置（重要分层图）</a></li>
+<li><a href="#os_1">OS 的四种观察视角（考点：背熟这四个观点）</a></li>
+</ul>
+</li>
+<li><a href="#12-os">1.2 OS 的功能与特性</a><ul>
+<li><a href="#_3">五大功能（考点）</a></li>
+<li><a href="#_4">四大特性（考点 + 关系图）</a></li>
+</ul>
+</li>
+<li><a href="#13">1.3 资源管理三大技术：复用 / 虚拟 / 抽象</a><ul>
+<li><a href="#1">(1) 复用：分割共享一个物理资源</a></li>
+<li><a href="#2">(2) 虚拟：创造&rdquo;虚假但好用&rdquo;的资源</a></li>
+<li><a href="#3">(3) 抽象：屏蔽硬件细节，提供易用接口</a></li>
+<li><a href="#4">(4) 三技术的组合使用</a></li>
+<li><a href="#os_2">OS 三大基础抽象（考点）</a></li>
+<li><a href="#os_3">OS 虚拟机概念</a></li>
+</ul>
+</li>
+<li><a href="#14-os-os">1.4 OS 接口：用户怎么和 OS 打交道</a><ul>
+<li><a href="#141">1.4.1 程序接口与系统调用</a></li>
+<li><a href="#142">1.4.2 操作接口与系统程序</a></li>
+</ul>
+</li>
+<li><a href="#15-os-vs">1.5 OS 结构：单内核 vs 微内核</a><ul>
+<li><a href="#151-os">1.5.1 四种 OS 结构</a></li>
+<li><a href="#152-kernel">1.5.2 内核 (kernel) 概念</a></li>
+<li><a href="#153-monolithic-kernel">1.5.3 单内核（宏内核, Monolithic Kernel）</a></li>
+<li><a href="#154-microkernel">1.5.4 微内核 (Microkernel)</a></li>
+<li><a href="#155-os">1.5.5 OS 运行模型</a></li>
+</ul>
+</li>
+<li><a href="#16-os">1.6 OS 发展历史</a><ul>
+<li><a href="#_5">时间线</a></li>
+<li><a href="#161-194650s">1.6.1 人工操作阶段（电子管，1946~50s）</a></li>
+<li><a href="#162-50s-60s">1.6.2 执行系统阶段（晶体管，50s 末~60s 中）</a></li>
+<li><a href="#163-os-60s">1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）</a></li>
+<li><a href="#_6">多道程序设计（核心概念，考点中的考点）</a></li>
+<li><a href="#164-70s">1.6.4 分时系统（70s）</a></li>
+<li><a href="#165">1.6.5 实时系统</a></li>
+<li><a href="#166">1.6.6 进一步发展：网络/分布式/并行/嵌入式/云</a></li>
+</ul>
+</li>
+<li><a href="#17-os">1.7 常见 OS 类型一览</a></li>
+<li><a href="#18">1.8 章末考试要点速查</a><ul>
+<li><a href="#_8">必背名词解释</a></li>
+<li><a href="#_9">必背概念辨析</a></li>
+<li><a href="#_10">必背计算</a></li>
+<li><a href="#_11">必背关系图</a></li>
+<li><a href="#_12">高频简答题套路</a></li>
+</ul>
+</li>
+<li><a href="#_13">附录：对应原始幻灯片范围映射表</a></li>
+<li><a href="#_14">写作中遗留的疑问点</a></li>
+</ul>
+</div>
+</aside></div>
+<a class="back-to-top" href="#main" aria-label="返回顶部"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#up"/></svg></a>
+<footer class="page-footer">
+  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+</footer>
+<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+  <div class="theme-picker-head">
+    <h3 class="theme-picker-title">选择主题</h3>
+    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
+  </div>
+  <div class="theme-picker-actions">
+    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
+    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  </div>
+  <div class="theme-picker-grid" data-theme-grid></div>
+</aside>
+<div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
+
+<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body></html>

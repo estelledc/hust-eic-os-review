@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="20 页考前总图，按章节列考点。">
+<meta name="color-scheme" content="light dark">
+<title>总复习提纲 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="themes/themes.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html" aria-label="返回首页">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
+      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
+      </button>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="chipbar" aria-label="章节快速导航">
+    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
+    <div class="chipbar-track">
+        <a class="chip" href="ch1.html">第 1 章 操作系统概论</a>
+        <a class="chip" href="ch2.html">第 2 章 处理器管理</a>
+        <a class="chip" href="ch3.html">第 3 章 同步互斥与死锁</a>
+        <a class="chip" href="ch4.html">第 4 章 存储管理</a>
+        <a class="chip" href="ch5.html">第 5 章 设备管理</a>
+        <a class="chip chip-active" href="review.html">总复习提纲</a>
+        <a class="chip" href="homework.html">作业明细</a>
+        <a class="chip" href="tutorial-1.html">教程笔记 · Part 1</a>
+        <a class="chip" href="tutorial-2.html">教程笔记 · Part 2</a>
+        <a class="chip" href="tutorial-3.html">教程笔记 · Part 3</a>
+    </div>
+  </nav>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="站点导航">
+  <a class="home-link" href="index.html">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
+    <span>课程地图</span>
+  </a>
+  <section class="nav-group" aria-labelledby="grp-chapter"><h3 id="grp-chapter" class="nav-group-title"><span class="nav-group-icon">📖</span>课程章节</h3><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><h3 id="grp-exam" class="nav-group-title"><span class="nav-group-icon">📝</span>考前材料</h3><ul class="nav-list"><li><a class="nav-link nav-link-active" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><h3 id="grp-tutorial" class="nav-group-title"><span class="nav-group-icon">📚</span>教程笔记</h3><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <div class="sidebar-footer">
+    <a class="ghost" href="themes-gallery.html">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      <span>主题画廊（71 套）</span>
+    </a>
+    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+  </div>
+</aside>
+<main class="main" id="main">
+  <article class="prose">
+    <header class="page-head">
+      <h1>总复习提纲</h1>
+      <p class="page-lede">20 页考前总图，按章节列考点。</p>
+    </header>
+    <blockquote>
+<p>20 页文字层完整提取（全文已直接整理在本页），第 20 页 I/O 层次图已 Read 转成 mermaid 内嵌（见本文末），原图已清理。
+这是<strong>考前总图</strong>，按章节列考点条目，配合各章 <code>notes.md</code> 一起看。</p>
+</blockquote>
+<hr>
+<h2 id="1"><a class="toclink" href="#1">第 1 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>第一章 OS概述
+1、OS的定义与作用
+2、OS的特征和功能
+3、操作系统管理资源的主要技术
+  复用、虚拟、抽象
+4、用户接口
+5、OS的内核结构
+   单内核、微内核
+6、OS的种类，
+7、OS的发展简史，未来趋势
+</code></pre>
+<hr>
+<h2 id="2"><a class="toclink" href="#2">第 2 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>操作系统接口
+n   联机命令接口
+    n 联机命令
+    n 终端处理程序
+
+    n 命令解释程序
+
+n   程序接口
+    n 系统调用与一般过程调用的区别
+    n 中断与陷入
+
+n   图形用户接口
+</code></pre>
+<hr>
+<h2 id="3"><a class="toclink" href="#3">第 3 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>计算机系统层次结构
+用户1    用户2     用户3     用户4          用户n
+                              …
+
+
+财务系统   航空订票   上网浏览     电子商务   …   科学计算
+              (应用软件)
+  编译程序 汇编程序     数据库    …     实用程序
+              (支撑软件)
+
+               操作系统
+              (系统软件)
+
+              计算机硬件
+</code></pre>
+<hr>
+<h2 id="4"><a class="toclink" href="#4">第 4 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>操作系统定义
+           多道程序设计
+                                OS的作用
+           进程基本概念
+                                 OS特征
+           进程同步互斥
+                              OS的主要功能
+           进程间通信
+                                 OS分类
+            进程调度
+                               OS结构设计
+             死锁
+
+
+
+              处理机管理         基本概念
+   I/O系统
+I/O控制方式
+  缓冲技术                                      用户接口
+I/O软件组成                操作      作业管理        作业基本概念
+            设备管理                         批处理系统作业管理
+ 设备独立性                 系统      用户接口
+  设备分配                                    分时系统作业管理
+  驱动程序
+ 虚设备技术
+  通道技术
+  磁盘调度          文件管理        存储管理
+
+
+            文件基本概念            程序的装入与链接
+           文件的逻辑结构             存储管理任务
+           文件的物理结构             动态分区分配
+             文件目录               交换技术
+            外存空间管理             页式存储管理
+           文件共享与保护             段式存储管理
+            数据一致性               段页式
+                               虚拟存储技术
+</code></pre>
+<hr>
+<h2 id="5"><a class="toclink" href="#5">第 5 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>并发                   处理机管理
+                 共享                   存储管理
+                 虚拟                   设备管理
+                 异步                   文件管理
+                                      用户接口
+    单内核                                                虚拟
+    微内核                                                复用
+                                                       抽象
+                       OS特征         OS功能
+
+          OS内核结构                           OS管理手段
+
+                              操作系
+          OS分类                统基本
+                              概念             硬件运行环境
+
+ 批处理操作系统
+  分时系统
+ 实时操作系统            操作系统定义           操作系统设计
+                                                      CPU状态
+个人计算机操作系统                                             系统堆栈
+ 网络操作系统                                               中断技术
+ 分布式操作系统              有效管理                             时钟
+                      合理调度          操作系统设计目标
+                                                       通道
+                      使用方便          操作系统结构设计
+                                                      地址映射
+  吞吐量
+                                                      存储保护
+  时间片
+  虚机器
+</code></pre>
+<hr>
+<h2 id="6"><a class="toclink" href="#6">第 6 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>第二章 处理器管理与调度
+1、处理器的结构与组成
+  ALU MCU 寄存器 指令集
+2、处理机调度的基本概念和种类
+ 长期调度、中期调度、短期调度
+3、选择调度算法的准则，周转时间，带权周转
+ 时间，响应时间
+4、常见调度算法，抢占，响应比
+  FIFO, 短作业优先、最高响应比、时间片轮
+转、优先级、多级反馈队列
+</code></pre>
+<hr>
+<h2 id="7"><a class="toclink" href="#7">第 7 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>第二章 进程的基本概念
+1、进程概念 ,和程序的区别与联系
+2、进程的基本状态及状态转换的原因
+3、进程的组成结构，PCB的作用
+4、进程控制的原语操作
+5、线程的概念，与进程的区别
+6、线程的实现方式
+  ULT KLT
+</code></pre>
+<hr>
+<h2 id="8"><a class="toclink" href="#8">第 8 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>第三章 进程同步、死锁
+1、并发进程的表示：有向图、伪码。
+2、并发进程常见错误及其原因
+(1)结果不唯一、永远等待
+(2)对于共享资源的使用过程不封闭
+3、进程互斥、临界区原则
+4、信号量及P/V操作，物理意义、解决同步互斥的方法
+5、几种经典同步问题及其变型
+   n 同步约束条件的分析，信号量的初值的设定
+
+   n 单缓冲区的一个生产者一个消费者同步问题
+
+   n 多缓冲区的多个生产者多个消费者同步问题
+
+   n 多个生产者多个消费者多个缓冲区的同步问题
+
+   n 阅读者、写入者问题
+
+   n 哲学家就餐问题
+</code></pre>
+<hr>
+<h2 id="9"><a class="toclink" href="#9">第 9 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>6、管程的概念与应用
+7、进程间通信的原理和实现方法
+  管道、 信箱、缓冲、中断
+</code></pre>
+<hr>
+<h2 id="10"><a class="toclink" href="#10">第 10 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>死锁
+
+1、死锁的基本概念
+2、产生死锁的根本原因
+  资源不足、 进程推进顺序不当
+3、处理死锁的基本方法
+4、死锁产生的原因，四个必要条件
+ （1）静态资源分配法
+ （2）有序资源使用法
+5、死锁的预防，进程资源图
+6、利用银行家算法避免死锁
+7、死锁的检测与解除
+</code></pre>
+<hr>
+<h2 id="11"><a class="toclink" href="#11">第 11 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>进程
+          顺序环境                        进程状态及转换
+          并发环境                         进程控制块
+        与时间有关的错误                       系统并发度
+         不可再现性                         进程控制
+                                       进程特性
+                                       可重入程序
+
+
+
+            多道程序设计                    进程基本概念
+
+
+
+   进程同步互斥                      进程               死锁
+                               管理
+
+
+                进程间通信               进程调度
+
+   进程同步
+                                调度算法选择原则     死锁的有关结论
+   进程互斥          共享内存             算法：       产生死锁的必要条件
+    临界区          消息缓冲             先进先出        死锁预防
+  进程同步机制      Send/Receive原语     时间片轮转        死锁避免
+    信号量          管道通信            基于优先数       死锁检测解除
+   P、V操作            信箱           高响应比优先       资源分配图
+生产者与消费者问题
+  读者写者问题                          抢占式
+ 哲学家进餐问题                         实时调度技术
+</code></pre>
+<hr>
+<h2 id="12"><a class="toclink" href="#12">第 12 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>第四章 存储管理
+n 重定位的基本概念：为什么要引入
+n 如何提高内存利用率：离散分配、对换机制、动态链
+
+  接、虚拟存储器、存储器共享
+n 动态分区分配方式：分配、回收算法
+
+n 基本分页存储管理方式：为什么引入；地址变换机构
+  和过程（含具有快表的情况）
+n 基本分段存储管理方式：为什么引入；地址变换机构
+  和过程（含具有快表的情况）；信息的共享和保护
+n 虚拟存储器的基本概念：为什么要引入；特征；实现
+  虚拟存储的关键技术
+n 请求分页系统的基本原理：页表机制；地址变换过程；
+  页面置换算法
+</code></pre>
+<hr>
+<h2 id="13"><a class="toclink" href="#13">第 13 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>方法 单一       分区式          页式          段式       段页式
+功能  连续区      固定      可变 静态     动态
+适用环   单道     多道           多道          多道       多道
+境
+虚拟空   一维     一维           一维          二维       二维
+间
+重定位   静态     静态      动态   动态          动态       动态
+方式
+分配方   静态连续   静态 动态连续区     静态或动态页      动态段为单位   动态分配页为
+式     区                   为单位非连续      非连续      单位非连续
+
+释放    执行完后   执行完后全 分区     执行   淘汰与执   淘汰与执行完   淘汰与执行
+                          完后   行完后释
+      全部释放   部释放   释放     释放   放
+                                      后释放      完后释放
+保护    越界保护   越界保护与保护键 越界保护与控          越界保护与控   越界保护与
+                      制权保护            制权保护     控制权保护
+内存扩   覆盖与交   覆盖与交换        覆盖   虚拟存    虚拟存储     虚拟存储
+充     换                   交换   储
+共享    不能     不能           较难          方便       方便
+硬件支   保护用寄   保护用寄存器，重 地址变换机构，         段式地址变换机构， 段式地址变换机
+                      中断机构，保护         保护与中断机构， 构，保护与中断
+持     存器     定位机构                     动态连接机构    机构，动态连接
+                          机构
+                                                机构
+</code></pre>
+<hr>
+<h2 id="14"><a class="toclink" href="#14">第 14 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>典型问题
+n 存储器管理的基本任务
+n 动态重定位的概念、实现方式，什么情况下需要重定位
+
+n 比较固定分区与可变分区
+
+n 基于空闲分区链的内存分配与回收算法的应用实例：首次
+
+  适应法，循环首次适应法，最佳适应法
+n 在某分页系统中，给定内存容量和物理块大小，计算物理
+
+  块的数量；对给定的进程页表，将给定的逻辑地址，计算
+  出其对应的物理地址并画出地址变换流程图。
+n 在某分段系统中对给定的进程段表，将给定的逻辑地址，
+
+  计算出其对应的物理地址并画出地址变换流程图。
+n 请求分页系统过程的各种问题，并用流程图的方式表示地
+  址变换过程
+n 对给定的问题，按各种页面置换算法，写页面调入过程，
+  计算和分析缺页率，并对多种算法的性能作比较分析
+</code></pre>
+<hr>
+<h2 id="15"><a class="toclink" href="#15">第 15 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>高速缓存
+                     内存管理分配回收
+          内存
+                       存储共享
+          磁盘
+                       存储保护
+                       内存扩充
+         系统区
+                       地址映射
+         用户区
+
+
+         存储体系        存储管理任务
+
+                                      装入与链接
+                存储         其他         对换技术
+                管理                    覆盖技术
+
+
+     存储管理方案          虚拟存储管理
+
+
+     段式存储管理
+     页式存储管理
+     段页式存储管理
+
+                                 虚拟存储器
+                                虚拟存储技术
+用户程序划分                          程序局部性原理
+ 逻辑地址                           虚拟页式管理
+内存空间划分                          虚拟段式管理
+ 内存分配                           页面淘汰算法
+ 管理考虑                           抖动（颠簸）
+ 硬件支持
+地址映射过程
+</code></pre>
+<hr>
+<h2 id="16"><a class="toclink" href="#16">第 16 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>第五章设备管理
+I/O 控制方式：四种I/O 方式的基本原理；四种I/O 方式由
+  低到高效的演变
+缓冲管理
+n 缓冲的概念，为什么引入缓冲
+
+n 单缓冲如何提高I/O 速度，它存在哪些不足，双缓冲、循
+  环缓冲又如何提高CPU 与I/O 设备的并行性
+n 缓冲池是为了解决什么问题而引入，引入缓冲池后系统将
+
+  如何处理I/O 设备和CPU 间的数据输送
+n 缓冲池的工作方式及Getbuf和Putbuf过程
+
+设备独立性
+n 什么是设备独立性
+
+n 如何实现设备独立性
+
+设备驱动程序
+</code></pre>
+<hr>
+<h2 id="17"><a class="toclink" href="#17">第 17 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>虚拟设备和SPOOLing 技术
+n 什么是虚拟设备
+
+n 什么是SPOOLing技术，SPOOLing系统的组成
+
+n 如何利用SPOOLing技术实现共享打印机
+
+
+
+磁盘调度
+n 磁盘调度的目标
+
+n 磁盘访问时间的计算
+
+n FCFS、SSTF、SCAN、CSCAN 等算法的应用及这些调度算法
+  的演变过程，分别解决了哪些问题；各算法的性能比较
+</code></pre>
+<hr>
+<h2 id="18"><a class="toclink" href="#18">第 18 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>典型问题
+n 各种I/O 控制方式的比较
+n 为什么引入缓冲区
+
+n 缓冲如何提高I/O 速度
+
+n 为什么引入设备独立性，如何实现
+
+n 什么是虚拟设备，实现虚拟设备的关键技术
+
+n SPOOLing技术的组成，如何利用SPOOLing 技术实现共享打
+  印机
+n 设备处理程序的功能和处理过程
+
+n 对各种磁盘调度算法，计算访问次序和平均寻道时间，性
+
+  能
+n 磁盘访问时间的组成和计算
+</code></pre>
+<hr>
+<h2 id="19"><a class="toclink" href="#19">第 19 页</a></h2>
+<p><strong>文字：</strong></p>
+<pre><code>设备管理重要性
+                          用户进程
+          设备独立性
+                         与设备无关软件
+          设备分类
+                         设备驱动程序
+         设备管理任务
+                         中断处理程序
+         设备管理功能
+
+
+
+
+             基本概念        I/O软件组成
+
+
+
+
+缓冲技术                设备             设备驱动程序
+                    管理
+
+
+
+         虚设备技术       设备处理          磁盘存储管理
+
+
+                                   磁盘访问时间
+                                   磁盘调度
+SPOOLing技术           设备管理             l先来先服务
+ 共享打印机              设备分配回收
+                    独占设备分配           l最短寻道时间优先
+                    共享设备分配           l扫描（电梯算法）
+                                     lCSCAN
+</code></pre>
+<hr>
+<h2 id="20-io"><a class="toclink" href="#20-io">第 20 页 — I/O 软件的层次（复习重点）</a></h2>
+<p>第五章设备管理的总结图，把 I/O 软件分成五层（自上而下）：</p>
+<ol>
+<li><strong>用户进程</strong>（最上层）— 发起 I/O 请求</li>
+<li><strong>独立于设备的软件</strong>（设备无关层）— 提供统一接口、缓冲、命名、保护</li>
+<li><strong>设备驱动程序</strong> — 翻译为具体设备命令</li>
+<li><strong>中断处理程序</strong> — 处理设备完成时的中断信号</li>
+<li><strong>硬件</strong>（最下层）— 真正执行 I/O</li>
+</ol>
+<p>图上左侧画&rdquo;I/O 请求&rdquo;箭头自上而下流（用户 → 硬件），右侧画&rdquo;I/O 完成后的回答&rdquo;箭头自下而上流（硬件 → 用户）。底部强调&rdquo;系统的分量及各层的主要功能&rdquo;。</p>
+<p><strong>记忆点（考点）</strong>：
+- 五层从上到下、从抽象到具体
+- &ldquo;请求路径&rdquo;和&rdquo;回答路径&rdquo;反向，每层各司其职
+- 这是考&rdquo;设备管理软件层次&rdquo;题的标准答案模板</p>
+<p>原 I/O 软件层次图已转 mermaid（双向流：上层发请求→下层逐层向下，硬件完成后→应答逐层向上）：</p>
+<pre class="mermaid">flowchart TD
+    U[用户进程]
+    I[独立于设备的软件]
+    D[设备驱动程序]
+    INT[中断处理程序]
+    H[硬件]
+    U -->|① I/O 请求| I
+    I -->|② 转发请求| D
+    D -->|③ 执行设备命令| INT
+    INT -->|④ 设备命令| H
+    H -.->|⑤ I/O 完成中断| INT
+    INT -.->|⑥ 中断回调| D
+    D -.->|⑦ 完成回答| I
+    I -.->|⑧ 完成回答| U
+</pre>
+<p><strong>记忆点</strong>：实线 = 请求路径（自上而下），虚线 = 应答路径（自下而上）。每层各司其职，是考试&rdquo;设备管理软件层次&rdquo;题的标准答案模板。</p>
+<hr>
+  </article>
+</main>
+<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3><div class="toc">
+<ul>
+<li><a href="#1">第 1 页</a></li>
+<li><a href="#2">第 2 页</a></li>
+<li><a href="#3">第 3 页</a></li>
+<li><a href="#4">第 4 页</a></li>
+<li><a href="#5">第 5 页</a></li>
+<li><a href="#6">第 6 页</a></li>
+<li><a href="#7">第 7 页</a></li>
+<li><a href="#8">第 8 页</a></li>
+<li><a href="#9">第 9 页</a></li>
+<li><a href="#10">第 10 页</a></li>
+<li><a href="#11">第 11 页</a></li>
+<li><a href="#12">第 12 页</a></li>
+<li><a href="#13">第 13 页</a></li>
+<li><a href="#14">第 14 页</a></li>
+<li><a href="#15">第 15 页</a></li>
+<li><a href="#16">第 16 页</a></li>
+<li><a href="#17">第 17 页</a></li>
+<li><a href="#18">第 18 页</a></li>
+<li><a href="#19">第 19 页</a></li>
+<li><a href="#20-io">第 20 页 — I/O 软件的层次（复习重点）</a></li>
+</ul>
+</div>
+</aside></div>
+<a class="back-to-top" href="#main" aria-label="返回顶部"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#up"/></svg></a>
+<footer class="page-footer">
+  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+</footer>
+<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+  <div class="theme-picker-head">
+    <h3 class="theme-picker-title">选择主题</h3>
+    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
+  </div>
+  <div class="theme-picker-actions">
+    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
+    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  </div>
+  <div class="theme-picker-grid" data-theme-grid></div>
+</aside>
+<div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
+
+<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body></html>
