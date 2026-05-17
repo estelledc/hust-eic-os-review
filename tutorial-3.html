@@ -12,12 +12,22 @@
 <script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 </head>
 <body>
-<header class="topbar" role="banner">
+<header class="topbar site-topbar" role="banner">
   <div class="topbar-inner">
     <a class="brand" href="index.html" aria-label="返回首页">
       <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
       <span>华中科技大学电信本科 · 操作系统复习笔记</span>
     </a>
+    <button class="site-nav-toggle" type="button" aria-expanded="false" data-site-nav-toggle>导航</button>
+    <nav class="site-nav" aria-label="站点主导航">
+      <a class="site-nav-link" href="index.html">课程地图</a>
+      <a class="site-nav-link" href="ch1.html">阅读</a>
+      <a class="site-nav-link" href="practice.html">实践</a>
+      <a class="site-nav-link" href="review.html">总复习</a>
+      <a class="site-nav-link" href="homework.html">作业</a>
+      <a class="site-nav-link is-active" href="tutorial-1.html">教程</a>
+      <a class="site-nav-link" href="themes-gallery.html">主题</a>
+    </nav>
     <div class="topbar-actions">
       <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
@@ -27,21 +37,6 @@
       </button>
     </div>
   </div>
-  <nav class="chipbar" aria-label="章节快速导航">
-    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
-    <div class="chipbar-track">
-        <a class="chip" href="ch1.html">第 1 章 操作系统概论</a>
-        <a class="chip" href="ch2.html">第 2 章 处理器管理</a>
-        <a class="chip" href="ch3.html">第 3 章 同步互斥与死锁</a>
-        <a class="chip" href="ch4.html">第 4 章 存储管理</a>
-        <a class="chip" href="ch5.html">第 5 章 设备管理</a>
-        <a class="chip" href="review.html">总复习提纲</a>
-        <a class="chip" href="homework.html">作业明细</a>
-        <a class="chip" href="tutorial-1.html">教程笔记 · Part 1</a>
-        <a class="chip" href="tutorial-2.html">教程笔记 · Part 2</a>
-        <a class="chip chip-active" href="tutorial-3.html">教程笔记 · Part 3</a>
-    </div>
-  </nav>
 </header>
 <div class="layout">
 <aside class="sidebar" aria-label="站点导航">
@@ -49,13 +44,13 @@
     <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
     <span>课程地图</span>
   </a>
-  <section class="nav-group" aria-labelledby="grp-chapter"><h3 id="grp-chapter" class="nav-group-title"><span class="nav-group-icon">📖</span>课程章节</h3><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><h3 id="grp-exam" class="nav-group-title"><span class="nav-group-icon">📝</span>考前材料</h3><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><h3 id="grp-tutorial" class="nav-group-title"><span class="nav-group-icon">📚</span>教程笔记</h3><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link nav-link-active" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <section class="nav-group" aria-labelledby="grp-chapter"><p id="grp-chapter" class="nav-group-title">课程章节</p><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><p id="grp-exam" class="nav-group-title">考前材料</p><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-practice"><p id="grp-practice" class="nav-group-title">实践模式</p><ul class="nav-list"><li><a class="nav-link" href="practice.html"><span class="nav-link-title">实践模式</span><span class="nav-link-desc">HIT-OSlab Lab1-Lab9 的站内交互式学习版。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><p id="grp-tutorial" class="nav-group-title">教程笔记</p><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link nav-link-active" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
   <div class="sidebar-footer">
     <a class="ghost" href="themes-gallery.html">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
       <span>主题画廊（71 套）</span>
     </a>
-    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+    <p class="ghost sidebar-note">本站源代码以 markdown 编写、build.py 重新生成。</p>
   </div>
 </aside>
 <main class="main" id="main">

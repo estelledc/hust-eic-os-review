@@ -14,6 +14,7 @@ Outputs:
 from __future__ import annotations
 
 import html as html_mod
+import json
 import re
 import shutil
 from pathlib import Path
@@ -43,6 +44,8 @@ PAGES = [
      "20 页考前总图，按章节列考点。"),
     ("homework", "homework.md", "作业明细", "exam",
      "5 章作业题号 + 教材原题完整文字。"),
+    ("practice", "practice.md", "实践模式", "practice",
+     "HIT-OSlab Lab1-Lab9 的站内交互式学习版。"),
     ("tutorial-1", "tutorial-1.md", "教程笔记 · Part 1", "tutorial",
      "OS 概述 · 处理器管理 · 存储管理（前段）。"),
     ("tutorial-2", "tutorial-2.md", "教程笔记 · Part 2", "tutorial",
@@ -54,6 +57,7 @@ PAGES = [
 GROUPS = [
     ("chapter",  "课程章节",     "📖"),
     ("exam",     "考前材料",     "📝"),
+    ("practice", "实践模式",     "🧪"),
     ("tutorial", "教程笔记",     "📚"),
 ]
 
@@ -166,17 +170,46 @@ def head_html(page_title: str, page_desc: str) -> str:
 """
 
 def topbar_html(active_slug: str) -> str:
-    chips = []
-    for slug, src, title, group, _ in PAGES:
-        cls = "chip" + (" chip-active" if slug == active_slug else "")
-        chips.append(f'<a class="{cls}" href="{slug}.html">{html_mod.escape(title)}</a>')
-    chip_html = "\n        ".join(chips)
-    return f"""<header class="topbar" role="banner">
+    def is_active(kind: str) -> bool:
+        if kind == "home":
+            return active_slug == "__home__"
+        if kind == "read":
+            return any(slug == active_slug and group == "chapter" for slug, _, _, group, _ in PAGES)
+        if kind == "practice":
+            return active_slug == "practice"
+        if kind == "review":
+            return active_slug == "review"
+        if kind == "homework":
+            return active_slug == "homework"
+        if kind == "tutorial":
+            return any(slug == active_slug and group == "tutorial" for slug, _, _, group, _ in PAGES)
+        if kind == "themes":
+            return active_slug == "__gallery__"
+        return False
+
+    links = [
+        ("home", "课程地图", "index.html"),
+        ("read", "阅读", "ch1.html"),
+        ("practice", "实践", "practice.html"),
+        ("review", "总复习", "review.html"),
+        ("homework", "作业", "homework.html"),
+        ("tutorial", "教程", "tutorial-1.html"),
+        ("themes", "主题", "themes-gallery.html"),
+    ]
+    nav_html = "\n      ".join(
+        f'<a class="site-nav-link{" is-active" if is_active(kind) else ""}" href="{href}">{label}</a>'
+        for kind, label, href in links
+    )
+    return f"""<header class="topbar site-topbar" role="banner">
   <div class="topbar-inner">
     <a class="brand" href="index.html" aria-label="返回首页">
       <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#book"/></svg>
       <span>{SITE_TITLE}</span>
     </a>
+    <button class="site-nav-toggle" type="button" aria-expanded="false" data-site-nav-toggle>导航</button>
+    <nav class="site-nav" aria-label="站点主导航">
+      {nav_html}
+    </nav>
     <div class="topbar-actions">
       <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#sun"/></svg>
@@ -186,18 +219,12 @@ def topbar_html(active_slug: str) -> str:
       </button>
     </div>
   </div>
-  <nav class="chipbar" aria-label="章节快速导航">
-    <button class="chipbar-toggle" type="button" aria-expanded="false" data-chipbar-toggle>章节目录</button>
-    <div class="chipbar-track">
-        {chip_html}
-    </div>
-  </nav>
 </header>
 """
 
 def sidebar_html(active_slug: str) -> str:
     sections = []
-    for grp_id, grp_label, grp_icon in GROUPS:
+    for grp_id, grp_label, _grp_icon in GROUPS:
         items = []
         for slug, src, title, group, intro in PAGES:
             if group != grp_id:
@@ -211,7 +238,7 @@ def sidebar_html(active_slug: str) -> str:
             )
         sections.append(
             f'<section class="nav-group" aria-labelledby="grp-{grp_id}">'
-            f'<h3 id="grp-{grp_id}" class="nav-group-title"><span class="nav-group-icon">{grp_icon}</span>{html_mod.escape(grp_label)}</h3>'
+            f'<p id="grp-{grp_id}" class="nav-group-title">{html_mod.escape(grp_label)}</p>'
             f'<ul class="nav-list">{"".join(items)}</ul>'
             f"</section>"
         )
@@ -226,7 +253,7 @@ def sidebar_html(active_slug: str) -> str:
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#palette"/></svg>
       <span>主题画廊（71 套）</span>
     </a>
-    <p class="ghost" style="margin-top:.6rem">本站源代码以 markdown 编写、build.py 重新生成。</p>
+    <p class="ghost sidebar-note">本站源代码以 markdown 编写、build.py 重新生成。</p>
   </div>
 </aside>
 """
@@ -253,13 +280,19 @@ PICKER_HTML = f"""<aside class="theme-picker" data-theme-panel hidden aria-label
 """
 
 def themes_inline_script() -> str:
-    import json as _json
     p = ROOT / "themes" / "themes.json"
     if not p.exists():
         return '<script>window.__THEMES__=[];</script>'
-    obj = _json.loads(p.read_text(encoding="utf-8"))
+    obj = json.loads(p.read_text(encoding="utf-8"))
     arr = obj.get("themes", [])
-    return f'<script id="themes-data">window.__THEMES__={_json.dumps(arr, ensure_ascii=False)};</script>'
+    return f'<script id="themes-data">window.__THEMES__={json.dumps(arr, ensure_ascii=False)};</script>'
+
+def practice_inline_script() -> str:
+    p = CONTENT / "practice-labs.json"
+    if not p.exists():
+        return '<script>window.__PRACTICE_LABS__={"labs":[]};</script>'
+    obj = json.loads(p.read_text(encoding="utf-8"))
+    return f'<script id="practice-data">window.__PRACTICE_LABS__={json.dumps(obj, ensure_ascii=False)};</script>'
 
 SCRIPTS_HTML = f"""
 {themes_inline_script()}
@@ -270,17 +303,21 @@ SCRIPTS_HTML = f"""
 def page_html(slug: str, title: str, intro: str, body: str, toc: str) -> str:
     title_esc = html_mod.escape(title)
     intro_esc = html_mod.escape(intro)
+    has_toc_links = bool(toc and "<a " in toc)
+    layout_class = "layout layout-practice layout-practice-focused" if slug == "practice" else "layout"
+    prose_class = "prose prose-practice" if slug == "practice" else "prose"
+    sidebar_block = "" if slug == "practice" else sidebar_html(slug)
     toc_block = (
         f'<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3>{toc}</aside>'
-        if toc else ""
+        if has_toc_links else ""
     )
     return (
         head_html(title, intro)
         + topbar_html(slug)
-        + '<div class="layout">\n'
-        + sidebar_html(slug)
+        + f'<div class="{layout_class}">\n'
+        + sidebar_block
         + '<main class="main" id="main">\n'
-        + f'  <article class="prose">\n'
+        + f'  <article class="{prose_class}">\n'
         + f'    <header class="page-head">\n'
         + f'      <h1>{title_esc}</h1>\n'
         + (f'      <p class="page-lede">{intro_esc}</p>\n' if intro else "")
@@ -294,6 +331,7 @@ def page_html(slug: str, title: str, intro: str, body: str, toc: str) -> str:
         + f'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#up"/></svg></a>\n'
         + FOOTER_HTML
         + PICKER_HTML
+        + (practice_inline_script() if slug == "practice" else "")
         + SCRIPTS_HTML
         + "</body></html>\n"
     )
@@ -301,45 +339,73 @@ def page_html(slug: str, title: str, intro: str, body: str, toc: str) -> str:
 # --------- index page ---------
 
 INDEX_TEMPLATE = """<main class="main main-home" id="main">
-  <article class="home">
-    <header class="hero">
-      <p class="hero-eyebrow">华中科技大学 · 电信本科</p>
+  <article class="home home-dashboard">
+    <header class="hero home-hero surface">
+      <p class="kicker">华中科技大学 · 电信本科</p>
       <h1 class="hero-title">操作系统复习笔记</h1>
-      <p class="hero-lede">5 章 + 总复习提纲 + 作业明细 + 教程三部分。围绕考点与求职面试主题做了图文融合，含 mermaid 结构图。</p>
+      <p class="hero-lede">把阅读、考前复习、作业题和 Lab 实践放进同一套学习路径。先建立概念，再做练习，最后回到题型和实验证据。</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="ch1.html">从第 1 章开始 →</a>
-        <a class="btn" href="review.html">直达总复习提纲</a>
+        <a class="btn btn-primary" href="ch1.html">从第 1 章开始</a>
+        <a class="btn btn-secondary" href="practice.html">进入实践模式</a>
+        <a class="btn btn-ghost" href="review.html">直达总复习</a>
       </div>
     </header>
 
-    <section class="map">
-      <h2 class="map-title"><span class="map-icon">📖</span>章节路径</h2>
+    <section class="map learning-section">
+      <header class="section-head">
+        <p class="kicker">阅读模式</p>
+        <h2>章节路径</h2>
+        <p>按操作系统的主线推进：概论、处理器、同步互斥、存储、设备。</p>
+      </header>
       <ol class="cards">
         {chapter_cards}
       </ol>
     </section>
 
-    <section class="map">
-      <h2 class="map-title"><span class="map-icon">📝</span>考前材料</h2>
+    <section class="map learning-section">
+      <header class="section-head">
+        <p class="kicker">考前材料</p>
+        <h2>复习与作业</h2>
+        <p>把高频考点、老师布置的题号和完整题面放在一起查。</p>
+      </header>
       <ol class="cards cards-2">
         {exam_cards}
       </ol>
     </section>
 
-    <section class="map">
-      <h2 class="map-title"><span class="map-icon">📚</span>教程笔记</h2>
+    <section class="map learning-section">
+      <header class="section-head">
+        <p class="kicker">实践模式</p>
+        <h2>站内 Lab Studio</h2>
+        <p>用一步一检查的方式理解 HIT-OSlab 题目，不依赖真实编译环境。</p>
+      </header>
+      <ol class="cards cards-2">
+        {practice_cards}
+      </ol>
+    </section>
+
+    <section class="map learning-section">
+      <header class="section-head">
+        <p class="kicker">教程笔记</p>
+        <h2>教材补充路径</h2>
+        <p>当课程笔记不够细时，用三段教程笔记补定义、例题和原书脉络。</p>
+      </header>
       <ol class="cards cards-2">
         {tutorial_cards}
       </ol>
     </section>
 
-    <section class="tips">
-      <h2 class="map-title"><span class="map-icon">💡</span>怎么用这套笔记</h2>
+    <section class="tips surface">
+      <header class="section-head">
+        <p class="kicker">学习策略</p>
+        <h2>怎么用这套笔记</h2>
+      </header>
       <ul class="bullets">
         <li><strong>第一遍系统过</strong>：按 ch1 → ch5 顺序，每章先读章末小结，再回头补细节。</li>
+        <li><strong>动手补强</strong>：进入「实践模式」，按 Lab1 → Lab9 的检查点逐步推进。</li>
         <li><strong>考前冲刺</strong>：直接读「总复习提纲」，再用「作业明细」对照真题题型。</li>
         <li><strong>遇到不熟的概念</strong>：右栏目录可定位到具体小节；mermaid 图鼠标悬停可放大。</li>
-        <li><strong>移动端</strong>：左侧导航折叠在顶部「章节目录」按钮内。</li>
+        <li><strong>移动端</strong>：顶部「导航」按钮会展开同一套站点入口。</li>
       </ul>
     </section>
   </article>
@@ -365,6 +431,10 @@ def index_page() -> str:
         card_html(slug, title, intro)
         for (slug, _, title, group, intro) in PAGES if group == "exam"
     )
+    practice_cards = "\n        ".join(
+        card_html(slug, title, intro)
+        for (slug, _, title, group, intro) in PAGES if group == "practice"
+    )
     tutorial_cards = "\n        ".join(
         card_html(slug, title, intro, badge=f"P{i+1}")
         for i, (slug, _, title, group, intro) in enumerate(p for p in PAGES if p[3] == "tutorial")
@@ -372,10 +442,11 @@ def index_page() -> str:
     body = INDEX_TEMPLATE.format(
         chapter_cards=chapter_cards,
         exam_cards=exam_cards,
+        practice_cards=practice_cards,
         tutorial_cards=tutorial_cards,
     )
     return (
-        head_html("课程地图", "5 章 + 复习提纲 + 作业 + 教程三部分。")
+        head_html("课程地图", "5 章 + 复习提纲 + 作业 + 实践模式 + 教程三部分。")
         + topbar_html("__home__")
         + '<div class="layout layout-home">\n'
         + sidebar_html("__home__")
@@ -411,34 +482,40 @@ def gallery_page() -> str:
             f'</div>'
             f'<p class="gallery-card-desc">{desc}</p>'
             f'<div class="gallery-card-actions">'
-            f'<button class="gallery-apply" type="button" data-theme-set="{slug}">应用主题</button>'
-            f'<a class="gallery-preview-link" href="ch1.html" data-preview-link="{slug}">在 ch1 中预览 →</a>'
+            f'<button class="btn btn-mini btn-primary" type="button" data-theme-set="{slug}" data-gallery-apply>应用主题</button>'
+            f'<a class="btn btn-mini btn-secondary" href="ch1.html" data-preview-link="{slug}">在 ch1 中预览</a>'
             f'</div></div></article>'
         )
     body = (
         f'<main class="main main-home" id="main">'
-        f'<article class="home">'
-        f'<header class="hero">'
-        f'<p class="hero-eyebrow">主题画廊</p>'
+        f'<article class="home gallery-page">'
+        f'<header class="hero home-hero surface">'
+        f'<p class="kicker">主题画廊</p>'
         f'<h1 class="hero-title">71 套设计系统主题</h1>'
-        f'<p class="hero-lede">来自开源仓库 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的 <strong>71</strong> 个 design-md 主题色板，已映射到本站的 CSS 变量。点击「应用主题」全站立即生效；选择跟随系统则恢复默认。</p>'
+        f'<p class="hero-lede">来自开源仓库 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的主题色板，已经映射到本站 CSS 变量。切换主题后，全站阅读页和实践页会一起变化。</p>'
         f'<div class="hero-actions">'
         f'<button class="btn btn-primary" type="button" data-theme-set="">默认（跟随系统）</button>'
-        f'<a class="btn" href="index.html">返回首页</a>'
+        f'<a class="btn btn-secondary" href="index.html">返回课程地图</a>'
         f'</div>'
         f'</header>'
-        f'<div class="gallery-toolbar">'
+        f'<section class="gallery-browser">'
+        f'<header class="section-head">'
+        f'<p class="kicker">外观设置</p>'
+        f'<h2>选择主题</h2>'
+        f'<p>搜索品牌名或按明暗筛选，再直接应用到当前站点。</p>'
+        f'</header>'
+        f'<div class="site-toolbar">'
         f'<input class="gallery-search" type="search" placeholder="搜索主题名（apple / spotify / claude ...）" data-gallery-search aria-label="搜索主题">'
-        f'<div class="gallery-filters" role="group" aria-label="按明暗筛选">'
-        f'<button type="button" class="gallery-filter is-active" data-gallery-filter="all">全部</button>'
-        f'<button type="button" class="gallery-filter" data-gallery-filter="light">浅色</button>'
-        f'<button type="button" class="gallery-filter" data-gallery-filter="dark">深色</button>'
+        f'<div class="site-segmented" role="group" aria-label="按明暗筛选">'
+        f'<button type="button" class="site-segment is-active" data-gallery-filter="all">全部</button>'
+        f'<button type="button" class="site-segment" data-gallery-filter="light">浅色</button>'
+        f'<button type="button" class="site-segment" data-gallery-filter="dark">深色</button>'
         f'</div>'
         f'<span class="gallery-meta" data-gallery-meta>{len(themes)} 套主题</span>'
         f'</div>'
         f'<div class="gallery-grid" data-gallery-grid>'
         + "".join(cards) +
-        f'</div>'
+        f'</div></section>'
         f'</article>'
         f'</main>'
     )
@@ -481,7 +558,7 @@ def gallery_page() -> str:
     grid.querySelectorAll('[data-theme-set]').forEach(function(el){
       el.classList.toggle('is-active', el.getAttribute('data-theme-set') === cur);
       if (el.getAttribute('data-theme-set') === cur) el.textContent = '✓ 已应用';
-      else if (el.classList.contains('gallery-apply')) el.textContent = '应用主题';
+      else if (el.hasAttribute('data-gallery-apply')) el.textContent = '应用主题';
     });
   }
   refresh();
