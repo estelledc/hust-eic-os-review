@@ -287,12 +287,65 @@ def themes_inline_script() -> str:
     arr = obj.get("themes", [])
     return f'<script id="themes-data">window.__THEMES__={json.dumps(arr, ensure_ascii=False)};</script>'
 
+PRACTICE_LABS_OUT_DIR = ROOT / "practice-labs"
+
+# 索引时保留的 lab 元数据字段（不含 phases / beginner / firstPrinciples 等大字段）
+PRACTICE_INDEX_LAB_FIELDS = (
+    "id",
+    "title",
+    "focus",
+    "estimatedMinutes",
+    "difficulty",
+    "concepts",
+    "sourceRoute",
+    "outcomes",
+    "drivingQuestion",
+    "plainLanguageGoal",
+)
+
+def emit_practice_lab_files() -> dict:
+    """把 content/practice-labs.json 拆为根目录 practice-labs/{index,lab-N}.json。
+
+    返回 index 对象，供 inline 注入。
+    """
+    src = CONTENT / "practice-labs.json"
+    if not src.exists():
+        return {"version": 2, "tracks": [], "labs": []}
+    data = json.loads(src.read_text(encoding="utf-8"))
+    PRACTICE_LABS_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    # 写每 lab 全量 json
+    for lab in data.get("labs", []):
+        lab_path = PRACTICE_LABS_OUT_DIR / f"{lab['id']}.json"
+        lab_path.write_text(
+            json.dumps(lab, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    # 索引：tracks + 每 lab 的轻量元数据（不含 phases / beginner / firstPrinciples）
+    index_labs = []
+    for lab in data.get("labs", []):
+        meta = {k: lab[k] for k in PRACTICE_INDEX_LAB_FIELDS if k in lab}
+        # 给前端一个能算 phase 数量的快照
+        meta["phaseIds"] = [phase["id"] for phase in lab.get("phases", [])]
+        index_labs.append(meta)
+    index_obj = {
+        "version": data.get("version", 2),
+        "tracks": data.get("tracks", []),
+        "labs": index_labs,
+    }
+    (PRACTICE_LABS_OUT_DIR / "index.json").write_text(
+        json.dumps(index_obj, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return index_obj
+
 def practice_inline_script() -> str:
-    p = CONTENT / "practice-labs.json"
-    if not p.exists():
-        return '<script>window.__PRACTICE_LABS__={"labs":[]};</script>'
-    obj = json.loads(p.read_text(encoding="utf-8"))
-    return f'<script id="practice-data">window.__PRACTICE_LABS__={json.dumps(obj, ensure_ascii=False)};</script>'
+    """页面内联仅 index——完整 lab 数据在 practice-labs/lab-N.json 按需 fetch。"""
+    index_obj = emit_practice_lab_files()
+    return (
+        '<script id="practice-data">'
+        f'window.__PRACTICE_LABS__={json.dumps(index_obj, ensure_ascii=False)};'
+        '</script>'
+    )
 
 SCRIPTS_HTML = f"""
 {themes_inline_script()}

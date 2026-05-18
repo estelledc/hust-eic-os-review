@@ -1,0 +1,813 @@
+{
+  "id": "lab8",
+  "title": "终端设备的控制",
+  "focus": "理解键盘输入和屏幕输出怎样经过中断、TTY 缓冲和终端规则",
+  "estimatedMinutes": 45,
+  "difficulty": "medium",
+  "concepts": [
+    "键盘中断",
+    "扫描码",
+    "TTY",
+    "缓冲区",
+    "read"
+  ],
+  "sourceRoute": {
+    "name": "HIT-OSlab Lab8",
+    "url": "https://github.com/Joker001014/HIT-OSlab"
+  },
+  "outcomes": [
+    "能解释终端输入路径",
+    "能区分中断处理和用户 read",
+    "能诊断终端规则没有生效的层次"
+  ],
+  "reportPrompts": [
+    "说明按键到用户 read 的路径。",
+    "解释 TTY 缓冲为什么必要。",
+    "记录一个终端现象和它对应的内核层次。"
+  ],
+  "phases": [
+    {
+      "id": "prepare",
+      "title": "预备",
+      "purpose": "先建立对象和边界，知道这一关到底在解释哪条系统链路。",
+      "steps": [
+        {
+          "id": "lab8-starter-map",
+          "title": "按键到屏幕，中间走了几道关",
+          "goal": "先知道这关解决的系统问题，不急着背术语",
+          "tracks": [
+            "starter"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "如果给第一次接触 OS 实验的同学解释「终端设备的控制」，哪一句最接近？",
+          "context": "这是零基础路径的入口。先把题目翻成一句人话，确认你知道自己要观察哪条系统链路。",
+          "beginnerTip": "先不用背术语，先找这关在解决哪个真实问题。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "键盘中断",
+              "扫描码",
+              "TTY"
+            ]
+          },
+          "options": [
+            {
+              "value": "plain",
+              "label": "这关是在学“键盘输入怎样经过中断、TTY 缓冲和 read 到达用户程序”。"
+            },
+            {
+              "value": "wrong-1",
+              "label": "这关主要是在计算周转时间。"
+            },
+            {
+              "value": "wrong-2",
+              "label": "这关只是让用户程序直接读键盘硬件。"
+            },
+            {
+              "value": "wrong-3",
+              "label": "这关是在共享物理页。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "plain"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：硬件中断和用户 read 是不同上下文"
+            },
+            {
+              "level": 3,
+              "text": "Lab8 的核心是「输入路径分层」——键盘事件不会直接到用户程序，中间有中断处理、有驱动转换、有 TTY 规则、有缓冲区。其它选项把这关换成了别的实验或错误模型。找出唯一描述这条多层路径的那一句，但请你自己解释为什么需要这么多层。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab8-starter-map-plain-boundary",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-1"
+              },
+              "feedback": "这里混淆了主题。终端设备的控制 的第一步是看懂：硬件中断和用户 read 是不同上下文。"
+            }
+          ],
+          "feedback": "这个选项没有说清这一关的系统问题。先回到右侧机制画板，把题目压成一句你能复述的话。",
+          "success": "对。你已经看清这一关的关键边界：按键不是直接送到用户程序：中断先到内核，字符进 TTY 缓冲，用户 read 再从缓冲里取走。",
+          "coach": {
+            "why": "「按一下键、屏幕显示一个字符」看起来直接，其实经过了至少 4 道关：键盘中断 → 驱动收扫描码 → 转字符进 TTY 缓冲 → 用户 read 取走。这一步先确认你抓住了「输入有多层中转」这个事实。",
+            "observe": "正确选项点出「中断、TTY 缓冲、read」三段——这就是 Lab8 的接力链。其它选项都跑题：周转时间是 Lab4、直接读硬件是错的（用户态没权限）、共享物理页是 Lab7。",
+            "act": "选出唯一描述「键盘到 read 的多层中转」的那一项。",
+            "check": "你应该能说出：用户程序 read 拿到的字符不是从键盘硬件直接来的——它来自 TTY 缓冲区，缓冲区由中断和驱动协作填充。三件事各管一段。",
+            "repair": "如果选了周转时间：那是 Lab4 的统计量。如果选了直接读硬件：用户态没权限访问键盘 I/O 端口（这正是要中断+驱动的原因）。如果选了共享物理页：那是 Lab7 内存映射。"
+          }
+        },
+        {
+          "id": "lab8-prepare-choice",
+          "title": "抓住最容易混淆的边界",
+          "goal": "区分「硬件中断和用户 read 是不同上下文」",
+          "tracks": [
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "用户进程 read 终端时，通常不是直接读键盘硬件，原因是什么？",
+          "context": "很多错误不是不会写代码，而是把两个层次当成一个层次。先把边界看清，后面操作才有方向。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "键盘中断",
+              "扫描码",
+              "TTY",
+              "缓冲区",
+              "read"
+            ]
+          },
+          "options": [
+            {
+              "value": "buffered",
+              "label": "键盘事件先由中断和 TTY 缓冲处理，read 再取缓冲数据。"
+            },
+            {
+              "value": "direct-hardware",
+              "label": "用户程序总是直接访问键盘端口。"
+            },
+            {
+              "value": "no-kernel",
+              "label": "终端输入不经过内核。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "buffered"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：硬件中断和用户 read 是不同上下文"
+            },
+            {
+              "level": 3,
+              "text": "用户态访问硬件 I/O 端口会被 CPU 拒绝（特权级保护），所以输入路径必须经过内核。内核里有中断处理 → 驱动 → 缓冲，最后用户 read 取数据。三个选项里只有一个反映了真实的多层路径，但具体为什么 direct-hardware 不行请你自己解释。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab8-prepare-choice-boundary-mix",
+              "detect": {
+                "kind": "selected",
+                "value": "direct-hardware"
+              },
+              "feedback": "这个选择把边界混在一起了。先记住：硬件中断和用户 read 是不同上下文。"
+            }
+          ],
+          "feedback": "这个选择还没有对准机制边界。回到心智模型，先分清对象和状态属于哪一层。",
+          "success": "判断正确。你已经抓住这一关的第一条边界：硬件中断和用户 read 是不同上下文。",
+          "coach": {
+            "why": "「为什么不能直接读键盘」是 Lab8 的关键问题。原因有两个：① 用户态没权限直接访问 I/O 端口（特权级保护）；② 即使能读，键盘只给你扫描码，不给你字符——还要软件把扫描码翻译成字符。所以必须经过内核缓冲。",
+            "observe": "buffered 选项指出真正机制：中断 + 驱动 + 缓冲区是中间层，read 只取缓冲。direct-hardware 是错误模型（用户态没权限）。no-kernel 更错——没有内核谁去管中断？",
+            "act": "选 buffered：键盘事件 → 中断处理 → 驱动入队 → read 取出，这是 Linux 0.11 终端输入的实际路径。",
+            "check": "你应该能说出：用户程序 read 拿到的是缓冲区里已经加工过的字符，不是键盘硬件的原始信号——这是 OS 抽象设备的标准做法。",
+            "repair": "如果选了 direct-hardware：你忽略了用户态的权限限制——in/out 指令在 ring 3 会被 CPU 拒绝。如果选了 no-kernel：那中断处理代码在哪里？硬件中断只能被内核处理。"
+          }
+        },
+        {
+          "id": "lab8-prepare-trace",
+          "title": "把状态流排成因果链",
+          "goal": "按顺序说出「键盘产生中断」到「用户进程 read 取走数据」",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "trace",
+          "type": "trace",
+          "prompt": "把下面动作排成正确顺序，形成「终端设备的控制」的状态流。",
+          "context": "OS 实验的许多错误来自顺序错位。先排入口、状态变化、观察结果，再进入命令和代码。",
+          "simulator": {
+            "kind": "state-flow",
+            "nodes": [
+              "键盘产生中断",
+              "驱动读取扫描码",
+              "字符进入 TTY 缓冲区",
+              "终端规则处理回显",
+              "用户进程 read 取走数据"
+            ],
+            "highlightOnPass": [
+              "驱动读取扫描码",
+              "字符进入 TTY 缓冲区",
+              "终端规则处理回显"
+            ]
+          },
+          "items": [
+            "用户进程 read 取走数据",
+            "终端规则处理回显",
+            "字符进入 TTY 缓冲区",
+            "驱动读取扫描码",
+            "键盘产生中断"
+          ],
+          "checks": [
+            {
+              "kind": "orderedItems",
+              "answer": [
+                "键盘产生中断",
+                "驱动读取扫描码",
+                "字符进入 TTY 缓冲区",
+                "终端规则处理回显",
+                "用户进程 read 取走数据"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找到入口动作，再沿着状态变化往后排。"
+            },
+            {
+              "level": 2,
+              "text": "中间关键状态是：驱动读取扫描码。"
+            },
+            {
+              "level": 3,
+              "text": "终端输入的接力起点必须是硬件事件（中断），终点是用户层动作（read），中间是驱动 + 缓冲 + 行规程。回显是「字符进缓冲后顺手做的动作」，不是「必须先回显才能进缓冲」——把这条因果搞对，顺序就出来了，但请你自己确认。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab8-prepare-trace-order-inverted",
+              "detect": {
+                "kind": "orderedBefore",
+                "item": "用户进程 read 取走数据",
+                "before": "驱动读取扫描码"
+              },
+              "feedback": "你把结果放到了状态变化之前。先发生 驱动读取扫描码，后面才可能出现 用户进程 read 取走数据。"
+            }
+          ],
+          "feedback": "顺序还不对。按“入口动作 -> 状态变化 -> 可观察证据”重新排列。",
+          "success": "顺序正确。你已经把这关看成连续状态流，而不是孤立名词。",
+          "coach": {
+            "why": "终端输入的因果链严格固定：键盘产生中断（硬件事件）→ 驱动收扫描码（中断处理上下文）→ 字符进 TTY 缓冲（数据进入软件队列）→ 终端规则处理回显（行规程：要不要立即显示）→ 用户进程 read（系统调用上下文取走）。常见错排是把「回显」放在最前——其实回显发生在缓冲入队之后。",
+            "observe": "5 个动作的状态变化：键盘中断（CPU 跳到 IRQ 处理）→ 驱动读扫描码（从键盘端口读硬件值）→ 字符进 TTY 缓冲（扫描码翻译成字符后入队列）→ 终端规则回显（如果是 echo 模式就把字符打回屏幕）→ 用户 read（用户进程的 read 系统调用从队列取字符）。",
+            "act": "把「键盘产生中断」拖到第一位、「用户进程 read 取走数据」拖到最后；中间 3 步按「驱动收 → 入缓冲 → 回显」排序。",
+            "check": "你应该能说出：每一步消费上一步产生的状态——中断让驱动有机会跑、驱动产生扫描码、扫描码变字符进缓冲、缓冲里有字符 read 才取得到。回显是「副动作」（要不要打到屏幕）不是「必经动作」。",
+            "repair": "如果你把「回显」放在最前：那时缓冲里还没字符，回显什么？如果把「驱动读扫描码」放在「中断」之前：驱动是被中断触发的，没中断它不跑。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "title": "观察",
+      "purpose": "先从可观察现象倒推状态变化，再决定应该检查哪个层次。",
+      "steps": [
+        {
+          "id": "lab8-observe-diagnose",
+          "title": "从现象回到错因",
+          "goal": "看到异常时先定位层次，而不是乱改代码",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "diagnose",
+          "type": "diagnose",
+          "prompt": "按键后用户程序一直读不到字符，优先检查哪个层次？",
+          "context": "观察阶段训练的是诊断顺序：先问现象违反了哪条状态规则，再决定检查哪个入口。",
+          "scenario": "键盘事件发生了，但 TTY 输入队列没有新增字符，用户 read 一直等待。",
+          "options": [
+            {
+              "value": "tty-buffer-rule",
+              "label": "检查扫描码转换和 TTY 缓冲入队规则。"
+            },
+            {
+              "value": "address-layer",
+              "label": "检查页表共享页。"
+            },
+            {
+              "value": "syscall-table",
+              "label": "检查系统调用号是否越界。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "tty-buffer-rule"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先看现象违反了哪条机制约束。"
+            },
+            {
+              "level": 2,
+              "text": "优先回到这个边界：硬件中断和用户 read 是不同上下文"
+            },
+            {
+              "level": 3,
+              "text": "终端读不到字符的诊断三步：① 看键盘中断是否被触发（IRQ1 + IDT 项是否正确）；② 看驱动是否读到扫描码（驱动里的 inb 调用）；③ 看字符是否入队（tty queue 的入队代码）。具体顺序由你判断。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab8-observe-diagnose-wrong-layer",
+              "detect": {
+                "kind": "selected",
+                "value": "address-layer"
+              },
+              "feedback": "这个选项不能解释现象。优先检查：把用户程序 read 当成直接读硬件。"
+            }
+          ],
+          "feedback": "这个诊断不能解释给出的现象。先找状态在哪一步偏离预期。",
+          "success": "诊断正确。这个现象最能指向：把用户程序 read 当成直接读硬件。",
+          "beginnerTip": "把它当成“看现象找原因”的练习。不会术语也可以先判断是哪一层出了问题。",
+          "coach": {
+            "why": "「按键后 read 不到字符」是 Lab8 经典现象，原因几乎总在「中断到缓冲」这一段：扫描码没正确翻译、字符没入缓冲、或缓冲入队的同步出错。这一步在让你识别「现象指向 TTY 层」而非别的子系统。",
+            "observe": "观察「读不到字符」这个现象时，证据要从硬件往用户程序方向逐层取：键盘有没有产生中断、驱动有没有读到扫描码、TTY 队列里有没有字符。tty-buffer-rule 选项把检查方向落在了这条证据链上。address-layer 和 syscall-table 不会留下任何终端相关的状态。",
+            "act": "选 tty-buffer-rule：去检查 scan_to_char 的转换函数、TTY 队列入队代码、中断处理是否正确触发。",
+            "check": "你应该能说出：终端故障的诊断范围在「中断 + 驱动 + TTY」这三层——不会跑到内存映射或系统调用号那边去。",
+            "repair": "如果选了 address-layer 或 syscall-table：那是别的实验的范畴，不会影响终端字符到达。回到 Lab8：先看中断是否正确触发（IRQ1 是否启用）、驱动是否读到扫描码、扫描码是否进了 TTY 队列。"
+          }
+        },
+        {
+          "id": "lab8-observe-fill",
+          "title": "给关键状态贴上名字",
+          "goal": "能用术语说出 中断、缓冲区 的位置",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "fill",
+          "type": "fill",
+          "prompt": "补全两个状态词，让它们和右侧机制画板对应。",
+          "context": "术语不是背诵用的，它让你能在报告和排查里准确指向状态。",
+          "simulator": {
+            "kind": "state-note",
+            "nodes": [
+              "键盘中断",
+              "扫描码",
+              "TTY",
+              "缓冲区"
+            ]
+          },
+          "blanks": [
+            {
+              "id": "irq",
+              "label": "硬件事件打断 CPU 进入内核处理路径",
+              "placeholder": "中断"
+            },
+            {
+              "id": "queue",
+              "label": "暂存终端输入字符的队列",
+              "placeholder": "缓冲区"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "fills",
+              "answers": {
+                "irq": [
+                  "中断",
+                  "interrupt"
+                ],
+                "queue": [
+                  "缓冲",
+                  "queue"
+                ]
+              }
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先判断空格是在问对象、状态、动作还是证据。"
+            },
+            {
+              "level": 2,
+              "text": "这关最重要的状态之一是：扫描码记录硬件输入"
+            },
+            {
+              "level": 3,
+              "text": "硬件事件让 CPU 跳到内核处理路径——这是中断。字符在被 read 取走之前要暂存——这是缓冲。第一空填「事件入口」类术语，第二空填「数据暂存」类术语。具体术语请你写。"
+            }
+          ],
+          "feedback": "有空格还没对上。检查是否把相邻层次的名词混用了。",
+          "success": "填空正确。你已经把关键术语和状态位置对上了。",
+          "coach": {
+            "why": "中断和缓冲区是 Lab8 的两个核心机制——一个是硬件事件进入内核的方式，一个是字符在内核里暂存的位置。两者的协作是终端输入的核心：中断把字符送进缓冲、read 从缓冲取出。",
+            "observe": "观察两个空对应的概念：第一空指向「硬件事件让 CPU 跳到内核」（这是中断 / interrupt）；第二空指向「字符暂存的队列」（这是缓冲区 / queue / buffer）。两者一个是机制、一个是数据结构。",
+            "act": "irq 空填「中断」（也接受 interrupt），queue 空填「缓冲」（也接受 queue / buffer）。",
+            "check": "你应该能说出：中断是「事件入口」，缓冲是「数据暂存」——一个负责让事件被处理，一个负责让事件不丢失。",
+            "repair": "如果第一空填了「驱动」：那是处理中断的代码，不是「打断 CPU」的事件本身。如果第二空填了「设备」：缓冲是软件队列、设备是硬件——不是同一件事。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "operate",
+      "title": "操作",
+      "purpose": "在站内用命令、代码片段和解释练习表达关键状态转移。",
+      "steps": [
+        {
+          "id": "lab8-operate-command",
+          "title": "用命令表达证据链",
+          "goal": "把实验动作写成可检查的顺序",
+          "tracks": [
+            "starter",
+            "quick",
+            "full"
+          ],
+          "interaction": "command",
+          "type": "command",
+          "prompt": "写出进入 chr_drv 目录、构建、返回实验目录、启动 tty-demo 的四行动作。",
+          "context": "tty-demo 的证据应能区分“按键进了缓冲”和“用户程序读到了字符”。",
+          "simulator": {
+            "kind": "terminal",
+            "output": "$ cd oslab/linux-0.11/kernel/chr_drv\n$ make\n$ cd ../../../\n$ ./run tty-demo\n# simulated: key event enters tty queue and read returns it"
+          },
+          "starter": "cd oslab/linux-0.11/kernel/chr_drv",
+          "checks": [
+            {
+              "kind": "commands",
+              "commands": [
+                "cd oslab/linux-0.11/kernel/chr_drv",
+                "make",
+                "cd ../../../",
+                "./run tty-demo"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "命令模拟器只检查顺序，不会真实执行。"
+            },
+            {
+              "level": 2,
+              "text": "先进入会产生改动或证据的目录，再构建或启动观察。"
+            },
+            {
+              "level": 3,
+              "text": "Lab8 的 cd 比之前几关多了一层（chr_drv 是 kernel 的子目录），所以 cd 退要写 cd ../../../ 退三层。这是和 Lab5/6 的关键差异——具体写法你自己来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab8-operate-command-missing-command",
+              "detect": {
+                "kind": "missingCommand",
+                "command": "make"
+              },
+              "feedback": "命令链缺少关键准备动作。真实实验里需要先完成「make」这一环，才有后续观察证据。"
+            }
+          ],
+          "feedback": "命令顺序或数量不匹配。按实验链路重新输入，每行一条命令。",
+          "success": "命令顺序正确。你表达出了从准备到观察证据的完整动作链。",
+          "beginnerTip": "这里不会真的运行命令，也不是考你背命令。你是在练习“先做什么、再做什么”。",
+          "coach": {
+            "why": "Lab8 修改的是 chr_drv（character device drivers，包含 tty/console/keyboard），所以 cd 进 kernel/chr_drv 子目录。这是嵌套两层的目录，所以最后 cd 退要退三层（chr_drv → kernel → linux-0.11 → oslab）。",
+            "observe": "starter 第一条 cd oslab/linux-0.11/kernel/chr_drv 切到字符设备驱动目录。下一条 make 编进驱动修改。再 cd ../../../ 退三层（注意比 Lab5/6 多退一层），最后 ./run tty-demo 加载终端演示脚本。",
+            "act": "在第一条之后追加 make → cd ../../../ → ./run tty-demo。",
+            "check": "你应该能说出：cd 退几层等于「我下了多深」——Lab8 进了三层，所以退三层。每个 ../ 退一层，三个 ../ 才能回到 oslab 根。",
+            "repair": "如果 cd .. 只退两层：你停在了 linux-0.11 而不是 oslab，./run 找不到。如果 ./run 没带 tty-demo：Bochs 启动了但没运行终端测试程序——看不到 Lab8 的现象。"
+          }
+        },
+        {
+          "id": "lab8-operate-code",
+          "title": "在代码片段里标出状态入口",
+          "goal": "用 tty、queue、read 锚定关键机制",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "code",
+          "type": "code",
+          "prompt": "在片段中保留 tty、queue、read，说明终端输入要先进入缓冲再被用户读取。",
+          "context": "代码片段强调设备输入的中间状态：TTY 队列。",
+          "simulator": {
+            "kind": "code-context",
+            "nodes": [
+              "tty",
+              "queue",
+              "read"
+            ]
+          },
+          "starter": "void tty_receive(char ch) {\n    /* put char into tty queue before read consumes it */\n}",
+          "checks": [
+            {
+              "kind": "codeKeywords",
+              "keywords": [
+                "tty",
+                "queue",
+                "read"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "这不是完整编程题，只检查你是否标出关键对象。"
+            },
+            {
+              "level": 2,
+              "text": "把片段和这个状态联系起来：扫描码记录硬件输入"
+            },
+            {
+              "level": 3,
+              "text": "tty_receive 的工作 = 把字符塞进 TTY 队列、等 read 来取。三个关键词：tty（被操作对象）、queue（暂存位置）、read（下游消费者）。把三者用一句话连起来即可，但请用具体动词（put / wait / consume 等）。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab8-operate-code-missing-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "tty"
+              },
+              "feedback": "缺少 tty 会让片段失去关键锚点。先标出对象，再谈完整实现。"
+            }
+          ],
+          "feedback": "片段还缺少关键锚点。先不要写复杂实现，补上能说明机制的关键词。",
+          "success": "片段通过。你已经把代码中的名字和机制状态连接起来。",
+          "coach": {
+            "why": "tty_receive 是 TTY 收字符的核心函数——它从中断处理路径被调用，必须把字符放进 TTY 队列等 read 来消费。三个关键词分别对应：tty（被操作的对象）、queue（数据进入的位置）、read（消费者）。",
+            "observe": "starter 给了 tty_receive(char ch) 函数体注释「put char into tty queue before read consumes it」。三个关键词的角色：tty（对象）、queue（数据落点）、read（读取动作）。",
+            "act": "在函数体里写出实际入队动作（比如 tty->queue.put(ch) 或保留注释意图），三个关键词全部出现。",
+            "check": "你应该能说出：tty_receive 的工作就是「把字符放入 TTY 的队列里，等用户 read」——它和 read 之间靠队列解耦，不是直接传递。",
+            "repair": "如果只用了 tty 和 queue 没用 read：那是写了「数据生产」没说「消费方」——但代码逻辑里 read 是必然的下游，必须在注释里点出。"
+          }
+        },
+        {
+          "id": "lab8-operate-explain",
+          "title": "解释失败的第一怀疑点",
+          "goal": "能把异常现象连接到具体边界和证据",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "用“中断、缓冲区、read”解释：为什么用户程序不应该直接等待键盘硬件。",
+          "context": "解释题不是写长段报告，而是训练你从现象回到最小可检查原因。",
+          "simulator": {
+            "kind": "failure-card",
+            "nodes": [
+              "中断",
+              "缓冲区",
+              "read"
+            ]
+          },
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 24,
+              "keywords": [
+                "中断",
+                "缓冲区",
+                "read"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：硬件中断和用户 read 是不同上下文"
+            },
+            {
+              "level": 3,
+              "text": "三个关键词构成「异步事件解耦」的标准设计：中断（硬件 → 内核）+ 缓冲区（数据暂存）+ read（软件 → 用户）。没有中转层用户程序就要轮询，浪费 CPU。具体怎么写让用户能跟着想清楚由你来。"
+            }
+          ],
+          "feedback": "解释还不够具体。请写出一个边界、一个状态变化和一个证据。",
+          "success": "解释通过。你已经能把现象、边界和证据连成一条排查路径。",
+          "coach": {
+            "why": "「为什么用户程序不直接等键盘」是 Lab8 想让你理解的设计核心。三个关键词是路径上的三段：中断（让内核知道有键盘事件）→ 缓冲区（让字符不丢失）→ read（让用户程序在自己的节奏里取）。三段缺一就是不可用的设计。",
+            "observe": "三个词的因果：键盘随时可能产生事件（异步），但用户程序不一定随时在读——必须有中断把事件抓住、有缓冲让事件不丢失、有 read 在用户准备好时拿出来。",
+            "act": "写 2-3 句话，按「键盘事件异步 → 中断 + 缓冲解决异步 → read 让用户按自己节奏取」的顺序，三个词都用上。",
+            "check": "你应该能说出：直接等键盘 = 用户程序必须时刻盯着键盘端口，CPU 全用来轮询；中断 + 缓冲 + read = 解耦了硬件节奏和软件节奏。",
+            "repair": "如果只列了三个词：补一句「三段解决了同一个问题——硬件随时来、软件不一定随时取，必须有中转」。"
+          },
+          "misconceptions": [
+            {
+              "id": "lab8-operate-explain-missing-cause",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "中断"
+              },
+              "feedback": "解释里缺少 中断，会让排查点太空。把它和具体证据连接起来。"
+            }
+          ]
+        },
+        {
+          "id": "lab8-full-depth-1",
+          "title": "解释终端缓冲",
+          "goal": "把机制边界解释到可以迁移到真实实验",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "为什么用户程序 read 通常不是直接读取键盘硬件？请说明中断、TTY 和缓冲区的分工。",
+          "context": "完整路径需要你不只会选答案，还能说明为什么这个边界会改变实验现象。",
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 26,
+              "keywords": [
+                "中断",
+                "TTY",
+                "缓冲区"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：硬件中断和用户 read 是不同上下文"
+            },
+            {
+              "level": 3,
+              "text": "三层各管一段：中断（硬件触发内核）、TTY（规则处理：转字符、回显、控制字符）、缓冲区（数据暂存等 read）。每层有独立责任，合并任何两层都会让某个职责丢失。具体怎么写让用户能跟着想清楚由你来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab8-full-depth-1-missing-depth-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "中断"
+              },
+              "feedback": "缺少 中断 会让解释脱离题目机制。请把它放回因果链里。"
+            }
+          ],
+          "feedback": "解释还停留在表面。请明确写出对象、状态、边界和证据。",
+          "success": "解释通过。你已经把这一层机制从操作提升成了可迁移理解。",
+          "coach": {
+            "why": "这一步要更精细——不只说「需要中转」，还要说三层各自做什么。中断负责「让硬件事件进入内核处理路径」（IRQ1 触发驱动）、TTY 负责「字符规则处理」（扫描码转字符、行规程、回显）、缓冲区负责「字符暂存等待 read」。",
+            "observe": "三个关键词的分工：中断（机制：CPU 跳到 IRQ 处理）→ TTY（层次：终端子系统，含驱动 + 行规程）→ 缓冲区（数据结构：FIFO 队列）。三者协作完成「键盘事件 → 用户字符」的转换。",
+            "act": "写 3 句话以上：① 中断负责什么（让硬件事件触发内核代码运行）；② TTY 负责什么（扫描码转字符、行规程决定回显）；③ 缓冲区负责什么（字符 FIFO，read 取出）。",
+            "check": "你应该能说出：三层职责互不替代——少了中断硬件事件被忽略；少了 TTY 字符没翻译；少了缓冲事件来了没地方放。",
+            "repair": "如果你写得太抽象（「都很重要」「互相协作」）：那等于没说。补上具体——中断处理的入口是 IDT[33]、TTY 行规程在 termios 配置、缓冲区是 tty_queue 结构。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "复盘",
+      "purpose": "把刚才的操作整理成能迁移到真实 Linux 0.11 实验的检查清单。",
+      "steps": [
+        {
+          "id": "lab8-reflect-summary",
+          "title": "写入学习档案",
+          "goal": "把本关理解压缩成以后能复用的检查清单",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "reflection",
+          "type": "reflection",
+          "prompt": "用三句话写入学习档案：1. 键盘和屏幕看似简单，为什么终端输入输出要经过内核缓冲和驱动规则？；2. 这关最重要的边界是什么；3. 迁移到真实实验时先看哪个证据。",
+          "context": "复盘不是抄答案，而是把你现在的理解保存下来，方便之后做真实实验时自查。",
+          "checks": [
+            {
+              "kind": "reflection",
+              "minLength": 12
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "用自己的话写，不要复制题面。"
+            },
+            {
+              "level": 2,
+              "text": "至少写出一个对象、一个状态变化、一个可观察证据。"
+            },
+            {
+              "level": 3,
+              "text": "压成 3 句：第一句给出输入路径 5 棒（中断 → 驱动 → 转字符 → 缓冲 → read）；第二句指出最易混的边界（扫描码 vs 字符、中断上下文 vs 进程上下文）；第三句留真实实验时第一个要看的证据（IRQ 触发 / 队列字符 / 行规程）。具体内容你自己写。"
+            }
+          ],
+          "feedback": "复盘太短。至少写出问题、边界和一个观察证据。",
+          "success": "已写入学习档案。你现在有了一段可以迁移到真实实验前的自查说明。",
+          "reflectionPrompt": "总结 终端设备的控制：我理解的核心机制是；我容易混淆的是；真实环境中我会先检查。",
+          "beginnerTip": "可以直接用“我现在知道……”开头。目标是确认你没有被术语吓住。",
+          "coach": {
+            "why": "复盘要把「终端 = 多层中转 + 异步解耦」沉淀下来。三句话用途：第一句答驱动问题（说出多层为什么必要）、第二句标记最易混的边界（中断 vs 驱动 vs TTY、扫描码 vs 字符）、第三句给真实实验留具体证据。",
+            "observe": "驱动问题的回答模板：键盘事件是异步硬件信号；用户程序按自己节奏读字符；中间靠中断 + 驱动 + TTY 缓冲解耦——所以输入要经过这些层。",
+            "act": "三段：① 输入路径的完整 5 棒（中断 → 驱动 → 转字符 → 缓冲 → read）；② 最易混的边界（扫描码 vs 字符、中断上下文 vs 进程上下文、TTY 行规程 vs 用户程序）；③ 真实实验时第一个看的证据（IRQ1 是否触发、TTY 队列是否有字符、行规程配置）。",
+            "check": "你应该能说出：以后看任何输入设备问题都能问「中断到了吗、驱动转了吗、缓冲入了吗、用户读了吗」——这是 Lab8 训练的核心思维。",
+            "repair": "如果三句话很泛：把每句换成具体动作（看 IRQ 是否触发 / 看 tty queue 是否有字符 / 看行规程配置）。"
+          }
+        }
+      ]
+    }
+  ],
+  "beginner": {
+    "story": "你按下键盘时，用户程序并不是直接读硬件。中断、驱动和缓冲区共同把设备事件变成程序能读取的字符。",
+    "why": "如果把用户程序输出和终端驱动混成一层，就无法解释为什么某个按键规则或回显行为没有生效。",
+    "analogy": "像前台收件：快递不是直接冲进办公室，而是先到前台登记，放入收件箱，需要的人再来取。",
+    "firstGoal": "能说清按键从硬件事件到用户 read 的路径。",
+    "reassurance": "先不用写完整驱动。先抓住“中断进入内核，缓冲保存字符，read 取走数据”。",
+    "glossary": [
+      {
+        "term": "键盘中断",
+        "meaning": "键盘事件触发 CPU 进入内核处理路径。"
+      },
+      {
+        "term": "扫描码",
+        "meaning": "键盘硬件产生的低层编码，需要转换成字符。"
+      },
+      {
+        "term": "TTY",
+        "meaning": "终端子系统，管理输入输出规则和缓冲。"
+      },
+      {
+        "term": "缓冲区",
+        "meaning": "暂存输入输出数据的队列。"
+      }
+    ]
+  },
+  "drivingQuestion": "键盘和屏幕看似简单，为什么终端输入输出要经过内核缓冲和驱动规则？",
+  "plainLanguageGoal": "按键不是直接送到用户程序：中断先到内核，字符进 TTY 缓冲，用户 read 再从缓冲里取走。",
+  "mentalModel": {
+    "title": "从按键事件到用户读取",
+    "explanation": "键盘产生中断，驱动读取扫描码并转换，字符进入 TTY 缓冲区，终端规则处理回显和特殊键，用户进程通过 read 取走数据。",
+    "flow": [
+      "键盘产生中断",
+      "驱动读取扫描码",
+      "字符进入 TTY 缓冲区",
+      "终端规则处理回显",
+      "用户进程 read 取走数据"
+    ],
+    "checkpoints": [
+      "用户程序不直接读键盘硬件",
+      "中断上下文和进程 read 上下文不同",
+      "回显规则和缓冲队列都会影响现象"
+    ]
+  },
+  "transferChecklist": [
+    "先确定要改的是输入中断、TTY 缓冲还是输出规则",
+    "用一个按键现象验证缓冲是否变化",
+    "用 read 返回结果验证用户程序是否读到数据"
+  ],
+  "firstPrinciples": {
+    "actors": [
+      "键盘硬件产生需要处理的输入事件",
+      "终端驱动把事件转换成字符",
+      "用户进程通过 read 消费缓冲数据"
+    ],
+    "state": [
+      "扫描码记录硬件输入",
+      "TTY 队列保存待处理字符",
+      "终端规则保存回显和特殊键行为"
+    ],
+    "boundary": [
+      "硬件中断和用户 read 是不同上下文",
+      "输入缓冲和屏幕输出是不同方向",
+      "驱动规则和用户程序逻辑不同"
+    ],
+    "transition": [
+      "中断把键盘事件交给内核",
+      "驱动转换并放入队列",
+      "read 从队列取走字符并返回用户程序"
+    ],
+    "evidence": [
+      "按键后缓冲变化说明输入路径生效",
+      "回显变化说明终端规则被应用",
+      "read 返回值说明用户进程读到了数据"
+    ],
+    "failureModes": [
+      "把用户程序 read 当成直接读硬件",
+      "只改输出不改 TTY 规则",
+      "缓冲没有入队导致用户程序一直读不到"
+    ]
+  }
+}

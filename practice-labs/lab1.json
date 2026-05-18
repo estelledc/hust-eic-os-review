@@ -1,0 +1,752 @@
+{
+  "id": "lab1",
+  "title": "熟悉实验环境",
+  "focus": "看懂宿主机、源码、Image、Bochs 和磁盘镜像之间的证据链",
+  "estimatedMinutes": 30,
+  "difficulty": "easy",
+  "concepts": [
+    "宿主系统",
+    "源码目录",
+    "Image",
+    "Bochs",
+    "磁盘镜像"
+  ],
+  "sourceRoute": {
+    "name": "HIT-OSlab Lab1",
+    "url": "https://github.com/Joker001014/HIT-OSlab"
+  },
+  "outcomes": [
+    "能画出宿主机到 Bochs 的四段链路",
+    "能诊断“改了没生效”优先检查哪里",
+    "能把真实实验前的构建和验证步骤写成清单"
+  ],
+  "reportPrompts": [
+    "说明源码、Image、Bochs 和磁盘镜像的边界。",
+    "记录一次“现象没变化”时你会按什么顺序检查。",
+    "写出迁移到真实 Linux 0.11 实验前的验证清单。"
+  ],
+  "phases": [
+    {
+      "id": "prepare",
+      "title": "预备",
+      "purpose": "先建立对象和边界，知道这一关到底在解释哪条系统链路。",
+      "steps": [
+        {
+          "id": "lab1-starter-map",
+          "title": "我改了源码，Bochs 真的换了吗",
+          "goal": "先知道这关解决的系统问题，不急着背术语",
+          "tracks": [
+            "starter"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "如果给第一次接触 OS 实验的同学解释「熟悉实验环境」，哪一句最接近？",
+          "context": "这是零基础路径的入口。先把题目翻成一句人话，确认你知道自己要观察哪条系统链路。",
+          "beginnerTip": "先不用背术语，先找这关在解决哪个真实问题。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "宿主系统",
+              "源码目录",
+              "Image"
+            ]
+          },
+          "options": [
+            {
+              "value": "plain",
+              "label": "这关是在学“我改了源码后，怎样证明 Bochs 跑到了新 Image”。"
+            },
+            {
+              "value": "wrong-1",
+              "label": "这关主要是在记住一串目录名。"
+            },
+            {
+              "value": "wrong-2",
+              "label": "这关主要是在学习进程调度算法。"
+            },
+            {
+              "value": "wrong-3",
+              "label": "这关只是让屏幕多输出几行字。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "plain"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：宿主机和模拟机是两层环境"
+            },
+            {
+              "level": 3,
+              "text": "正确选项里有一个关键短语：「证明 Bochs 跑到了新 Image」。其它选项都缺这条「证明」的因果——找出唯一同时提到「改源码」和「Bochs 验证」的那一句，但选完后请用你自己的话复述一遍。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab1-starter-map-plain-boundary",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-1"
+              },
+              "feedback": "这里混淆了主题。熟悉实验环境 的第一步是看懂：宿主机和模拟机是两层环境。"
+            }
+          ],
+          "feedback": "这个选项没有说清这一关的系统问题。先回到右侧机制画板，把题目压成一句你能复述的话。",
+          "success": "对。你已经看清这一关的关键边界：先把实验环境看成一条加工线：改源码、生成 Image、交给 Bochs、再用输出验证。",
+          "coach": {
+            "why": "OS 实验里，初学者最常迷路的不是某行代码，而是「我以为 Bochs 跑的就是我刚改的源码」。这一关的所有后续动作都建立在这条认知上：源码不会自动出现在 Bochs 里。先认这一点，再做任何事。",
+            "observe": "看四个选项，三个错的各代表一种典型陷阱：被术语吓到（选「记目录名」）、被旁观知识替代（选「调度算法」）、把表象当成本质（选「多输出几行」）。只有 plain 选项点出了「源码 → Image → Bochs」的核心链路。",
+            "act": "选出唯一指出「证明改动进了 Image」的那一项；其它三项都把这关的目的弄丢了。",
+            "check": "你应该能说出：本关不是练命令，是在建立证据意识——任何修改都要能在 Bochs 里被看见，否则就当没改。",
+            "repair": "如果你选了「记目录名」，说明你被表面动作吸引；如果选了「调度算法」，说明你跳过了 Lab1 直接想后面；如果选了「多输出字」，说明你把现象当成了目的。回到题目：这关在解决「证据」问题。"
+          }
+        },
+        {
+          "id": "lab1-prepare-choice",
+          "title": "抓住最容易混淆的边界",
+          "goal": "区分「宿主机和模拟机是两层环境」",
+          "tracks": [
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "哪一句最能说明 oslab 的工作流？",
+          "context": "很多错误不是不会写代码，而是把两个层次当成一个层次。先把边界看清，后面操作才有方向。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "宿主系统",
+              "源码目录",
+              "Image",
+              "Bochs",
+              "磁盘镜像"
+            ]
+          },
+          "options": [
+            {
+              "value": "edit-build-run",
+              "label": "先在宿主机改源码，再构建 Image，最后让 Bochs 启动并观察。"
+            },
+            {
+              "value": "edit-run-directly",
+              "label": "改完源码后 Bochs 会自动读取源码运行。"
+            },
+            {
+              "value": "bochs-builds-source",
+              "label": "Bochs 会替你编译 Linux 0.11 源码。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "edit-build-run"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：宿主机和模拟机是两层环境"
+            },
+            {
+              "level": 3,
+              "text": "三个选项里只有一个把「编辑、构建、启动」三步分别说出来；另两个或省略中间步、或把构建甩给 Bochs。挑出明确写出 make 这步的那一项——但你也要能解释为什么这一步不能跳。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab1-prepare-choice-boundary-mix",
+              "detect": {
+                "kind": "selected",
+                "value": "edit-run-directly"
+              },
+              "feedback": "这个选择把边界混在一起了。先记住：宿主机和模拟机是两层环境。"
+            }
+          ],
+          "feedback": "这个选择还没有对准机制边界。回到心智模型，先分清对象和状态属于哪一层。",
+          "success": "判断正确。你已经抓住这一关的第一条边界：宿主机和模拟机是两层环境。",
+          "coach": {
+            "why": "工作流的方向是：宿主机做编辑+构建，模拟机只做加载+运行。两个错误选项都把这个方向反过来——以为 Bochs 能自动读源码、自动编译。这是「以为模拟器无所不能」的初学者陷阱。",
+            "observe": "edit-run-directly 暗示「改完就好」，省略了构建；bochs-builds-source 把 Bochs 当成 IDE。两者都把宿主机的工作甩给了模拟机。正确选项 edit-build-run 明确写出三个动作的接力。",
+            "act": "选出按「编辑 → 构建 → 启动」排好顺序、且把动作分配给正确角色的选项。",
+            "check": "你应该能说出：宿主机的职责是改源码 + make；Bochs 的职责是加载 make 产生的 Image。这两件事不能合并，也不能换人做。",
+            "repair": "如果你选了 edit-run-directly，是把构建步漏掉了——回想一下：源码是文本，CPU 不能直接执行文本。如果选了 bochs-builds-source，是把构建职责安到了模拟机上——Bochs 是「电脑模拟器」，不是「编译器」。"
+          }
+        },
+        {
+          "id": "lab1-prepare-trace",
+          "title": "把状态流排成因果链",
+          "goal": "按顺序说出「在宿主机修改源码」到「观察 Linux 0.11 输出」",
+          "tracks": [
+            "quick",
+            "full"
+          ],
+          "interaction": "trace",
+          "type": "trace",
+          "prompt": "把下面动作排成正确顺序，形成「熟悉实验环境」的状态流。",
+          "context": "OS 实验的许多错误来自顺序错位。先排入口、状态变化、观察结果，再进入命令和代码。",
+          "simulator": {
+            "kind": "state-flow",
+            "nodes": [
+              "修改源码",
+              "编译 Image",
+              "准备镜像文件交换",
+              "启动 Bochs",
+              "在 Linux 0.11 中验证"
+            ],
+            "highlightOnPass": [
+              "编译 Image",
+              "准备镜像文件交换",
+              "启动 Bochs"
+            ]
+          },
+          "items": [
+            "在 Linux 0.11 中验证",
+            "启动 Bochs",
+            "准备镜像文件交换",
+            "编译 Image",
+            "修改源码"
+          ],
+          "checks": [
+            {
+              "kind": "orderedItems",
+              "answer": [
+                "修改源码",
+                "编译 Image",
+                "准备镜像文件交换",
+                "启动 Bochs",
+                "在 Linux 0.11 中验证"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找到入口动作，再沿着状态变化往后排。"
+            },
+            {
+              "level": 2,
+              "text": "中间关键状态是：重新构建 Image。"
+            },
+            {
+              "level": 3,
+              "text": "对每两个相邻节点问：「上一步如果没做，下一步还能做吗？」例如「编译 Image」和「准备镜像文件交换」——没编译，要交换什么呢？这条因果链能把所有节点定位清楚，但最终顺序请你自己验证。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab1-prepare-trace-order-inverted",
+              "detect": {
+                "kind": "orderedBefore",
+                "item": "在 Linux 0.11 中验证",
+                "before": "编译 Image"
+              },
+              "feedback": "你把结果放到了状态变化之前。先发生 编译 Image，后面才可能出现 在 Linux 0.11 中验证。"
+            }
+          ],
+          "feedback": "顺序还不对。按“入口动作 -> 状态变化 -> 可观察证据”重新排列。",
+          "success": "顺序正确。你已经把这关看成连续状态流，而不是孤立名词。",
+          "coach": {
+            "why": "排序错的最常见模式是把「准备镜像文件交换」放最后，以为它是观察的一部分。其实它是「让 Bochs 拿到新 Image」的桥梁，必须在启动 Bochs 之前。这一步要看清「数据如何从宿主机传到模拟机」。",
+            "observe": "观察 5 个动作之间的因果状态：「修改源码」改的是宿主机文件状态，「编译 Image」改的是构建产物状态，「准备镜像文件交换」改的是 Bochs 能不能读到新 Image，「启动 Bochs」改的是模拟器的运行状态，「在 Linux 0.11 中验证」是最终结果。每相邻两步必须前者改完后者才有意义。",
+            "act": "把「修改源码」拖到第一位，「验证」拖到最后；中间三步按「先生成产物、再让模拟机找到、最后启动」排序。",
+            "check": "你应该能说出：每一步如果不发生，下一步就没有意义——没改源码就没必要 make；没 make 就启动 Bochs 等于跑老 Image；没准备镜像交换 Bochs 就找不到新 Image。",
+            "repair": "如果你把「准备镜像文件交换」放在「启动 Bochs」之后，问自己：Bochs 启动时它读哪里？读不到新 Image 就还是老的。把它移到「编译 Image」之后、「启动 Bochs」之前。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "title": "观察",
+      "purpose": "先从可观察现象倒推状态变化，再决定应该检查哪个层次。",
+      "steps": [
+        {
+          "id": "lab1-observe-diagnose",
+          "title": "从现象回到错因",
+          "goal": "看到异常时先定位层次，而不是乱改代码",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "diagnose",
+          "type": "diagnose",
+          "prompt": "你改了源码，但 Bochs 里的现象完全没变，第一步应怀疑什么？",
+          "context": "观察阶段训练的是诊断顺序：先问现象违反了哪条状态规则，再决定检查哪个入口。",
+          "scenario": "屏幕输出还是旧文字，构建目录里也没有新的 Image 时间戳。",
+          "options": [
+            {
+              "value": "rebuild-image",
+              "label": "先确认是否重新构建并启动了新的 Image。"
+            },
+            {
+              "value": "change-font",
+              "label": "先修改网页字体。"
+            },
+            {
+              "value": "skip-bochs",
+              "label": "不用启动 Bochs，直接认为实验成功。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "rebuild-image"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先看现象违反了哪条机制约束。"
+            },
+            {
+              "level": 2,
+              "text": "优先回到这个边界：宿主机和模拟机是两层环境"
+            },
+            {
+              "level": 3,
+              "text": "「改了没变化」有三种典型原因：①没 make 生成新 Image；②make 了但 Bochs 启动的还是老镜像；③改的代码不在编译路径里。三种都指向同一个第一步：先确认 Image 真的更新了——但具体怎么确认要靠你自己说。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab1-observe-diagnose-wrong-layer",
+              "detect": {
+                "kind": "selected",
+                "value": "change-font"
+              },
+              "feedback": "这个选项不能解释现象。优先检查：忘记重新编译导致 Bochs 仍跑旧 Image。"
+            }
+          ],
+          "feedback": "这个诊断不能解释给出的现象。先找状态在哪一步偏离预期。",
+          "success": "诊断正确。这个现象最能指向：忘记重新编译导致 Bochs 仍跑旧 Image。",
+          "beginnerTip": "把它当成“看现象找原因”的练习。不会术语也可以先判断是哪一层出了问题。",
+          "coach": {
+            "why": "「改了没变化」是 OS 实验最频繁的错觉。错的诊断方向有两类：往美学/界面上找（改字体），或者干脆放弃验证（不启动 Bochs）。正确的方向永远是回到证据链：Image 是不是真的更新了。",
+            "observe": "三个选项里，rebuild-image 把你拉回到证据：它要求你看 Image 文件本身和 Bochs 启动日志这两条状态。change-font 把现象引向无关维度，skip-bochs 干脆放弃观察——后两个都不收集任何证据，所以不可能是真诊断。",
+            "act": "选 rebuild-image：先看 Image 时间戳和 Bochs 启动日志，再判断到底跑没跑新内核。",
+            "check": "你应该能说出：现象不变时，先怀疑「我改的源码到底有没有被 make」，而不是怀疑代码逻辑。这是诊断的第一性步骤。",
+            "repair": "如果选了 change-font：你在治症状不治病。如果选了 skip-bochs：你放弃了唯一的验证手段。回到链路上：源码 → make → Image → Bochs。任何一节断了，结果就不变——逐节查。"
+          }
+        },
+        {
+          "id": "lab1-observe-fill",
+          "title": "给关键状态贴上名字",
+          "goal": "能用术语说出 Image、Bochs 的位置",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "fill",
+          "type": "fill",
+          "prompt": "补全两个状态词，让它们和右侧机制画板对应。",
+          "context": "术语不是背诵用的，它让你能在报告和排查里准确指向状态。",
+          "simulator": {
+            "kind": "state-note",
+            "nodes": [
+              "宿主系统",
+              "源码目录",
+              "Image",
+              "Bochs"
+            ]
+          },
+          "blanks": [
+            {
+              "id": "kernel",
+              "label": "Bochs 加载的内核成品",
+              "placeholder": "Image"
+            },
+            {
+              "id": "simulator",
+              "label": "运行 Linux 0.11 的模拟电脑",
+              "placeholder": "Bochs"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "fills",
+              "answers": {
+                "kernel": [
+                  "image"
+                ],
+                "simulator": [
+                  "bochs"
+                ]
+              }
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先判断空格是在问对象、状态、动作还是证据。"
+            },
+            {
+              "level": 2,
+              "text": "这关最重要的状态之一是：源码状态保存在宿主机目录里"
+            },
+            {
+              "level": 3,
+              "text": "类比一下：Image 像 DVD 光盘上的电影文件，Bochs 像 DVD 播放器。光盘不会自己播放，播放器没有光盘也不知道放什么。两个空填的是这两种角色——但请用术语本身写答案，不要写类比词。"
+            }
+          ],
+          "feedback": "有空格还没对上。检查是否把相邻层次的名词混用了。",
+          "success": "填空正确。你已经把关键术语和状态位置对上了。",
+          "coach": {
+            "why": "术语贴错最常见：把 Image 说成「Bochs」、把 Bochs 说成「内核」。这一步在用最短的方式让你区分「成品」和「运行成品的机器」——这两个东西在 Lab1 之后会一直纠缠出现。",
+            "observe": "两个空各对应一种角色：「Bochs 加载的内核成品」是被加载者（=Image），「运行 Linux 0.11 的模拟电脑」是加载者（=Bochs）。提示语 placeholder 已经把答案写出来了，但你要理解为什么是这样。",
+            "act": "在 kernel 空填 Image，在 simulator 空填 Bochs。",
+            "check": "你应该能说出：Image 是文件（启动映像），Bochs 是程序（模拟硬件）。两者的关系是「Bochs 加载并运行 Image」——一物一名，绝不混用。",
+            "repair": "如果填反了：你把「成品」和「运行成品的机器」搞混了。类比：电影是 Image（DVD 文件），DVD 播放机是 Bochs（机器）。播放器不是电影，电影也不是播放器。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "operate",
+      "title": "操作",
+      "purpose": "在站内用命令、代码片段和解释练习表达关键状态转移。",
+      "steps": [
+        {
+          "id": "lab1-operate-command",
+          "title": "用命令表达证据链",
+          "goal": "把实验动作写成可检查的顺序",
+          "tracks": [
+            "starter",
+            "quick",
+            "full"
+          ],
+          "interaction": "command",
+          "type": "command",
+          "prompt": "在命令模拟器里写出“进入源码目录、构建、回到实验目录、启动观察”的四行动作。",
+          "context": "这些命令不真实执行；它们让你练习把“源码变成可观察输出”的证据链说清楚。",
+          "simulator": {
+            "kind": "terminal",
+            "output": "$ cd oslab/linux-0.11\n$ make\n$ cd ..\n$ ./run\n# simulated: Bochs loaded a freshly built Image"
+          },
+          "starter": "cd oslab/linux-0.11",
+          "checks": [
+            {
+              "kind": "commands",
+              "commands": [
+                "cd oslab/linux-0.11",
+                "make",
+                "cd ..",
+                "./run"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "命令模拟器只检查顺序，不会真实执行。"
+            },
+            {
+              "level": 2,
+              "text": "先进入会产生改动或证据的目录，再构建或启动观察。"
+            },
+            {
+              "level": 3,
+              "text": "命令分两类：移动光标的（cd）和改变文件/进程的（make、./run）。第一条给你了，下一条要在源码目录里产生新 Image，再下一条要回到能启动 Bochs 的位置，最后启动它——具体写法你自己来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab1-operate-command-missing-command",
+              "detect": {
+                "kind": "missingCommand",
+                "command": "make"
+              },
+              "feedback": "命令链缺少关键准备动作。真实实验里需要先完成「make」这一环，才有后续观察证据。"
+            }
+          ],
+          "feedback": "命令顺序或数量不匹配。按实验链路重新输入，每行一条命令。",
+          "success": "命令顺序正确。你表达出了从准备到观察证据的完整动作链。",
+          "beginnerTip": "这里不会真的运行命令，也不是考你背命令。你是在练习“先做什么、再做什么”。",
+          "coach": {
+            "why": "命令的顺序就是状态变化的顺序。这一步要练的不是「记住四条命令」，而是看出每条命令在改什么状态——cd 切目录、make 生成 Image、cd .. 退到 oslab 根、./run 启动 Bochs。少一条或顺序错都会让链路断。",
+            "observe": "starter 第一条 cd oslab/linux-0.11 把你的当前目录状态切到源码目录。从这条命令的结果看：你现在能看到 Makefile 和 boot/ 等子目录——这说明你站在了能 make 的位置上。下一条必须利用这个状态。",
+            "act": "在第一条之后追加：make → cd .. → ./run。每条命令独占一行。",
+            "check": "你应该能说出：cd 改的是「我现在站在哪个目录」，make 改的是「Image 文件是新还是旧」，./run 改的是「Bochs 是否启动」——三种状态各对应一条命令。",
+            "repair": "如果 make 漏了：你跳过了「把源码变成 Image」这一步，./run 启动的还是老 Image。如果 cd .. 漏了：./run 找不到，因为 run 脚本在 oslab/ 而不在 oslab/linux-0.11/ 里。如果顺序乱了：状态变化的因果就接不上。"
+          }
+        },
+        {
+          "id": "lab1-operate-code",
+          "title": "在代码片段里标出状态入口",
+          "goal": "用 Image、Bochs、linux-0.11 锚定关键机制",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "code",
+          "type": "code",
+          "prompt": "在注释片段里写出 Image、Bochs、linux-0.11 三个对象的关系。",
+          "context": "这里不是写可运行 C 代码，而是把环境边界写进代码注释，训练你以后读构建脚本时不混层。",
+          "simulator": {
+            "kind": "code-context",
+            "nodes": [
+              "Image",
+              "Bochs",
+              "linux-0.11"
+            ]
+          },
+          "starter": "/* linux-0.11 源码经过 make 生成 Image；\n   Bochs 加载 Image，而不是直接运行源码。 */",
+          "checks": [
+            {
+              "kind": "codeKeywords",
+              "keywords": [
+                "Image",
+                "Bochs",
+                "linux-0.11"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "这不是完整编程题，只检查你是否标出关键对象。"
+            },
+            {
+              "level": 2,
+              "text": "把片段和这个状态联系起来：源码状态保存在宿主机目录里"
+            },
+            {
+              "level": 3,
+              "text": "注释只需要把三件事的因果说清：linux-0.11 是输入、Image 是中间产物、Bochs 是消费者。一句「Bochs 不读源码，只加载 Image」就足够触发关键词检查——但你写的句子要能让别人读懂这条因果。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab1-operate-code-missing-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "Image"
+              },
+              "feedback": "缺少 Image 会让片段失去关键锚点。先标出对象，再谈完整实现。"
+            }
+          ],
+          "feedback": "片段还缺少关键锚点。先不要写复杂实现，补上能说明机制的关键词。",
+          "success": "片段通过。你已经把代码中的名字和机制状态连接起来。",
+          "coach": {
+            "why": "代码片段不是让你写完整逻辑，而是让你用注释表达「三个对象的关系」。如果你能在两行注释里把 linux-0.11、Image、Bochs 的关系讲对，说明你已经把整个加工线放进了脑子里。",
+            "observe": "starter 已经写了一句「linux-0.11 源码经过 make 生成 Image」——你需要补的是 Bochs 怎么进来。Bochs 的角色不是编译，是「加载 Image」。",
+            "act": "在 starter 注释后追加一句话，把 Bochs 的角色写出来——例如 Bochs 加载 Image 启动 Linux 0.11，让三个关键词都自然出现。",
+            "check": "你应该能说出：linux-0.11（源码）+ Image（构建产物）+ Bochs（加载器）三者构成完整链路，缺一不可。",
+            "repair": "如果你只写了 Bochs 但没说它「加载 Image」：你把 Bochs 当成抽象工具了。如果你写了 Image 但没接 Bochs：你把构建和运行断开了。三个关键词必须在一句话里有因果关系，不是并列堆砌。"
+          }
+        },
+        {
+          "id": "lab1-operate-explain",
+          "title": "解释失败的第一怀疑点",
+          "goal": "能把异常现象连接到具体边界和证据",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "如果改动没有出现，请用“重新编译、Image、Bochs”解释你会先检查哪一段链路。",
+          "context": "解释题不是写长段报告，而是训练你从现象回到最小可检查原因。",
+          "simulator": {
+            "kind": "failure-card",
+            "nodes": [
+              "重新编译",
+              "Image",
+              "Bochs"
+            ]
+          },
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 24,
+              "keywords": [
+                "重新编译",
+                "Image",
+                "Bochs"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：宿主机和模拟机是两层环境"
+            },
+            {
+              "level": 3,
+              "text": "诊断不是把三个词往一起堆，而是写出顺序：从「我现在看到的」回溯到「我可能漏的」。Bochs（终点）→ Image（中间产物）→ 重新编译（源头动作）——每步都问「这一节有没有出问题」，但具体怎么写让用户能跟着做，靠你自己。"
+            }
+          ],
+          "feedback": "解释还不够具体。请写出一个边界、一个状态变化和一个证据。",
+          "success": "解释通过。你已经能把现象、边界和证据连成一条排查路径。",
+          "coach": {
+            "why": "调试时最容易凭直觉乱猜。这一步在练「按链路找断点」：从源码到 Bochs 之间有四节，任何一节断了现象都不会变。能用「重新编译 / Image / Bochs」三个词组织出诊断顺序，说明你已经把链路内化了。",
+            "observe": "三个关键词是按因果排的：源码改了 → 重新编译 → 产生新 Image → Bochs 加载新 Image。诊断时反着走：先看 Bochs 加载的是不是新 Image，再看 Image 时间戳，再确认是否真的 make 了。",
+            "act": "写 2-3 句话，按「先看 X，再看 Y，最后看 Z」的顺序，把三个关键词都用上。可以是「先看 Bochs 启动日志确认加载了哪个 Image，再看 Image 文件时间戳，最后回到源码目录确认是否重新编译」。",
+            "check": "你应该能说出：诊断顺序不能从源码端开始，而要从「我看到的现象」端开始往回追——因为终点（Bochs）才是产生现象的地方。",
+            "repair": "如果你写得太短没覆盖三个词：你跳过了链路的某一节，下次现象不变时你也会跳过那一节。如果三个词都用了但没顺序：那是堆砌不是诊断——重写时给每个词配一句「先看 / 再看 / 最后看」。"
+          },
+          "misconceptions": [
+            {
+              "id": "lab1-operate-explain-missing-cause",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "重新编译"
+              },
+              "feedback": "解释里缺少 重新编译，会让排查点太空。把它和具体证据连接起来。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "复盘",
+      "purpose": "把刚才的操作整理成能迁移到真实 Linux 0.11 实验的检查清单。",
+      "steps": [
+        {
+          "id": "lab1-reflect-summary",
+          "title": "写入学习档案",
+          "goal": "把本关理解压缩成以后能复用的检查清单",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "reflection",
+          "type": "reflection",
+          "prompt": "用三句话写入学习档案：1. 我改了源码以后，怎样确认 Bochs 启动的确实是新构建出来的 Linux 0.11？；2. 这关最重要的边界是什么；3. 迁移到真实实验时先看哪个证据。",
+          "context": "复盘不是抄答案，而是把你现在的理解保存下来，方便之后做真实实验时自查。",
+          "checks": [
+            {
+              "kind": "reflection",
+              "minLength": 12
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "用自己的话写，不要复制题面。"
+            },
+            {
+              "level": 2,
+              "text": "至少写出一个对象、一个状态变化、一个可观察证据。"
+            },
+            {
+              "level": 3,
+              "text": "把这一关的所有内容压成 3 句话：第一句回答「怎样证明 Bochs 跑了新内核」；第二句指出最容易混淆的边界；第三句留一个未来真实实验时第一个要查的证据。每句话都要具体到能在三个月后看懂——但内容由你来写。"
+            }
+          ],
+          "feedback": "复盘太短。至少写出问题、边界和一个观察证据。",
+          "success": "已写入学习档案。你现在有了一段可以迁移到真实实验前的自查说明。",
+          "reflectionPrompt": "总结 熟悉实验环境：我理解的核心机制是；我容易混淆的是；真实环境中我会先检查。",
+          "beginnerTip": "可以直接用“我现在知道……”开头。目标是确认你没有被术语吓住。",
+          "coach": {
+            "why": "复盘不是写感想，是给「未来要做真实实验的自己」留一份检查清单。三句话对应三种用途：第一句答驱动问题（说出方法）、第二句标记最容易翻车的地方、第三句给未来的自己一个具体动作。",
+            "observe": "驱动问题已经印在 prompt 里了：「我改了源码以后，怎样确认 Bochs 启动的确实是新构建出来的 Linux 0.11？」——你的第一句话直接回答它即可。",
+            "act": "写三段：① 我会怎么确认 Bochs 跑了新内核（Image 时间戳 + Bochs 启动输出 + 一个可观察现象）；② 最容易混的边界（宿主 vs 模拟、源码 vs Image）；③ 真实实验时第一个看的证据（Image 是否更新）。",
+            "check": "你应该能说出：每次现象不变时，复盘里这份清单能直接复用——不用再从头思考。",
+            "repair": "如果三句话都写得很泛：那等于没写。把每句换成具体动作（看哪个文件、看哪行输出、跑什么命令），下次才能用。"
+          }
+        }
+      ]
+    }
+  ],
+  "beginner": {
+    "story": "第一次做 OS 实验，最容易迷路的不是代码，而是不知道自己正在操作哪一层。Lab1 先让你看懂源码、构建产物和模拟器之间的关系。",
+    "why": "后面所有实验都要修改 Linux 0.11。如果你不能判断 Bochs 跑的是不是新 Image，后面的现象就没有可信度。",
+    "analogy": "像改讲义：你先改 Word 原稿，再导出 PDF，最后打开 PDF 检查。Bochs 打开的不是原稿，而是构建后的成品。",
+    "firstGoal": "能用自己的话说清源码、Image、Bochs、磁盘镜像各自负责什么。",
+    "reassurance": "这一步不要求你会内核源码。先把“我改了哪里、运行了什么、从哪里看结果”说清楚。",
+    "glossary": [
+      {
+        "term": "宿主系统",
+        "meaning": "你真正使用的电脑环境，编辑源码和执行构建命令都发生在这里。"
+      },
+      {
+        "term": "Image",
+        "meaning": "Linux 0.11 编译后的启动映像，是 Bochs 实际加载的内核成品。"
+      },
+      {
+        "term": "Bochs",
+        "meaning": "软件模拟出来的电脑，用来启动和观察 Linux 0.11。"
+      },
+      {
+        "term": "磁盘镜像",
+        "meaning": "给模拟机使用的虚拟磁盘，常用来在宿主机和 Linux 0.11 之间交换文件。"
+      }
+    ]
+  },
+  "drivingQuestion": "我改了源码以后，怎样确认 Bochs 启动的确实是新构建出来的 Linux 0.11？",
+  "plainLanguageGoal": "先把实验环境看成一条加工线：改源码、生成 Image、交给 Bochs、再用输出验证。",
+  "mentalModel": {
+    "title": "源码到运行结果的加工线",
+    "explanation": "源码不会被 Bochs 直接执行。你在宿主机改源码，构建命令把它变成 Image，Bochs 再加载这个 Image，最后通过屏幕输出或文件现象验证结果。",
+    "flow": [
+      "在宿主机修改源码",
+      "重新构建 Image",
+      "启动 Bochs 加载 Image",
+      "观察 Linux 0.11 输出"
+    ],
+    "checkpoints": [
+      "源码和 Image 不是同一个东西",
+      "运行前必须确认重新构建",
+      "观察结果必须能追溯到刚生成的 Image"
+    ]
+  },
+  "transferChecklist": [
+    "确认改动发生在 Linux 0.11 源码目录",
+    "启动前重新构建 Image 并查看时间或构建输出",
+    "在 Bochs 中用一个可观察现象证明新映像已启动"
+  ],
+  "firstPrinciples": {
+    "actors": [
+      "宿主机负责编辑和构建源码",
+      "Bochs 负责模拟硬件并加载 Image",
+      "Linux 0.11 在模拟机里给出观察结果"
+    ],
+    "state": [
+      "源码状态保存在宿主机目录里",
+      "运行状态体现在构建后的 Image 和 Bochs 屏幕输出中",
+      "文件交换状态可能保存在磁盘镜像里"
+    ],
+    "boundary": [
+      "宿主机和模拟机是两层环境",
+      "源码文件和启动映像是两种产物",
+      "构建完成和启动成功是两个不同证据"
+    ],
+    "transition": [
+      "修改源码只改变原料",
+      "make 把源码转成新的 Image",
+      "run/Bochs 把 Image 变成可观察现象"
+    ],
+    "evidence": [
+      "构建日志说明 Image 是否更新",
+      "Bochs 输出说明新映像是否被加载",
+      "预期文字或文件现象说明修改是否进入运行结果"
+    ],
+    "failureModes": [
+      "忘记重新编译导致 Bochs 仍跑旧 Image",
+      "在错误目录操作导致源码没有参与构建",
+      "把宿主机文件变化误认为模拟机已经看到"
+    ]
+  }
+}

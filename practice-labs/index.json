@@ -1,0 +1,306 @@
+{
+  "version": 2,
+  "tracks": [
+    {
+      "id": "starter",
+      "title": "零基础引导",
+      "description": "按实验复杂度安排 4-8 步，先用白话建立理解。"
+    },
+    {
+      "id": "quick",
+      "title": "快速体验",
+      "description": "每个 Lab 只完成核心步骤，先建立全局认识。"
+    },
+    {
+      "id": "full",
+      "title": "完整实践",
+      "description": "按 Lab1 到 Lab9 完成全部阶段和检查点。"
+    },
+    {
+      "id": "exam",
+      "title": "考前重点",
+      "description": "按高频机制和易错点组织任务。"
+    }
+  ],
+  "labs": [
+    {
+      "id": "lab1",
+      "title": "熟悉实验环境",
+      "focus": "看懂宿主机、源码、Image、Bochs 和磁盘镜像之间的证据链",
+      "estimatedMinutes": 30,
+      "difficulty": "easy",
+      "concepts": [
+        "宿主系统",
+        "源码目录",
+        "Image",
+        "Bochs",
+        "磁盘镜像"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab1",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能画出宿主机到 Bochs 的四段链路",
+        "能诊断“改了没生效”优先检查哪里",
+        "能把真实实验前的构建和验证步骤写成清单"
+      ],
+      "drivingQuestion": "我改了源码以后，怎样确认 Bochs 启动的确实是新构建出来的 Linux 0.11？",
+      "plainLanguageGoal": "先把实验环境看成一条加工线：改源码、生成 Image、交给 Bochs、再用输出验证。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab2",
+      "title": "操作系统的引导",
+      "focus": "理解 BIOS、bootsect、setup、head.s 和内核入口之间的控制权交接",
+      "estimatedMinutes": 35,
+      "difficulty": "medium",
+      "concepts": [
+        "BIOS",
+        "bootsect",
+        "setup",
+        "保护模式",
+        "内核入口"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab2",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能解释启动接力链",
+        "能区分加载、搬移和跳转",
+        "能把早期启动失败定位到具体阶段"
+      ],
+      "drivingQuestion": "一台刚启动的机器，控制权怎样从 BIOS 一棒一棒交给 Linux 0.11 内核？",
+      "plainLanguageGoal": "把启动看成接力赛：每一小段代码只负责把下一段代码带到能继续跑的位置。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab3",
+      "title": "系统调用",
+      "focus": "理解用户态程序怎样通过系统调用号和系统调用表安全请求内核服务",
+      "estimatedMinutes": 40,
+      "difficulty": "medium",
+      "concepts": [
+        "用户态",
+        "内核态",
+        "int 0x80",
+        "系统调用号",
+        "sys_call_table"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab3",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能解释系统调用为什么需要受控入口",
+        "能定位新增系统调用路径缺哪一段",
+        "能用返回值证明内核服务被调用"
+      ],
+      "drivingQuestion": "用户程序不能随便跳进内核，那它怎样安全地请求内核帮忙？",
+      "plainLanguageGoal": "把系统调用看成一扇受控入口：用户程序按号码敲门，内核查表后执行对应服务。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab4",
+      "title": "进程运行轨迹的跟踪与统计",
+      "focus": "把调度过程转成可分析的时间、pid 和状态轨迹",
+      "estimatedMinutes": 45,
+      "difficulty": "medium",
+      "concepts": [
+        "进程状态",
+        "调度",
+        "日志",
+        "pid",
+        "周转时间"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab4",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能设计最小进程轨迹日志",
+        "能根据日志判断调度状态",
+        "能解释统计结果依赖记录点"
+      ],
+      "drivingQuestion": "进程运行看不见时，怎样记录轨迹并从轨迹里看懂调度？",
+      "plainLanguageGoal": "把调度器的每次状态变化写成日志，再用日志反推进程什么时候就绪、运行、阻塞和结束。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab5",
+      "title": "基于内核栈切换的进程切换",
+      "focus": "理解进程切换时现场、内核栈和调度选择怎样连接",
+      "estimatedMinutes": 50,
+      "difficulty": "hard",
+      "concepts": [
+        "内核栈",
+        "现场",
+        "schedule",
+        "task_struct",
+        "上下文切换"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab5",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能解释为什么进程切换依赖内核栈",
+        "能区分调度选择和现场切换",
+        "能诊断切换后返回位置错误"
+      ],
+      "drivingQuestion": "进程切换时，为什么内核栈会影响“从哪里停下、从哪里继续”？",
+      "plainLanguageGoal": "切换进程不是改一个编号，而是保存旧进程现场，再恢复新进程在内核里的暂停点。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab6",
+      "title": "Lab 6 信号量的实现与应用",
+      "focus": "理解 P/V 操作如何用计数和等待队列协调互斥、阻塞与唤醒",
+      "estimatedMinutes": 55,
+      "difficulty": "hard",
+      "concepts": [
+        "信号量",
+        "P 操作",
+        "V 操作",
+        "阻塞队列",
+        "临界区"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab6",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能解释信号量计数和等待队列的关系",
+        "能判断 P/V 顺序是否破坏互斥",
+        "能区分忙等和阻塞等待"
+      ],
+      "drivingQuestion": "多个进程抢同一个资源时，信号量怎样决定谁继续、谁等待、谁被唤醒？",
+      "plainLanguageGoal": "把信号量看成“剩余名额 + 等待队列”：没名额就睡眠，有名额或释放资源时再唤醒。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab7",
+      "title": "地址映射与共享",
+      "focus": "理解逻辑地址、线性地址、物理地址和共享物理页之间的映射关系",
+      "estimatedMinutes": 55,
+      "difficulty": "hard",
+      "concepts": [
+        "逻辑地址",
+        "线性地址",
+        "物理地址",
+        "页表",
+        "共享页"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab7",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能区分三层地址",
+        "能解释共享页的判定证据",
+        "能诊断地址层次混淆"
+      ],
+      "drivingQuestion": "程序看到的是逻辑地址，硬件使用的是物理地址，中间怎样映射，两个进程又怎样共享同一页？",
+      "plainLanguageGoal": "地址不是一个数那么简单：程序给出逻辑地址，系统翻译到物理页，共享就是让不同映射指向同一物理页。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab8",
+      "title": "终端设备的控制",
+      "focus": "理解键盘输入和屏幕输出怎样经过中断、TTY 缓冲和终端规则",
+      "estimatedMinutes": 45,
+      "difficulty": "medium",
+      "concepts": [
+        "键盘中断",
+        "扫描码",
+        "TTY",
+        "缓冲区",
+        "read"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab8",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能解释终端输入路径",
+        "能区分中断处理和用户 read",
+        "能诊断终端规则没有生效的层次"
+      ],
+      "drivingQuestion": "键盘和屏幕看似简单，为什么终端输入输出要经过内核缓冲和驱动规则？",
+      "plainLanguageGoal": "按键不是直接送到用户程序：中断先到内核，字符进 TTY 缓冲，用户 read 再从缓冲里取走。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    },
+    {
+      "id": "lab9",
+      "title": "proc 文件系统的实现",
+      "focus": "理解 proc 怎样用文件接口动态暴露内核状态",
+      "estimatedMinutes": 45,
+      "difficulty": "medium",
+      "concepts": [
+        "proc",
+        "虚拟文件",
+        "read 回调",
+        "内核状态",
+        "VFS"
+      ],
+      "sourceRoute": {
+        "name": "HIT-OSlab Lab9",
+        "url": "https://github.com/Joker001014/HIT-OSlab"
+      },
+      "outcomes": [
+        "能解释 proc 与普通文件的区别",
+        "能描述 read 回调生成内容的路径",
+        "能诊断写死输出的问题"
+      ],
+      "drivingQuestion": "用户程序怎样通过 proc 文件系统看到内核里的实时状态？",
+      "plainLanguageGoal": "proc 文件看起来像文件，但 read 时内容由内核现场生成，不一定来自磁盘。",
+      "phaseIds": [
+        "prepare",
+        "observe",
+        "operate",
+        "reflect"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,815 @@
+{
+  "id": "lab4",
+  "title": "进程运行轨迹的跟踪与统计",
+  "focus": "把调度过程转成可分析的时间、pid 和状态轨迹",
+  "estimatedMinutes": 45,
+  "difficulty": "medium",
+  "concepts": [
+    "进程状态",
+    "调度",
+    "日志",
+    "pid",
+    "周转时间"
+  ],
+  "sourceRoute": {
+    "name": "HIT-OSlab Lab4",
+    "url": "https://github.com/Joker001014/HIT-OSlab"
+  },
+  "outcomes": [
+    "能设计最小进程轨迹日志",
+    "能根据日志判断调度状态",
+    "能解释统计结果依赖记录点"
+  ],
+  "reportPrompts": [
+    "说明你选择哪些位置记录进程状态。",
+    "用一段日志解释进程从就绪到运行再到阻塞。",
+    "写出统计等待时间前必须检查的证据。"
+  ],
+  "phases": [
+    {
+      "id": "prepare",
+      "title": "预备",
+      "purpose": "先建立对象和边界，知道这一关到底在解释哪条系统链路。",
+      "steps": [
+        {
+          "id": "lab4-starter-map",
+          "title": "看不见的进程怎么留下足迹",
+          "goal": "先知道这关解决的系统问题，不急着背术语",
+          "tracks": [
+            "starter"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "如果给第一次接触 OS 实验的同学解释「进程运行轨迹的跟踪与统计」，哪一句最接近？",
+          "context": "这是零基础路径的入口。先把题目翻成一句人话，确认你知道自己要观察哪条系统链路。",
+          "beginnerTip": "先不用背术语，先找这关在解决哪个真实问题。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "进程状态",
+              "调度",
+              "日志"
+            ]
+          },
+          "options": [
+            {
+              "value": "plain",
+              "label": "这关是在学“把看不见的进程状态变化记录成可分析日志”。"
+            },
+            {
+              "value": "wrong-1",
+              "label": "这关主要是在实现 proc 虚拟文件。"
+            },
+            {
+              "value": "wrong-2",
+              "label": "这关只是在让终端回显字符。"
+            },
+            {
+              "value": "wrong-3",
+              "label": "这关只是给进程起更好听的名字。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "plain"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：真实运行状态和日志文本不是同一个东西"
+            },
+            {
+              "level": 3,
+              "text": "「轨迹」这个词是关键——它隐含「时间序列 + 状态变化」。其它选项要么换主题（proc/终端）、要么把无关属性（名字）当成研究对象。找出唯一同时提及「状态变化」和「记录/日志」的那一句，但请用你自己的话说为什么必须记录。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab4-starter-map-plain-boundary",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-1"
+              },
+              "feedback": "这里混淆了主题。进程运行轨迹的跟踪与统计 的第一步是看懂：真实运行状态和日志文本不是同一个东西。"
+            }
+          ],
+          "feedback": "这个选项没有说清这一关的系统问题。先回到右侧机制画板，把题目压成一句你能复述的话。",
+          "success": "对。你已经看清这一关的关键边界：把调度器的每次状态变化写成日志，再用日志反推进程什么时候就绪、运行、阻塞和结束。",
+          "coach": {
+            "why": "进程是看不见的——它们在 CPU 里被调度切换，但你既看不到 ready 队列里有谁、也看不到为什么某个进程被换下去。Lab4 的核心动作是「让看不见的状态变化留下文字痕迹」。这一步先确认你抓住了「记录」这个目的。",
+            "observe": "正确选项点出「把状态变化记录成日志」——这就是 Lab4 的本质。其它选项指向了别的实验：proc 是 Lab9、终端回显是 Lab8、改进程名字根本没意义。",
+            "act": "选出唯一同时提到「进程状态」和「记录」的那一项。",
+            "check": "你应该能说出：调度的状态变化（ready ↔ running ↔ blocked）发生在内核里、用户看不到——必须用日志把它「印」出来才能分析。",
+            "repair": "如果选了 proc 虚拟文件：那是 Lab9 的题目（虚拟文件如何动态生成）。如果选了终端回显：那是 Lab8。如果选了改名字：那对调度行为本身没影响——名字不是状态。"
+          }
+        },
+        {
+          "id": "lab4-prepare-choice",
+          "title": "抓住最容易混淆的边界",
+          "goal": "区分「真实运行状态和日志文本不是同一个东西」",
+          "tracks": [
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "统计进程轨迹时，哪种信息最关键？",
+          "context": "很多错误不是不会写代码，而是把两个层次当成一个层次。先把边界看清，后面操作才有方向。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "进程状态",
+              "调度",
+              "日志",
+              "pid",
+              "周转时间"
+            ]
+          },
+          "options": [
+            {
+              "value": "state-time",
+              "label": "pid、时间、状态变化和变化原因。"
+            },
+            {
+              "value": "only-name",
+              "label": "只记录进程名字，不需要时间。"
+            },
+            {
+              "value": "only-color",
+              "label": "只记录输出颜色。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "state-time"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：真实运行状态和日志文本不是同一个东西"
+            },
+            {
+              "level": 3,
+              "text": "想象你拿到一份日志，要算「进程 A 等了多久」——你需要至少两个时间点（开始等、被唤醒）和确认「A」的方式（pid）。少 pid 你不知道哪条属于谁，少时间你不知道间隔多长，少状态变化你不知道事件是什么——四个字段一个不能少，但请你自己解释为什么。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab4-prepare-choice-boundary-mix",
+              "detect": {
+                "kind": "selected",
+                "value": "only-name"
+              },
+              "feedback": "这个选择把边界混在一起了。先记住：真实运行状态和日志文本不是同一个东西。"
+            }
+          ],
+          "feedback": "这个选择还没有对准机制边界。回到心智模型，先分清对象和状态属于哪一层。",
+          "success": "判断正确。你已经抓住这一关的第一条边界：真实运行状态和日志文本不是同一个东西。",
+          "coach": {
+            "why": "日志不是越多越好，而是「能不能还原过程」。state-time 选项给出了能还原过程的最小字段集：pid（谁）、时间（何时）、状态变化（发生了什么）、原因（为什么）。少了任何一项，日志就还原不出完整的调度故事。",
+            "observe": "only-name 缺时间——你看不出事件发生顺序；only-color 完全无关——颜色不是进程状态。state-time 列的四个字段对应「四 W」：who（pid）、when（time）、what（state change）、why（cause）。",
+            "act": "选 state-time：只有这套字段能让日志「可分析」——你能从中算等待时间、推断调度策略、找出阻塞原因。",
+            "check": "你应该能说出：日志的字段集决定了你能从日志里提取哪些结论——字段不够，再多行也分析不出有用结果。",
+            "repair": "如果选了 only-name：你会发现日志里全是「进程 A 在做事」但说不清「在哪个时刻、做什么改变」。如果选了 only-color：那是装饰，不是分析素材——颜色变化不对应任何调度事件。"
+          }
+        },
+        {
+          "id": "lab4-prepare-trace",
+          "title": "把状态流排成因果链",
+          "goal": "按顺序说出「进程创建」到「用日志计算统计量」",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "trace",
+          "type": "trace",
+          "prompt": "把下面动作排成正确顺序，形成「进程运行轨迹的跟踪与统计」的状态流。",
+          "context": "OS 实验的许多错误来自顺序错位。先排入口、状态变化、观察结果，再进入命令和代码。",
+          "simulator": {
+            "kind": "state-flow",
+            "nodes": [
+              "创建进程",
+              "进入就绪队列",
+              "被调度运行",
+              "因等待或时间片切换",
+              "日志统计状态轨迹"
+            ],
+            "highlightOnPass": [
+              "进入就绪队列",
+              "被调度运行",
+              "因等待或时间片切换"
+            ]
+          },
+          "items": [
+            "日志统计状态轨迹",
+            "因等待或时间片切换",
+            "被调度运行",
+            "进入就绪队列",
+            "创建进程"
+          ],
+          "checks": [
+            {
+              "kind": "orderedItems",
+              "answer": [
+                "创建进程",
+                "进入就绪队列",
+                "被调度运行",
+                "因等待或时间片切换",
+                "日志统计状态轨迹"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找到入口动作，再沿着状态变化往后排。"
+            },
+            {
+              "level": 2,
+              "text": "中间关键状态是：状态变化发生。"
+            },
+            {
+              "level": 3,
+              "text": "进程的状态从来不会从「被创建」直接到「运行」——必须先进 ready 队列，因为调度器只从 ready 队列里挑。日志是事后的归纳，不在因果链中间。把 5 个动作分成「进程经历」和「事后观察」两类，顺序就出来了——但请你自己说清因果。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab4-prepare-trace-order-inverted",
+              "detect": {
+                "kind": "orderedBefore",
+                "item": "日志统计状态轨迹",
+                "before": "进入就绪队列"
+              },
+              "feedback": "你把结果放到了状态变化之前。先发生 进入就绪队列，后面才可能出现 日志统计状态轨迹。"
+            }
+          ],
+          "feedback": "顺序还不对。按“入口动作 -> 状态变化 -> 可观察证据”重新排列。",
+          "success": "顺序正确。你已经把这关看成连续状态流，而不是孤立名词。",
+          "coach": {
+            "why": "进程的生命周期有固定阶段：被创建 → 进就绪队列 → 被调度运行 → 因某种原因离开 CPU → 后续被记录。常见错排是把「日志统计」混进中间——其实日志是观察手段，本身不在因果链里，只在最后总结时出现。",
+            "observe": "5 个动作的状态变化：创建进程（task_struct 被分配）→ 进入就绪队列（state=TASK_RUNNING 但没拿到 CPU）→ 被调度运行（schedule 选中，CPU 切到它）→ 因等待或时间片切换（state 变 TASK_INTERRUPTIBLE 或被换下）→ 日志统计状态轨迹（事后处理）。",
+            "act": "把「创建进程」拖到第一位、「日志统计状态轨迹」拖到最后；中间 3 步按「进队列 → 拿 CPU → 离 CPU」排序。",
+            "check": "你应该能说出：进程不会跳过任何一步——必须先创建才能就绪、先就绪才能运行、先运行才能因等待/切片离开。日志只是把这条因果序列「印下来」。",
+            "repair": "如果你把「日志统计」放在中间：你混淆了「观察手段」和「被观察对象」——日志在所有动作完成后才汇总分析，不是动作之一。如果把「就绪」和「运行」颠倒：那 CPU 怎么知道选谁运行？得先有 ready 队列才能挑选。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "title": "观察",
+      "purpose": "先从可观察现象倒推状态变化，再决定应该检查哪个层次。",
+      "steps": [
+        {
+          "id": "lab4-observe-diagnose",
+          "title": "从现象回到错因",
+          "goal": "看到异常时先定位层次，而不是乱改代码",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "diagnose",
+          "type": "diagnose",
+          "prompt": "日志看起来缺少某些状态变化，最可能的问题是什么？",
+          "context": "观察阶段训练的是诊断顺序：先问现象违反了哪条状态规则，再决定检查哪个入口。",
+          "scenario": "统计结果显示进程从创建直接结束，中间没有 ready/running/sleep 变化。",
+          "options": [
+            {
+              "value": "trace-points",
+              "label": "记录点没有覆盖关键状态变化。"
+            },
+            {
+              "value": "wrong-font",
+              "label": "日志字体不是等宽。"
+            },
+            {
+              "value": "wrong-proc",
+              "label": "proc 文件没有挂载。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "trace-points"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先看现象违反了哪条机制约束。"
+            },
+            {
+              "level": 2,
+              "text": "优先回到这个边界：真实运行状态和日志文本不是同一个东西"
+            },
+            {
+              "level": 3,
+              "text": "日志缺事件的诊断方法是「反向归因」：先列出你期望看到的所有状态变化，再 grep 内核源码看哪些位置赋值了 state 变量，对照看哪些位置缺 trace 调用。覆盖率不够就一定有空白——但具体怎么 grep 由你来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab4-observe-diagnose-wrong-layer",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-font"
+              },
+              "feedback": "这个选项不能解释现象。优先检查：只打印文字但没有状态字段。"
+            }
+          ],
+          "feedback": "这个诊断不能解释给出的现象。先找状态在哪一步偏离预期。",
+          "success": "诊断正确。这个现象最能指向：只打印文字但没有状态字段。",
+          "beginnerTip": "把它当成“看现象找原因”的练习。不会术语也可以先判断是哪一层出了问题。",
+          "coach": {
+            "why": "日志缺状态变化几乎总是同一类原因：你的 trace 调用没埋在所有「状态变量被赋新值」的地方。比如你只在 schedule() 里 trace 了 running 切换，但忘了 wake_up() 里的 blocked → ready，结果就一段空白。",
+            "observe": "trace_points 直接指向问题根源：观察点（trace 调用）的覆盖范围决定了日志能看到什么。wrong-font 和 wrong-proc 都是无关因素——前者只影响显示美观，后者属于 Lab9。",
+            "act": "选 trace_points：去 grep 内核里所有 state 变量被赋值的位置，确认 trace 调用都到位了。",
+            "check": "你应该能说出：日志里看不见的事件 = 没埋 trace 的事件——不是「事件没发生」，是「发生了但没被记录」。",
+            "repair": "如果选了 wrong-font：日志的可读性问题不会让事件消失，只会让你读不舒服。如果选了 wrong-proc：proc 是 Lab9，和这里的「内核函数里埋点」无关。回到 Lab4：每一处 state = TASK_XXX 的赋值都该有 trace。"
+          }
+        },
+        {
+          "id": "lab4-observe-fill",
+          "title": "给关键状态贴上名字",
+          "goal": "能用术语说出 就绪、阻塞 的位置",
+          "tracks": [
+            "starter",
+            "full",
+            "exam",
+            "quick"
+          ],
+          "interaction": "fill",
+          "type": "fill",
+          "prompt": "补全两个状态词，让它们和右侧机制画板对应。",
+          "context": "术语不是背诵用的，它让你能在报告和排查里准确指向状态。",
+          "simulator": {
+            "kind": "state-note",
+            "nodes": [
+              "进程状态",
+              "调度",
+              "日志",
+              "pid"
+            ]
+          },
+          "blanks": [
+            {
+              "id": "ready",
+              "label": "能运行但还没拿到 CPU 的状态",
+              "placeholder": "就绪"
+            },
+            {
+              "id": "blocked",
+              "label": "等待事件、暂时不能运行的状态",
+              "placeholder": "阻塞"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "fills",
+              "answers": {
+                "ready": [
+                  "就绪",
+                  "ready"
+                ],
+                "blocked": [
+                  "阻塞",
+                  "blocked",
+                  "sleep"
+                ]
+              }
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先判断空格是在问对象、状态、动作还是证据。"
+            },
+            {
+              "level": 2,
+              "text": "这关最重要的状态之一是：task_struct 保存进程状态"
+            },
+            {
+              "level": 3,
+              "text": "ready 队列里有多个进程——它们都「想跑」，调度器从中挑一个真正运行。blocked 的进程不在 ready 队列，要等条件触发才被唤回 ready。第一空是「想跑但没轮到」，第二空是「不想跑（在等什么）」——但答案要用术语本身。"
+            }
+          ],
+          "feedback": "有空格还没对上。检查是否把相邻层次的名词混用了。",
+          "success": "填空正确。你已经把关键术语和状态位置对上了。",
+          "coach": {
+            "why": "ready 和 blocked 是进程状态的两个核心名字——一个是「能跑但没轮到」，一个是「不能跑因为在等」。Lab4 的日志最常记录的就是这两种状态之间的切换，所以名字必须叫准。",
+            "observe": "观察两个空对应的进程状态：第一空指向「state == TASK_RUNNING 但当前不在 CPU 上」（这就是 ready），第二空指向「state == TASK_INTERRUPTIBLE/UNINTERRUPTIBLE」（这就是 blocked / sleep）。",
+            "act": "ready 空填「就绪」（也接受 ready），blocked 空填「阻塞」（也接受 blocked / sleep）。",
+            "check": "你应该能说出：ready 不等于 running——前者在排队，后者在 CPU 上。blocked 不等于死亡——前者在等条件成立，醒来还能 run。",
+            "repair": "如果第一空填了「运行」：你混淆了 ready 和 running——running 是「正在 CPU 上的那个」，ready 是「还没轮到的那些」。如果第二空填了「停止」：那是另一种状态（被信号 STOP 暂停），不是因等待事件而暂停。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "operate",
+      "title": "操作",
+      "purpose": "在站内用命令、代码片段和解释练习表达关键状态转移。",
+      "steps": [
+        {
+          "id": "lab4-operate-command",
+          "title": "用命令表达证据链",
+          "goal": "把实验动作写成可检查的顺序",
+          "tracks": [
+            "starter",
+            "quick",
+            "full"
+          ],
+          "interaction": "command",
+          "type": "command",
+          "prompt": "写出构建并启动进程轨迹模拟的四行动作。",
+          "context": "命令模拟强调证据来源：先让带日志的内核启动，再观察 process-log 输出。",
+          "simulator": {
+            "kind": "terminal",
+            "output": "$ cd oslab/linux-0.11\n$ make\n$ cd ..\n$ ./run process-log\n# simulated: pid state time lines are collected"
+          },
+          "starter": "cd oslab/linux-0.11",
+          "checks": [
+            {
+              "kind": "commands",
+              "commands": [
+                "cd oslab/linux-0.11",
+                "make",
+                "cd ..",
+                "./run process-log"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "命令模拟器只检查顺序，不会真实执行。"
+            },
+            {
+              "level": 2,
+              "text": "先进入会产生改动或证据的目录，再构建或启动观察。"
+            },
+            {
+              "level": 3,
+              "text": "Lab4 的 ./run 后面要跟 process-log 这个参数，提示 Bochs 启动后跑收集进程日志的程序——这是 Lab4 比 Lab1 多出来的细节。前三条命令和 Lab1 一致，第四条要带参数——但具体写法你自己来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab4-operate-command-missing-command",
+              "detect": {
+                "kind": "missingCommand",
+                "command": "make"
+              },
+              "feedback": "命令链缺少关键准备动作。真实实验里需要先完成「make」这一环，才有后续观察证据。"
+            }
+          ],
+          "feedback": "命令顺序或数量不匹配。按实验链路重新输入，每行一条命令。",
+          "success": "命令顺序正确。你表达出了从准备到观察证据的完整动作链。",
+          "beginnerTip": "这里不会真的运行命令，也不是考你背命令。你是在练习“先做什么、再做什么”。",
+          "coach": {
+            "why": "Lab4 不仅要构建内核，还要跑一个观察程序看日志输出——所以 ./run 后接 process-log 这个观察脚本。这一步在让你区分「构建」和「跑观察程序」是两个独立步骤。",
+            "observe": "starter 第一条 cd oslab/linux-0.11 切到源码目录。下一条 make 编进新的 trace 调用。再 cd .. 退到 oslab，最后 ./run process-log 启动 Bochs 并指定加载观察日志的脚本——日志是这一步产生的现象。",
+            "act": "在第一条之后追加 make → cd .. → ./run process-log。",
+            "check": "你应该能说出：构建产生「带 trace 埋点的内核」，./run process-log 产生「实际运行时的日志」——前者是工具，后者是数据。两者都要做才有可分析素材。",
+            "repair": "如果用了 ./run 而不是 ./run process-log：Bochs 启动了，但你看不到专门收集进程轨迹的输出——只是普通启动而已。Lab4 的日志现象需要观察脚本配合才会出现。"
+          }
+        },
+        {
+          "id": "lab4-operate-code",
+          "title": "在代码片段里标出状态入口",
+          "goal": "用 pid、state、trace 锚定关键机制",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "code",
+          "type": "code",
+          "prompt": "补全片段意图：trace_state 至少要记录 pid、state 和 trace 证据。",
+          "context": "代码练习关注日志字段是否足以解释状态变化，而不是追求完整内核实现。",
+          "simulator": {
+            "kind": "code-context",
+            "nodes": [
+              "pid",
+              "state",
+              "trace"
+            ]
+          },
+          "starter": "void trace_state(int pid, int state) {\n    /* trace pid and state with timestamp */\n}",
+          "checks": [
+            {
+              "kind": "codeKeywords",
+              "keywords": [
+                "pid",
+                "state",
+                "trace"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "这不是完整编程题，只检查你是否标出关键对象。"
+            },
+            {
+              "level": 2,
+              "text": "把片段和这个状态联系起来：task_struct 保存进程状态"
+            },
+            {
+              "level": 3,
+              "text": "trace_state 函数的工作就是把入参（pid + state）连同时间戳记到日志缓冲区。三个关键词：pid（被记录的对象）、state（被记录的事件）、trace（记录这个动作本身）。最简的实现就一行——但你自己写，不要直接抄。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab4-operate-code-missing-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "pid"
+              },
+              "feedback": "缺少 pid 会让片段失去关键锚点。先标出对象，再谈完整实现。"
+            }
+          ],
+          "feedback": "片段还缺少关键锚点。先不要写复杂实现，补上能说明机制的关键词。",
+          "success": "片段通过。你已经把代码中的名字和机制状态连接起来。",
+          "coach": {
+            "why": "trace_state 是 Lab4 的典型埋点函数——它必须接收 pid（谁的状态变了）和 state（变成什么），并加上时间戳生成日志条目。三个关键词缺任何一个日志都不可分析。",
+            "observe": "starter 给了函数签名 trace_state(int pid, int state) 和注释提示。pid 已经在参数里、state 也在参数里——你要做的是让函数体里出现 trace 这个动作（写日志），三个关键词同时出现。",
+            "act": "在函数体里写出实际 trace 动作（比如调一个 trace_log(pid, state, jiffies) 或保留注释意图），保证 pid、state、trace 三个词都在片段里。",
+            "check": "你应该能说出：每条日志至少包含 pid + state + 时间——少 pid 不知道是谁、少 state 不知道事件、少时间不知道顺序。",
+            "repair": "如果只写了 pid 和 state 没写 trace：那是函数签名没函数体——参数被传进来但没人记录它们。补上一行实际写日志的动作。"
+          }
+        },
+        {
+          "id": "lab4-operate-explain",
+          "title": "解释失败的第一怀疑点",
+          "goal": "能把异常现象连接到具体边界和证据",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "用“就绪、运行、阻塞”解释：为什么只有一行日志无法说明完整调度过程。",
+          "context": "解释题不是写长段报告，而是训练你从现象回到最小可检查原因。",
+          "simulator": {
+            "kind": "failure-card",
+            "nodes": [
+              "就绪",
+              "运行",
+              "阻塞"
+            ]
+          },
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 24,
+              "keywords": [
+                "就绪",
+                "运行",
+                "阻塞"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：真实运行状态和日志文本不是同一个东西"
+            },
+            {
+              "level": 3,
+              "text": "调度的本质是「让 CPU 在 ready 进程间切换」——这种切换发生在「running → ready」「running → blocked」「blocked → ready」等迁移上。每次迁移在日志里至少占两行（前一状态 + 后一状态）。三个状态词必须连同迁移一起说，但具体写法你自己来。"
+            }
+          ],
+          "feedback": "解释还不够具体。请写出一个边界、一个状态变化和一个证据。",
+          "success": "解释通过。你已经能把现象、边界和证据连成一条排查路径。",
+          "coach": {
+            "why": "「一行日志说明不了调度」——因为调度本质是状态切换，至少需要两个时间点（切换前/后）才能体现「变化」。这一步在让你从「就绪、运行、阻塞」三个状态出发，说明为什么必须记录跨状态的轨迹。",
+            "observe": "三个状态是闭环：就绪 → 运行 → 阻塞 → 就绪 → ... 只看一行日志只能看到瞬时快照，看不到状态之间的迁移——而调度行为完全体现在迁移里（什么时候被换下、为什么被换、等多久）。",
+            "act": "写 2-3 句话，按「单行只是快照 → 调度发生在迁移 → 必须看连续多行才能看到迁移」的顺序，三个状态词都用上。",
+            "check": "你应该能说出：日志的「连续两行」是分析单位，不是「一行」——比较两行才能算出等待时间、判断调度策略、推断阻塞原因。",
+            "repair": "如果只写了三个状态名没说「为什么连续多行才有用」：你只列了概念没解释为什么需要轨迹。补一句「相邻两行的状态变化告诉你一次调度事件」。"
+          },
+          "misconceptions": [
+            {
+              "id": "lab4-operate-explain-missing-cause",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "就绪"
+              },
+              "feedback": "解释里缺少 就绪，会让排查点太空。把它和具体证据连接起来。"
+            }
+          ]
+        },
+        {
+          "id": "lab4-full-depth-1",
+          "title": "解释日志和状态的关系",
+          "goal": "把机制边界解释到可以迁移到真实实验",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "为什么只有日志文本还不够，必须知道记录点对应哪个状态？请结合调度状态说明。",
+          "context": "完整路径需要你不只会选答案，还能说明为什么这个边界会改变实验现象。",
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 26,
+              "keywords": [
+                "日志",
+                "状态",
+                "调度"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：真实运行状态和日志文本不是同一个东西"
+            },
+            {
+              "level": 3,
+              "text": "日志、状态、调度三者：调度是动作（schedule 选谁跑、何时切换），状态是数据（task_struct.state 字段），日志是产物（trace 调用把状态变化记下来）。三者的因果关系是「调度产生状态变化、状态变化由日志记录」——但具体怎么写得清楚由你来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab4-full-depth-1-missing-depth-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "日志"
+              },
+              "feedback": "缺少 日志 会让解释脱离题目机制。请把它放回因果链里。"
+            }
+          ],
+          "feedback": "解释还停留在表面。请明确写出对象、状态、边界和证据。",
+          "success": "解释通过。你已经把这一层机制从操作提升成了可迁移理解。",
+          "coach": {
+            "why": "日志只是文本，单看文本不够——你必须知道「这行日志对应的 trace 调用埋在哪个函数里」才能解读它。这一步要求你说出「日志、状态、调度」三者的关系：调度发生 → 在埋点处记录 → 产生日志。",
+            "observe": "三个关键词的因果：调度（行为）→ 状态（被改变的内核数据）→ 日志（被记录的事实）。如果你只看日志不知道埋点位置，遇到「state=2」这种数字根本不知道是什么状态变化。",
+            "act": "写 3 句话以上：① 日志为什么不能脱离记录点解读（数字/缩写需要上下文）；② 状态和调度的关系（调度改变状态）；③ 完整解读流程（事件 → 状态变化 → 埋点记录 → 日志条目）。",
+            "check": "你应该能说出：分析日志必须配合 trace 调用的源码位置——单看日志文本只是「字符」，需要知道每条来自哪个埋点才能映射回真实事件。",
+            "repair": "如果你只罗列三个词：那是没说清因果。补上「调度做什么、状态在哪里、日志怎么联系两者」——三件事的关系不是平行的，是有层次的。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "复盘",
+      "purpose": "把刚才的操作整理成能迁移到真实 Linux 0.11 实验的检查清单。",
+      "steps": [
+        {
+          "id": "lab4-reflect-summary",
+          "title": "写入学习档案",
+          "goal": "把本关理解压缩成以后能复用的检查清单",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "reflection",
+          "type": "reflection",
+          "prompt": "用三句话写入学习档案：1. 进程运行看不见时，怎样记录轨迹并从轨迹里看懂调度？；2. 这关最重要的边界是什么；3. 迁移到真实实验时先看哪个证据。",
+          "context": "复盘不是抄答案，而是把你现在的理解保存下来，方便之后做真实实验时自查。",
+          "checks": [
+            {
+              "kind": "reflection",
+              "minLength": 12
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "用自己的话写，不要复制题面。"
+            },
+            {
+              "level": 2,
+              "text": "至少写出一个对象、一个状态变化、一个可观察证据。"
+            },
+            {
+              "level": 3,
+              "text": "压成 3 句：第一句给出 Lab4 的方法论（在 state 赋值处埋点、记最小可分析字段集）；第二句指出最易混的边界（状态 vs 名字、事件 vs 行为）；第三句留一个真实实验的具体动作（grep 埋点 / 检查字段完整性）。具体内容你自己写。"
+            }
+          ],
+          "feedback": "复盘太短。至少写出问题、边界和一个观察证据。",
+          "success": "已写入学习档案。你现在有了一段可以迁移到真实实验前的自查说明。",
+          "reflectionPrompt": "总结 进程运行轨迹的跟踪与统计：我理解的核心机制是；我容易混淆的是；真实环境中我会先检查。",
+          "beginnerTip": "可以直接用“我现在知道……”开头。目标是确认你没有被术语吓住。",
+          "coach": {
+            "why": "复盘要把「让看不见的进程留下文字痕迹」这个核心方法论沉淀下来。三句话用途：第一句答驱动问题（说出「埋点 + 字段集」）、第二句标记最易混的边界（事件 vs 状态、状态 vs 名字）、第三句给真实实验留具体证据（看哪些函数里有 trace、看日志有哪些必备字段）。",
+            "observe": "驱动问题：「进程运行看不见时，怎样记录轨迹并从轨迹里看懂调度？」第一句直接回答：在所有 state 赋值处埋 trace 调用，记 pid + state + 时间 + 原因。",
+            "act": "三段：① 完整记录方法（埋点 + 字段集）；② 最易混的边界（ready vs running、状态 vs 调度行为、日志 vs 解读）；③ 真实实验时第一个看的证据（grep state 赋值看埋点覆盖率、日志样本看字段是否齐全）。",
+            "check": "你应该能说出：以后看任何 OS 日志都能立刻问「字段够吗？埋点全吗？」——这是 Lab4 训练的核心能力。",
+            "repair": "如果三句话很泛：把每句换成具体动作。比如「我会先 grep 'state =' 找所有状态赋值点」「我会确认日志格式包含 pid 和时间戳」。"
+          }
+        }
+      ]
+    }
+  ],
+  "beginner": {
+    "story": "进程切换发生得很快，肉眼看不到。Lab4 的目标是设计证据：在哪些点记录，记录哪些字段，才能解释调度结果。",
+    "why": "没有日志，调度只是黑箱；日志位置不对，统计结果会误导你。",
+    "analogy": "像医院叫号记录：只知道病人来过不够，还要知道何时排队、何时叫到、何时离开。",
+    "firstGoal": "能说明一条进程轨迹日志至少要包含时间、pid、状态和原因。",
+    "reassurance": "先不用推复杂公式。先判断每条日志是在描述哪一次状态变化。",
+    "glossary": [
+      {
+        "term": "就绪",
+        "meaning": "进程已经可以运行，只是在等待 CPU。"
+      },
+      {
+        "term": "运行",
+        "meaning": "进程当前正在占用 CPU 执行。"
+      },
+      {
+        "term": "阻塞",
+        "meaning": "进程暂时等某个事件，不能继续运行。"
+      },
+      {
+        "term": "轨迹日志",
+        "meaning": "把进程状态变化记录成可分析文本。"
+      }
+    ]
+  },
+  "drivingQuestion": "进程运行看不见时，怎样记录轨迹并从轨迹里看懂调度？",
+  "plainLanguageGoal": "把调度器的每次状态变化写成日志，再用日志反推进程什么时候就绪、运行、阻塞和结束。",
+  "mentalModel": {
+    "title": "把不可见调度变成可见轨迹",
+    "explanation": "调度器改变进程状态时留下日志，日志里的时间、pid 和状态变化组成轨迹。统计周转或等待时间时，要先确认记录点和状态含义。",
+    "flow": [
+      "进程创建",
+      "状态变化发生",
+      "在关键点写日志",
+      "用日志计算统计量"
+    ],
+    "checkpoints": [
+      "日志字段必须能解释状态变化",
+      "记录点不同会改变统计结论",
+      "状态名要和调度语义对应"
+    ]
+  },
+  "transferChecklist": [
+    "先确定要记录哪些状态变化点",
+    "每条日志包含时间、pid、状态和原因",
+    "统计前先检查日志顺序是否自洽"
+  ],
+  "firstPrinciples": {
+    "actors": [
+      "进程在不同状态之间移动",
+      "调度器决定谁运行和谁等待",
+      "日志函数把状态变化留下证据"
+    ],
+    "state": [
+      "task_struct 保存进程状态",
+      "时间戳记录状态变化发生的时刻",
+      "日志文件保存可分析轨迹"
+    ],
+    "boundary": [
+      "真实运行状态和日志文本不是同一个东西",
+      "就绪、运行、阻塞代表不同调度含义",
+      "记录点在状态变化前后会影响解释"
+    ],
+    "transition": [
+      "fork 让新进程进入轨迹",
+      "schedule 把就绪进程切到运行",
+      "sleep/exit 等事件改变状态并触发记录"
+    ],
+    "evidence": [
+      "日志行中的 pid 和状态能还原路径",
+      "时间差能计算等待或周转",
+      "缺失状态说明记录点可能漏了"
+    ],
+    "failureModes": [
+      "只打印文字但没有状态字段",
+      "记录点放错导致顺序看起来矛盾",
+      "把阻塞时间误算成运行时间"
+    ]
+  }
+}
