@@ -1004,8 +1004,56 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
 }
 .practice-trace {
   display: grid;
-  gap: .5rem;
+  gap: .8rem;
   margin: .8rem 0;
+}
+.practice-trace-region {
+  padding: .55rem .65rem;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+}
+.practice-trace-region .practice-kicker {
+  margin: 0 0 .4rem;
+}
+.practice-trace-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+.practice-trace-candidate {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  width: 100%;
+  padding: .4rem .55rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: .85rem;
+  text-align: left;
+  cursor: pointer;
+}
+.practice-trace-candidate:hover,
+.practice-trace-candidate:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.practice-trace-pick-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: .75rem;
+}
+.practice-trace-answer {
+  display: grid;
+  gap: .4rem;
 }
 .practice-trace-item {
   display: grid;
@@ -1018,7 +1066,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
   border-radius: var(--radius-sm);
   background: var(--bg);
 }
-.practice-trace-item > span {
+.practice-trace-index {
   display: inline-grid;
   place-items: center;
   width: 1.55rem;
@@ -1033,7 +1081,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.practice-trace-item div {
+.practice-trace-controls {
   display: inline-flex;
   gap: .32rem;
 }
@@ -1065,6 +1113,156 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
   font-family: var(--font-mono);
   font-size: .8rem;
   line-height: 1.55;
+}
+/* ---------- mechanism board: 折叠次要项 ---------- */
+.practice-side-details {
+  padding: 0;
+}
+.practice-side-details > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: .65rem .9rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--fg-soft);
+}
+.practice-side-details > summary::-webkit-details-marker {
+  display: none;
+}
+.practice-side-details > summary::before {
+  content: "▸ ";
+  display: inline-block;
+  margin-right: .25rem;
+  color: var(--fg-soft);
+  transition: transform .15s ease;
+}
+.practice-side-details[open] > summary::before {
+  content: "▾ ";
+}
+.practice-side-detail-block {
+  padding: 0 .9rem .8rem;
+}
+.practice-side-detail-block + .practice-side-detail-block {
+  border-top: 1px dashed var(--border-soft);
+  padding-top: .7rem;
+}
+.practice-side-detail-block h4 {
+  margin: 0 0 .35rem;
+  font-size: .85rem;
+}
+.practice-side-detail-block ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: .8rem;
+  line-height: 1.55;
+}
+.practice-side-detail-block .btn {
+  margin-top: .4rem;
+  font-size: .8rem;
+}
+/* ---------- simulator: 7 kind 各自视觉 ---------- */
+.practice-sim {
+  margin: .75rem 0 0;
+}
+.practice-sim-concept-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: .5rem;
+}
+.practice-sim-concept-node {
+  padding: .55rem .65rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  text-align: center;
+  font-size: .85rem;
+}
+.practice-sim-state-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem .15rem;
+  margin: .75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.practice-sim-flow-node {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .25rem .55rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg-soft);
+  font-size: .8rem;
+}
+.practice-sim-flow-node.is-highlight {
+  border-color: var(--accent);
+  color: var(--fg);
+  font-weight: 600;
+}
+.practice-sim-flow-arrow {
+  color: var(--fg-soft);
+  font-size: .7rem;
+}
+.practice-sim-flow-node:first-child .practice-sim-flow-arrow {
+  display: none;
+}
+.practice-sim-state-note {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .4rem;
+  margin: .75rem 0 0;
+}
+.practice-sim-state-item {
+  padding: .45rem .6rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--bg);
+}
+.practice-sim-state-item dt {
+  font-weight: 600;
+  font-size: .85rem;
+  color: var(--fg);
+}
+.practice-sim-state-item dd {
+  margin: .15rem 0 0;
+  font-size: .75rem;
+  color: var(--fg-soft);
+}
+.practice-sim-code-context {
+  margin: .75rem 0 0;
+  padding: .65rem .8rem;
+  background: var(--code-bg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  line-height: 1.6;
+  overflow: auto;
+}
+.practice-sim-code-token {
+  display: inline-block;
+  padding: 0 .25rem;
+  color: var(--accent);
+}
+.practice-sim-failure-card {
+  margin: .75rem 0 0;
+  padding: .65rem .8rem;
+  border: 1px solid var(--danger-soft);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--fg);
+}
+.practice-sim-failure-card h5 {
+  margin: 0 0 .25rem;
+  font-size: .85rem;
+  color: var(--danger);
+}
+.practice-sim-failure-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: .8rem;
+  line-height: 1.5;
 }
 /* ---------- practice workspace navigation ---------- */
 .layout-practice-focused {
