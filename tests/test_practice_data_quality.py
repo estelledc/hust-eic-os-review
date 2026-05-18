@@ -25,6 +25,14 @@ BLOCKED_TEMPLATE_PHRASES = (
     "补全或改写片段，让它体现本 Lab 的关键机制",
     "如果这一步没有得到预期现象，最应该检查什么，为什么？",
 )
+# 跨 lab 模板句：任意短语在 ≥ CROSS_LAB_LIMIT 个 lab 中重复出现即视为模板化
+CROSS_LAB_TEMPLATE_PHRASES = (
+    "证据会帮助你判断",
+    "先回到右侧术语卡",
+    "把题目翻成日常语言",
+    "已经抓住入口问题",
+)
+CROSS_LAB_LIMIT = 5
 FIRST_PRINCIPLES_FIELDS = (
     "actors",
     "state",
@@ -106,7 +114,13 @@ class PracticeDataQualityTest(unittest.TestCase):
             ]
             starter_counts[lab["id"]] = len(starter_steps)
             self.assertGreaterEqual(len(starter_steps), 4, lab["id"])
-            self.assertEqual("先用白话认出这关", starter_steps[0]["title"])
+            # starter 首步必须是 choice 或 diagnose，让用户先认出题目
+            self.assertIn(
+                starter_steps[0]["interaction"],
+                {"choice", "diagnose"},
+                f"{lab['id']} starter 首步必须是 choice 或 diagnose",
+            )
+            # starter 首步标题不允许跨 lab 雷同（在 test_starter_step_titles_are_lab_specific 里强校验）
             self.assertTrue(any(step["interaction"] == "reflection" for step in starter_steps), lab["id"])
         self.assertGreater(len(set(starter_counts.values())), 1)
         self.assertLess(starter_counts["lab1"], starter_counts["lab6"])
@@ -188,6 +202,82 @@ class PracticeDataQualityTest(unittest.TestCase):
         serialized = json.dumps(self.data, ensure_ascii=False)
         for phrase in BLOCKED_PHRASES:
             self.assertNotIn(phrase, serialized)
+
+    def test_coach_fields_are_not_field_copies(self) -> None:
+        """coach.{why|act|check} 不允许直接复制 context|prompt|success。"""
+        violations: list[str] = []
+        for lab in self.data["labs"]:
+            for phase in lab["phases"]:
+                for step in phase["steps"]:
+                    coach = step.get("coach", {})
+                    if coach.get("why") and coach["why"] == step.get("context"):
+                        violations.append(f"{step['id']} coach.why == context")
+                    if coach.get("act") and coach["act"] == step.get("prompt"):
+                        violations.append(f"{step['id']} coach.act == prompt")
+                    if coach.get("check") and coach["check"] == step.get("success"):
+                        violations.append(f"{step['id']} coach.check == success")
+        self.assertEqual(
+            violations,
+            [],
+            f"\n共 {len(violations)} 处 coach 字段是复制而非教学扩写：\n  "
+            + "\n  ".join(violations[:20])
+            + ("\n  ..." if len(violations) > 20 else ""),
+        )
+
+    def test_template_phrases_are_not_repeated_across_labs(self) -> None:
+        """已知模板短语不允许在 ≥ CROSS_LAB_LIMIT 个 lab 中重复出现。"""
+        for phrase in CROSS_LAB_TEMPLATE_PHRASES:
+            hit_labs = []
+            for lab in self.data["labs"]:
+                serialized = json.dumps(lab, ensure_ascii=False)
+                if phrase in serialized:
+                    hit_labs.append(lab["id"])
+            self.assertLess(
+                len(hit_labs),
+                CROSS_LAB_LIMIT,
+                f'模板短语 "{phrase}" 在 {len(hit_labs)} 个 lab 中出现：{hit_labs}',
+            )
+
+    def test_starter_step_titles_are_lab_specific(self) -> None:
+        """9 个 lab 的 starter 首步标题不能完全相同。"""
+        first_titles: list[str] = []
+        for lab in self.data["labs"]:
+            starter_steps = [
+                step
+                for phase in lab["phases"]
+                for step in phase["steps"]
+                if "starter" in step["tracks"]
+            ]
+            if starter_steps:
+                first_titles.append(starter_steps[0]["title"])
+        # 至少 7 个 lab 的首步标题不同（允许 2 个偶然撞名）
+        self.assertGreaterEqual(
+            len(set(first_titles)),
+            max(7, len(first_titles) - 1),
+            f"starter 首步标题过于雷同：{first_titles}",
+        )
+
+    def test_third_level_hints_are_substantive(self) -> None:
+        """第三层 hint 应能指向具体差别，平均长度 ≥ 50 字。"""
+        h3_lengths: list[int] = []
+        short_h3: list[str] = []
+        for lab in self.data["labs"]:
+            for phase in lab["phases"]:
+                for step in phase["steps"]:
+                    for hint in step.get("hints", []):
+                        if hint.get("level") == 3:
+                            text = hint.get("text", "")
+                            h3_lengths.append(len(text))
+                            if len(text) < 30:
+                                short_h3.append(f"{step['id']}: {text}")
+        self.assertTrue(h3_lengths, "未发现第三层 hint")
+        avg = sum(h3_lengths) / len(h3_lengths)
+        self.assertGreaterEqual(
+            avg,
+            50,
+            f"第三层 hint 平均长度 {avg:.0f} 字，过短无法接近答案。"
+            + (f"\n过短示例：\n  " + "\n  ".join(short_h3[:5]) if short_h3 else ""),
+        )
 
 
 if __name__ == "__main__":

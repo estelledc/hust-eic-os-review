@@ -1,0 +1,875 @@
+{
+  "id": "lab6",
+  "title": "Lab 6 信号量的实现与应用",
+  "focus": "理解 P/V 操作如何用计数和等待队列协调互斥、阻塞与唤醒",
+  "estimatedMinutes": 55,
+  "difficulty": "hard",
+  "concepts": [
+    "信号量",
+    "P 操作",
+    "V 操作",
+    "阻塞队列",
+    "临界区"
+  ],
+  "sourceRoute": {
+    "name": "HIT-OSlab Lab6",
+    "url": "https://github.com/Joker001014/HIT-OSlab"
+  },
+  "outcomes": [
+    "能解释信号量计数和等待队列的关系",
+    "能判断 P/V 顺序是否破坏互斥",
+    "能区分忙等和阻塞等待"
+  ],
+  "reportPrompts": [
+    "说明信号量为什么不能只看作一个整数。",
+    "用 P/V 顺序解释生产者消费者的同步。",
+    "记录一个互斥失败现象和对应排查点。"
+  ],
+  "phases": [
+    {
+      "id": "prepare",
+      "title": "预备",
+      "purpose": "先建立对象和边界，知道这一关到底在解释哪条系统链路。",
+      "steps": [
+        {
+          "id": "lab6-starter-map",
+          "title": "抢同一个资源时，谁该等",
+          "goal": "先知道这关解决的系统问题，不急着背术语",
+          "tracks": [
+            "starter"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "如果给第一次接触 OS 实验的同学解释「Lab 6 信号量的实现与应用」，哪一句最接近？",
+          "context": "这是零基础路径的入口。先把题目翻成一句人话，确认你知道自己要观察哪条系统链路。",
+          "beginnerTip": "先不用背术语，先找这关在解决哪个真实问题。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "信号量",
+              "P 操作",
+              "V 操作"
+            ]
+          },
+          "options": [
+            {
+              "value": "plain",
+              "label": "这关是在学“多个进程抢同一个资源时，怎样排队、等待和唤醒”。"
+            },
+            {
+              "value": "wrong-1",
+              "label": "这关主要是在实现开机引导。"
+            },
+            {
+              "value": "wrong-2",
+              "label": "这关只是让进程输出更多文字。"
+            },
+            {
+              "value": "wrong-3",
+              "label": "这关只是在给变量取名。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "plain"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：临界区内外必须由 P/V 包住"
+            },
+            {
+              "level": 3,
+              "text": "「资源」「等待」「唤醒」三个词在选项里同时出现的只有一个——其它三个选项各自把这一关替换成了别的实验或表面问题。找出唯一描述「多个进程协调争用」的那一句，但请你自己解释为什么需要协调。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-starter-map-plain-boundary",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-1"
+              },
+              "feedback": "这里混淆了主题。Lab 6 信号量的实现与应用 的第一步是看懂：临界区内外必须由 P/V 包住。"
+            }
+          ],
+          "feedback": "这个选项没有说清这一关的系统问题。先回到右侧机制画板，把题目压成一句你能复述的话。",
+          "success": "对。你已经看清这一关的关键边界：把信号量看成“剩余名额 + 等待队列”：没名额就睡眠，有名额或释放资源时再唤醒。",
+          "coach": {
+            "why": "信号量的核心问题不是「计数」，而是「协调」——当多个进程抢同一个资源（打印机、共享变量、缓冲区）时，谁继续、谁等、谁醒，必须有一种机制决定。这一步先确认你抓住了「协调」这个动作。",
+            "observe": "正确选项点出「排队、等待和唤醒」——这是协调的三个动作。其它选项都跑题了：开机引导是 Lab2、输出文字和协调无关、变量取名是表面问题。",
+            "act": "选出唯一同时提到「资源争用」和「等待 + 唤醒」的那一项。",
+            "check": "你应该能说出：信号量解决的是「同时性」问题——没有信号量，多个进程都觉得「资源是我的」，就会同时进入临界区，破坏数据。",
+            "repair": "如果选了引导：那是 Lab2，和并发完全无关。如果选了输出文字：进程间协调的关键不是输出多少。如果选了取名字：变量名不影响并发行为。"
+          }
+        },
+        {
+          "id": "lab6-prepare-choice",
+          "title": "抓住最容易混淆的边界",
+          "goal": "区分「临界区内外必须由 P/V 包住」",
+          "tracks": [
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "信号量实现互斥时，P 操作应该放在临界区哪里？",
+          "context": "很多错误不是不会写代码，而是把两个层次当成一个层次。先把边界看清，后面操作才有方向。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "信号量",
+              "P 操作",
+              "V 操作",
+              "阻塞队列",
+              "临界区"
+            ]
+          },
+          "options": [
+            {
+              "value": "before",
+              "label": "进入临界区之前，先申请进入资格。"
+            },
+            {
+              "value": "inside-end",
+              "label": "临界区最后一行，做完共享操作再申请。"
+            },
+            {
+              "value": "after",
+              "label": "离开临界区之后，已经不需要保护。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "before"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：临界区内外必须由 P/V 包住"
+            },
+            {
+              "level": 3,
+              "text": "信号量的 P 操作是「门禁刷卡」——刷完才能进门。其它两个位置等于「进了门再刷」或「出了门刷」，都失去了门禁的作用。具体为什么 inside-end 和 after 都不对，请你自己解释。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-prepare-choice-boundary-mix",
+              "detect": {
+                "kind": "selected",
+                "value": "inside-end"
+              },
+              "feedback": "这个选择把边界混在一起了。先记住：临界区内外必须由 P/V 包住。"
+            }
+          ],
+          "feedback": "这个选择还没有对准机制边界。回到心智模型，先分清对象和状态属于哪一层。",
+          "success": "判断正确。你已经抓住这一关的第一条边界：临界区内外必须由 P/V 包住。",
+          "coach": {
+            "why": "P 操作必须放在临界区「之前」——这是信号量的语义决定的。P 是「申请资格」，资格通过了才能进；放在临界区之后等于先进去再问，那就完全失效了。这一步在排除「先进后申请」和「出来才申请」两种典型误解。",
+            "observe": "三个选项里只有 before 把 P 操作的位置摆正了。inside-end 让 P 在临界区末尾——但临界区里已经做完共享操作，P 已经没有作用。after 让 P 在临界区之后——更糟，进程已经离开了临界区，申请毫无意义。",
+            "act": "选 before：P 在临界区之前申请进入资格、V 在临界区之后释放资格——这是教科书结构。",
+            "check": "你应该能说出：信号量保护临界区靠的是「先申请后进入」——任何打破这个顺序的写法都会让保护失效。",
+            "repair": "如果选了 inside-end 或 after：你把 P 当成了「记账动作」（数有多少进程用过资源）——但 P 实际是「门禁」，必须先验证再放行。把 P 放在 before 是字面要求。"
+          }
+        },
+        {
+          "id": "lab6-prepare-trace",
+          "title": "把状态流排成因果链",
+          "goal": "按顺序说出「进程执行 P 操作」到「唤醒等待进程」",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "trace",
+          "type": "trace",
+          "prompt": "把下面动作排成正确顺序，形成「Lab 6 信号量的实现与应用」的状态流。",
+          "context": "OS 实验的许多错误来自顺序错位。先排入口、状态变化、观察结果，再进入命令和代码。",
+          "simulator": {
+            "kind": "state-flow",
+            "nodes": [
+              "进程执行 P 操作",
+              "检查信号量计数",
+              "必要时进入等待队列",
+              "V 操作释放资源",
+              "唤醒等待进程"
+            ],
+            "highlightOnPass": [
+              "检查信号量计数",
+              "必要时进入等待队列",
+              "V 操作释放资源"
+            ]
+          },
+          "items": [
+            "唤醒等待进程",
+            "V 操作释放资源",
+            "必要时进入等待队列",
+            "检查信号量计数",
+            "进程执行 P 操作"
+          ],
+          "checks": [
+            {
+              "kind": "orderedItems",
+              "answer": [
+                "进程执行 P 操作",
+                "检查信号量计数",
+                "必要时进入等待队列",
+                "V 操作释放资源",
+                "唤醒等待进程"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找到入口动作，再沿着状态变化往后排。"
+            },
+            {
+              "level": 2,
+              "text": "中间关键状态是：检查信号量计数。"
+            },
+            {
+              "level": 3,
+              "text": "把 5 个动作分两组：① 申请方（P 操作 → 检查 → 必要时入队）；② 释放方（V 操作 → 唤醒）。组内有严格顺序，组间也有顺序（释放发生在申请阻塞之后才有意义）。具体顺序由你自己确认。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-prepare-trace-order-inverted",
+              "detect": {
+                "kind": "orderedBefore",
+                "item": "唤醒等待进程",
+                "before": "检查信号量计数"
+              },
+              "feedback": "你把结果放到了状态变化之前。先发生 检查信号量计数，后面才可能出现 唤醒等待进程。"
+            }
+          ],
+          "feedback": "顺序还不对。按“入口动作 -> 状态变化 -> 可观察证据”重新排列。",
+          "success": "顺序正确。你已经把这关看成连续状态流，而不是孤立名词。",
+          "coach": {
+            "why": "信号量的因果链有两个角色：申请方（执行 P）和释放方（执行 V）。常见错排是把「检查计数」放在 P 操作之前——其实「执行 P」这个动作本身就包含了「先减计数再判断是否阻塞」。",
+            "observe": "5 个动作的状态变化：进程执行 P 操作（动作发起）→ 检查信号量计数（决定能否通过）→ 必要时进入等待队列（资源不够就阻塞）→ V 操作释放资源（计数恢复）→ 唤醒等待进程（计数足够后从队列里唤醒）。",
+            "act": "把「进程执行 P 操作」拖到第一位、「唤醒等待进程」拖到最后；中间 3 步按「检查 → 必要时入队 → V 释放」排序。",
+            "check": "你应该能说出：P 内部包含「检查 + 可能入队」、V 内部包含「释放 + 可能唤醒」——两个动作之间是「时序上的协作」（先 P 再 V），不是「同步并发」。",
+            "repair": "如果你把「检查计数」放在 P 操作之前：那 P 就空了——P 的工作就是检查并决定是否阻塞。如果把「V 操作」放在「等待队列」之前：那计数还没回升就唤醒，唤醒的进程一通过 P 又会被阻塞。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "title": "观察",
+      "purpose": "先从可观察现象倒推状态变化，再决定应该检查哪个层次。",
+      "steps": [
+        {
+          "id": "lab6-observe-diagnose",
+          "title": "从现象回到错因",
+          "goal": "看到异常时先定位层次，而不是乱改代码",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "diagnose",
+          "type": "diagnose",
+          "prompt": "多个进程仍然同时进入临界区，最可能的错因是什么？",
+          "context": "观察阶段训练的是诊断顺序：先问现象违反了哪条状态规则，再决定检查哪个入口。",
+          "scenario": "输出显示两个进程同时修改同一个共享计数，临界区没有被隔离。",
+          "options": [
+            {
+              "value": "wrong-pv-order",
+              "label": "P/V 位置或等待队列处理顺序错误。"
+            },
+            {
+              "value": "wrong-font",
+              "label": "代码字体不是等宽。"
+            },
+            {
+              "value": "wrong-report",
+              "label": "报告标题太短。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "wrong-pv-order"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先看现象违反了哪条机制约束。"
+            },
+            {
+              "level": 2,
+              "text": "优先回到这个边界：临界区内外必须由 P/V 包住"
+            },
+            {
+              "level": 3,
+              "text": "互斥失败诊断三步：① P 是否真的在临界区之前；② P 内部「减计数 + 入队」是不是原子动作（中间不能被中断）；③ V 内部「加计数 + 唤醒」是不是原子。任意一步不原子都会让多个进程「都觉得自己赢了」——但具体先查哪一步由你来判断。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-observe-diagnose-wrong-layer",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-font"
+              },
+              "feedback": "这个选项不能解释现象。优先检查：P/V 放反导致临界区失控。"
+            }
+          ],
+          "feedback": "这个诊断不能解释给出的现象。先找状态在哪一步偏离预期。",
+          "success": "诊断正确。这个现象最能指向：P/V 放反导致临界区失控。",
+          "beginnerTip": "把它当成“看现象找原因”的练习。不会术语也可以先判断是哪一层出了问题。",
+          "coach": {
+            "why": "「多个进程同时进了临界区」是信号量失效的典型现象——原因几乎总是 P/V 位置错或者等待队列处理有竞态。这一步在让你识别「现象指向 P/V 实现」而不是无关因素。",
+            "observe": "wrong-pv-order 直接指向问题的真正位置：P/V 顺序、原子性、等待队列的入队/出队竞态。wrong-font 和 wrong-report 都是无关因素——字体和报告标题不会让多个进程同时进临界区。",
+            "act": "选 wrong-pv-order：去检查 P/V 是否对称、是否原子（中间能否被中断）、等待队列的状态变化是否有竞态。",
+            "check": "你应该能说出：互斥失败的根因永远在「申请-释放协议」上——不是在显示或文档上。这是 Lab6 的诊断起点。",
+            "repair": "如果选了 wrong-font 或 wrong-report：那不会改变信号量的语义。回到 Lab6 的现象：互斥失败 = P/V 没保护好 = 实现里有 bug。"
+          }
+        },
+        {
+          "id": "lab6-observe-fill",
+          "title": "给关键状态贴上名字",
+          "goal": "能用术语说出 P 操作、V 操作 的位置",
+          "tracks": [
+            "starter",
+            "full",
+            "exam",
+            "quick"
+          ],
+          "interaction": "fill",
+          "type": "fill",
+          "prompt": "补全两个状态词，让它们和右侧机制画板对应。",
+          "context": "术语不是背诵用的，它让你能在报告和排查里准确指向状态。",
+          "simulator": {
+            "kind": "state-note",
+            "nodes": [
+              "信号量",
+              "P 操作",
+              "V 操作",
+              "阻塞队列"
+            ]
+          },
+          "blanks": [
+            {
+              "id": "p",
+              "label": "申请资源并可能阻塞的操作",
+              "placeholder": "P 操作"
+            },
+            {
+              "id": "v",
+              "label": "释放资源并可能唤醒的操作",
+              "placeholder": "V 操作"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "fills",
+              "answers": {
+                "p": [
+                  "p",
+                  "wait"
+                ],
+                "v": [
+                  "v",
+                  "signal"
+                ]
+              }
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先判断空格是在问对象、状态、动作还是证据。"
+            },
+            {
+              "level": 2,
+              "text": "这关最重要的状态之一是：计数表示当前资源余量"
+            },
+            {
+              "level": 3,
+              "text": "P 和 V 来自荷兰语，等价的英文是 wait 和 signal。两者的差别在动作不对称——P 可能让进程阻塞，V 可能唤醒进程。第一空是「想要资源」的动作，第二空是「释放资源」的动作。具体术语请你写。"
+            }
+          ],
+          "feedback": "有空格还没对上。检查是否把相邻层次的名词混用了。",
+          "success": "填空正确。你已经把关键术语和状态位置对上了。",
+          "coach": {
+            "why": "P 和 V 是 Dijkstra 起的名字（荷兰语 Proberen / Verhogen），但更直观的英文是 wait / signal。Lab6 的关键是认对：P = 申请（可能阻塞）、V = 释放（可能唤醒）——两个动作不可对称。",
+            "observe": "观察两个空对应的状态：第一空指向「申请资源并可能阻塞」（这就是 P 操作或 wait）；第二空指向「释放资源并可能唤醒」（这就是 V 操作或 signal）。两者的关键差别在「可能动作」——P 可能阻塞、V 可能唤醒。",
+            "act": "p 空填「P 操作」（也接受 P / wait），v 空填「V 操作」（也接受 V / signal）。",
+            "check": "你应该能说出：P 是「想进来的人在敲门」，V 是「出去的人放下钥匙」——动作不对称、效果也不对称。",
+            "repair": "如果你把 P 写成「释放」或 V 写成「申请」：那是名字记反了。记忆方法：P 在 wait 队列里 wait（W 形发音类似 V？反过来），V 是 signal（V 形像信号塔尖）——但用术语本身写答案。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "operate",
+      "title": "操作",
+      "purpose": "在站内用命令、代码片段和解释练习表达关键状态转移。",
+      "steps": [
+        {
+          "id": "lab6-operate-command",
+          "title": "用命令表达证据链",
+          "goal": "把实验动作写成可检查的顺序",
+          "tracks": [
+            "starter",
+            "quick",
+            "full"
+          ],
+          "interaction": "command",
+          "type": "command",
+          "prompt": "写出进入 kernel 目录、构建、返回实验目录、启动 semaphore-demo 的四行动作。",
+          "context": "semaphore-demo 的证据应体现进程等待和唤醒，而不只是看到几行输出。",
+          "simulator": {
+            "kind": "terminal",
+            "output": "$ cd oslab/linux-0.11/kernel\n$ make\n$ cd ../../\n$ ./run semaphore-demo\n# simulated: producer waits, consumer wakes it"
+          },
+          "starter": "cd oslab/linux-0.11/kernel",
+          "checks": [
+            {
+              "kind": "commands",
+              "commands": [
+                "cd oslab/linux-0.11/kernel",
+                "make",
+                "cd ../../",
+                "./run semaphore-demo"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "命令模拟器只检查顺序，不会真实执行。"
+            },
+            {
+              "level": 2,
+              "text": "先进入会产生改动或证据的目录，再构建或启动观察。"
+            },
+            {
+              "level": 3,
+              "text": "命令链结构和 Lab5 一致（cd kernel → make → cd ../../ → ./run）但参数不同：Lab6 用 semaphore-demo 启动并发演示。具体写法你自己来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-operate-command-missing-command",
+              "detect": {
+                "kind": "missingCommand",
+                "command": "make"
+              },
+              "feedback": "命令链缺少关键准备动作。真实实验里需要先完成「make」这一环，才有后续观察证据。"
+            }
+          ],
+          "feedback": "命令顺序或数量不匹配。按实验链路重新输入，每行一条命令。",
+          "success": "命令顺序正确。你表达出了从准备到观察证据的完整动作链。",
+          "beginnerTip": "这里不会真的运行命令，也不是考你背命令。你是在练习“先做什么、再做什么”。",
+          "coach": {
+            "why": "和 Lab5 一样，Lab6 修改的是 kernel/ 下的代码（信号量结构 + P/V 函数），所以 cd 进 kernel 局部 make。./run 后接 semaphore-demo 启动观察并发演示——demo 程序会跑生产者-消费者，让你看 P/V 是否真的互斥。",
+            "observe": "starter 第一条 cd oslab/linux-0.11/kernel 切到内核 C 文件目录。下一条 make 编进 P/V 实现。再 cd ../../ 退两层，最后 ./run semaphore-demo 启动并加载并发演示。",
+            "act": "在第一条之后追加 make → cd ../../ → ./run semaphore-demo。",
+            "check": "你应该能说出：信号量的正确性必须靠并发场景验证——单进程的代码看不出竞态问题，必须 demo 程序里多进程抢资源才能暴露 bug。",
+            "repair": "如果 ./run 没带 semaphore-demo：你只是启动了 Bochs 但没运行并发演示——看不到信号量是否生效。Lab6 的现象只在并发场景出现。"
+          }
+        },
+        {
+          "id": "lab6-operate-code",
+          "title": "在代码片段里标出状态入口",
+          "goal": "用 sem、sleep、wake 锚定关键机制",
+          "tracks": [
+            "starter",
+            "full",
+            "exam"
+          ],
+          "interaction": "code",
+          "type": "code",
+          "prompt": "在片段中保留 sem、sleep、wake，说明 P/V 不只改计数，还会改变进程状态。",
+          "context": "代码片段聚焦信号量的两个状态：计数和等待队列。",
+          "simulator": {
+            "kind": "code-context",
+            "nodes": [
+              "sem",
+              "sleep",
+              "wake"
+            ]
+          },
+          "starter": "void sem_wait(struct sem *sem) {\n    /* decrement sem and sleep when no resource */\n}\n/* sem_post should wake a waiting task */",
+          "checks": [
+            {
+              "kind": "codeKeywords",
+              "keywords": [
+                "sem",
+                "sleep",
+                "wake"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "这不是完整编程题，只检查你是否标出关键对象。"
+            },
+            {
+              "level": 2,
+              "text": "把片段和这个状态联系起来：计数表示当前资源余量"
+            },
+            {
+              "level": 3,
+              "text": "P/V 改的不只是计数，还有进程状态：P 在资源不够时让自己 sleep，V 在释放后 wake 等待者。三个关键词：sem（信号量本身）、sleep（P 的状态变化）、wake（V 的状态变化）——把它们放进 sem_wait 和 sem_post 的注释里即可，但请用一句话说清因果。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-operate-code-missing-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "sem"
+              },
+              "feedback": "缺少 sem 会让片段失去关键锚点。先标出对象，再谈完整实现。"
+            }
+          ],
+          "feedback": "片段还缺少关键锚点。先不要写复杂实现，补上能说明机制的关键词。",
+          "success": "片段通过。你已经把代码中的名字和机制状态连接起来。",
+          "coach": {
+            "why": "P 操作不只是 sem-- ——还要在资源不足时把当前进程从 RUNNING 切到 SLEEPING（即 sleep），并加入等待队列。V 同理——加完计数还要唤醒队列首个进程。这一步用三个关键词锁定 P/V 不可省略的状态变化。",
+            "observe": "starter 给了 sem_wait 函数体注释「decrement sem and sleep when no resource」和 sem_post 注释「wake a waiting task」。三个关键词：sem（被操作的对象）、sleep（资源不够时的状态变化）、wake（释放后的状态变化）。",
+            "act": "在片段里保留 sem_wait 和 sem_post 的结构，三个关键词全部出现：sem（信号量对象）、sleep（在 sem_wait 里 sleep_on）、wake（在 sem_post 里 wake_up）。",
+            "check": "你应该能说出：P/V 不只是「改计数」，还要「改进程状态」——这是它们和普通整数操作的本质区别。",
+            "repair": "如果你只用了 sem 和 sleep 没用 wake：那是只写了 P 没写 V——半个信号量。三个词必须同时在片段里，才能看出「申请-阻塞-释放-唤醒」的完整闭环。"
+          }
+        },
+        {
+          "id": "lab6-operate-explain",
+          "title": "解释失败的第一怀疑点",
+          "goal": "能把异常现象连接到具体边界和证据",
+          "tracks": [
+            "starter",
+            "full",
+            "exam",
+            "quick"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "用“P 操作、V 操作、阻塞”解释：为什么进程不能在资源不足时继续进入临界区。",
+          "context": "解释题不是写长段报告，而是训练你从现象回到最小可检查原因。",
+          "simulator": {
+            "kind": "failure-card",
+            "nodes": [
+              "P 操作",
+              "V 操作",
+              "阻塞"
+            ]
+          },
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 24,
+              "keywords": [
+                "P 操作",
+                "V 操作",
+                "阻塞"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：临界区内外必须由 P/V 包住"
+            },
+            {
+              "level": 3,
+              "text": "P 和 V 之间夹着「阻塞」状态——这不是异常，是设计。P 操作发现资源不足会主动让进程睡眠（阻塞），V 操作释放后唤醒等待的进程。三个词必须连成因果链，但具体怎么写让用户能跟着想清楚由你来。"
+            }
+          ],
+          "feedback": "解释还不够具体。请写出一个边界、一个状态变化和一个证据。",
+          "success": "解释通过。你已经能把现象、边界和证据连成一条排查路径。",
+          "coach": {
+            "why": "「资源不足时不能进入临界区」是信号量的核心契约——但为什么不能？因为临界区里的代码假设了「我独占」。如果两个进程都进去，共享变量被两边同时改，结果就是 race condition。三个关键词必须连起来解释这条因果。",
+            "observe": "三个关键词的因果：P 操作（申请） → 阻塞（资源不够时的应对） → V 操作（释放，同时检查是否需要唤醒）。这条链保证了「同一时刻最多一个进程在临界区」。",
+            "act": "写 2-3 句话：① P 操作发现资源不够会让进程阻塞；② 阻塞期间进程不会进入临界区；③ V 操作释放后才会唤醒被阻塞的进程，让它再次尝试 P。三个词都用上。",
+            "check": "你应该能说出：阻塞不是「失败」，是「正确响应」——它保证了协议不被破坏。",
+            "repair": "如果只写了三个词没串起来：补一句「P 失败 = 进入阻塞 = 不进临界区，V 之后才被唤醒重试」——这是闭环。"
+          },
+          "misconceptions": [
+            {
+              "id": "lab6-operate-explain-missing-cause",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "P 操作"
+              },
+              "feedback": "解释里缺少 P 操作，会让排查点太空。把它和具体证据连接起来。"
+            }
+          ]
+        },
+        {
+          "id": "lab6-full-depth-1",
+          "title": "解释等待队列",
+          "goal": "把机制边界解释到可以迁移到真实实验",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "P 操作发现资源不够时，为什么不是一直空转等待？请说明等待队列和阻塞的关系。",
+          "context": "完整路径需要你不只会选答案，还能说明为什么这个边界会改变实验现象。",
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 26,
+              "keywords": [
+                "P 操作",
+                "等待队列",
+                "阻塞"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：临界区内外必须由 P/V 包住"
+            },
+            {
+              "level": 3,
+              "text": "空转 vs 等待队列的差别在「占不占 CPU」——空转的进程一直在 ready 队列里被调度，等待队列的进程被踢出 ready、彻底睡了。三个词的关系：P 操作触发 → 等待队列接住 → 阻塞状态成立。具体写法你自己给。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-full-depth-1-missing-depth-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "P 操作"
+              },
+              "feedback": "缺少 P 操作 会让解释脱离题目机制。请把它放回因果链里。"
+            }
+          ],
+          "feedback": "解释还停留在表面。请明确写出对象、状态、边界和证据。",
+          "success": "解释通过。你已经把这一层机制从操作提升成了可迁移理解。",
+          "coach": {
+            "why": "「为什么不空转等」是初学者常问的——空转（busy waiting）确实简单，但它白白占着 CPU。等待队列是更高效的设计：让等待的进程进入 SLEEPING 状态，CPU 让给别的进程，等条件满足再唤醒。",
+            "observe": "三个关键词的关系：P 操作（动作发起）→ 等待队列（数据结构，存放被阻塞的进程）→ 阻塞（进程状态变化）。空转 = 进程在 RUNNING 不停查计数；等待队列方案 = 进程进 SLEEPING 让出 CPU。",
+            "act": "写 3 句话以上：① 空转的代价（占 CPU、其它进程跑不动）；② 等待队列的工作方式（P 失败时把自己放进队列、状态切到 SLEEPING、让出 CPU）；③ 唤醒时机（V 操作从队列里取一个）。",
+            "check": "你应该能说出：等待队列把「等」从 active（占 CPU）变成 passive（不占 CPU）——这是 OS 调度和并发设计的核心思想。",
+            "repair": "如果你只解释了「空转浪费」没解释「队列怎么工作」：补上具体——P 操作会调 sleep_on 把当前进程加入 sem 的 wait 队列、改 state 为 SLEEPING、调 schedule 让 CPU 给别人。"
+          }
+        },
+        {
+          "id": "lab6-full-depth-2",
+          "title": "解释唤醒边界",
+          "goal": "把机制边界解释到可以迁移到真实实验",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "为什么 V 操作不只是把计数加一？请说明它何时需要唤醒等待进程。",
+          "context": "完整路径需要你不只会选答案，还能说明为什么这个边界会改变实验现象。",
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 26,
+              "keywords": [
+                "V 操作",
+                "唤醒",
+                "信号量"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：临界区内外必须由 P/V 包住"
+            },
+            {
+              "level": 3,
+              "text": "V 操作的完整动作 = 加计数 + 必要时唤醒。「必要时」的判断条件是「等待队列非空」——空就不用唤醒，非空就要把队首进程从 SLEEPING 切回 RUNNING。三个关键词必须连同这条条件一起说，但具体写法你自己来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab6-full-depth-2-missing-depth-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "V 操作"
+              },
+              "feedback": "缺少 V 操作 会让解释脱离题目机制。请把它放回因果链里。"
+            }
+          ],
+          "feedback": "解释还停留在表面。请明确写出对象、状态、边界和证据。",
+          "success": "解释通过。你已经把这一层机制从操作提升成了可迁移理解。",
+          "coach": {
+            "why": "V 操作不止是 sem++ ——还要看等待队列里有没有进程在睡。如果有，V 必须唤醒它（把它从 SLEEPING 切回 RUNNING、加入 ready 队列），否则那个进程永远醒不过来——信号量等价于死了。",
+            "observe": "三个关键词的关系：V 操作（动作）→ 唤醒（条件动作：等待队列非空时）→ 信号量（被改的对象，计数 + 等待队列）。V 的伪代码是：sem++ ; if (wait_queue 非空) wake_up(wait_queue.first)。",
+            "act": "写 3 句话以上：① V 操作的两个动作（加计数 + 检查队列）；② 何时需要唤醒（等待队列非空）；③ 不唤醒会怎样（被阻塞的进程永远醒不来 = 死锁）。",
+            "check": "你应该能说出：V 操作的对偶角色是「负责唤醒」——它不只是释放，还要主动通知等待者。",
+            "repair": "如果你只说「V 加一」：那是错的——纯加一不会让被阻塞的进程醒来。补上「V 必须检查 wait 队列，非空就唤醒一个」。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "复盘",
+      "purpose": "把刚才的操作整理成能迁移到真实 Linux 0.11 实验的检查清单。",
+      "steps": [
+        {
+          "id": "lab6-reflect-summary",
+          "title": "写入学习档案",
+          "goal": "把本关理解压缩成以后能复用的检查清单",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "reflection",
+          "type": "reflection",
+          "prompt": "用三句话写入学习档案：1. 多个进程抢同一个资源时，信号量怎样决定谁继续、谁等待、谁被唤醒？；2. 这关最重要的边界是什么；3. 迁移到真实实验时先看哪个证据。",
+          "context": "复盘不是抄答案，而是把你现在的理解保存下来，方便之后做真实实验时自查。",
+          "checks": [
+            {
+              "kind": "reflection",
+              "minLength": 12
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "用自己的话写，不要复制题面。"
+            },
+            {
+              "level": 2,
+              "text": "至少写出一个对象、一个状态变化、一个可观察证据。"
+            },
+            {
+              "level": 3,
+              "text": "压成 3 句：第一句答「P/V 协议如何决定继续/等/唤醒」；第二句指出最易混的边界（计数 vs 队列、阻塞 vs 空转）；第三句留真实实验时第一个要看的证据（P/V 实现 / wake_up 调用 / 等待队列结构）。具体内容你自己写。"
+            }
+          ],
+          "feedback": "复盘太短。至少写出问题、边界和一个观察证据。",
+          "success": "已写入学习档案。你现在有了一段可以迁移到真实实验前的自查说明。",
+          "reflectionPrompt": "总结 Lab 6 信号量的实现与应用：我理解的核心机制是；我容易混淆的是；真实环境中我会先检查。",
+          "beginnerTip": "可以直接用“我现在知道……”开头。目标是确认你没有被术语吓住。",
+          "coach": {
+            "why": "复盘要把「信号量 = 计数 + 等待队列 + P/V 协议」沉淀下来。三句话用途：第一句答驱动问题（说出三件事的协作）、第二句标记最易混的边界（计数 vs 队列、P 阻塞 vs 空转、V 唤醒 vs 仅加计数）、第三句给真实实验留具体证据。",
+            "observe": "驱动问题：「多个进程抢同一个资源时，信号量怎样决定谁继续、谁等待、谁被唤醒？」第一句直接回答：P 操作减计数、不够则进等待队列阻塞；V 操作加计数、必要时唤醒队首。",
+            "act": "三段：① 信号量的完整组成（计数 + 等待队列 + P/V 函数）；② 最易混的边界（计数 vs 等待队列、阻塞 vs 空转、加计数 vs 加计数+唤醒）；③ 真实实验时第一个看的证据（P/V 是否原子、等待队列是否在该唤醒时唤醒）。",
+            "check": "你应该能说出：以后看任何同步原语都能问「计数怎么算、谁在等、什么时候唤醒」——这是 Lab6 训练的核心思维。",
+            "repair": "如果三句话很泛：把每句换成具体动作（grep wake_up 看是不是 V 都调了 / 看 P 是否是原子的 / 看 sem 结构是否带 wait_list）。"
+          }
+        }
+      ]
+    }
+  ],
+  "beginner": {
+    "story": "多个进程同时进入临界区会把共享数据弄乱。信号量把“能不能进”和“不能进时去哪等”变成明确规则。",
+    "why": "Lab6 不是只写 P/V 两个函数名，而是要把计数、队列、阻塞和唤醒接成完整同步机制。",
+    "analogy": "像有座位的自习室：座位数是计数，没有座位的人进等待队列，有人离开时叫醒下一个人。",
+    "firstGoal": "能说清 P 操作什么时候让进程阻塞，V 操作什么时候唤醒等待进程。",
+    "reassurance": "先不用写真实内核代码。先把“计数”和“等待队列”这两个状态看成一体。",
+    "glossary": [
+      {
+        "term": "信号量",
+        "meaning": "用计数和等待队列描述资源可用性的同步对象。"
+      },
+      {
+        "term": "P 操作",
+        "meaning": "申请资源；资源不足时可能让进程阻塞。"
+      },
+      {
+        "term": "V 操作",
+        "meaning": "释放资源；必要时唤醒等待队列里的进程。"
+      },
+      {
+        "term": "临界区",
+        "meaning": "一次只能让受控数量进程进入的共享资源区域。"
+      }
+    ]
+  },
+  "drivingQuestion": "多个进程抢同一个资源时，信号量怎样决定谁继续、谁等待、谁被唤醒？",
+  "plainLanguageGoal": "把信号量看成“剩余名额 + 等待队列”：没名额就睡眠，有名额或释放资源时再唤醒。",
+  "mentalModel": {
+    "title": "计数决定能否进，队列决定等在哪里",
+    "explanation": "P 操作先检查计数，不够时把进程放进等待队列并阻塞；V 操作释放资源时更新计数，并在需要时唤醒等待进程。",
+    "flow": [
+      "进程执行 P 操作",
+      "检查信号量计数",
+      "必要时进入等待队列",
+      "V 操作释放资源",
+      "唤醒等待进程"
+    ],
+    "checkpoints": [
+      "信号量不是单纯整数",
+      "P 必须在进入临界区之前",
+      "V 不只是加一，还可能唤醒等待者"
+    ]
+  },
+  "transferChecklist": [
+    "先画出资源计数和等待队列变化",
+    "检查 P 是否在临界区之前、V 是否在临界区之后",
+    "用生产者消费者输出验证互斥和同步"
+  ],
+  "firstPrinciples": {
+    "actors": [
+      "多个进程竞争同一资源",
+      "信号量保存资源计数和等待队列",
+      "调度/唤醒逻辑让阻塞进程重新有机会运行"
+    ],
+    "state": [
+      "计数表示当前资源余量",
+      "等待队列保存暂时不能进入的进程",
+      "临界区状态体现互斥是否被破坏"
+    ],
+    "boundary": [
+      "临界区内外必须由 P/V 包住",
+      "忙等和阻塞等待不同",
+      "释放资源和唤醒等待者是相关但不同动作"
+    ],
+    "transition": [
+      "P 减少可用资源或让进程睡眠",
+      "V 增加可用资源或叫醒等待进程",
+      "被唤醒进程重新进入就绪路径"
+    ],
+    "evidence": [
+      "交错输出能暴露互斥失败",
+      "等待队列变化能证明阻塞发生",
+      "生产者消费者顺序能说明同步是否正确"
+    ],
+    "failureModes": [
+      "P/V 放反导致临界区失控",
+      "只改计数不维护等待队列",
+      "V 操作没有唤醒导致进程永远睡眠"
+    ]
+  }
+}

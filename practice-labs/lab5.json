@@ -1,0 +1,872 @@
+{
+  "id": "lab5",
+  "title": "基于内核栈切换的进程切换",
+  "focus": "理解进程切换时现场、内核栈和调度选择怎样连接",
+  "estimatedMinutes": 50,
+  "difficulty": "hard",
+  "concepts": [
+    "内核栈",
+    "现场",
+    "schedule",
+    "task_struct",
+    "上下文切换"
+  ],
+  "sourceRoute": {
+    "name": "HIT-OSlab Lab5",
+    "url": "https://github.com/Joker001014/HIT-OSlab"
+  },
+  "outcomes": [
+    "能解释为什么进程切换依赖内核栈",
+    "能区分调度选择和现场切换",
+    "能诊断切换后返回位置错误"
+  ],
+  "reportPrompts": [
+    "说明内核栈在进程切换中的作用。",
+    "写出保存现场和恢复现场的顺序。",
+    "解释只修改 current 为什么不够。"
+  ],
+  "phases": [
+    {
+      "id": "prepare",
+      "title": "预备",
+      "purpose": "先建立对象和边界，知道这一关到底在解释哪条系统链路。",
+      "steps": [
+        {
+          "id": "lab5-starter-map",
+          "title": "切换进程时，内核栈在做什么",
+          "goal": "先知道这关解决的系统问题，不急着背术语",
+          "tracks": [
+            "starter"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "如果给第一次接触 OS 实验的同学解释「基于内核栈切换的进程切换」，哪一句最接近？",
+          "context": "这是零基础路径的入口。先把题目翻成一句人话，确认你知道自己要观察哪条系统链路。",
+          "beginnerTip": "先不用背术语，先找这关在解决哪个真实问题。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "内核栈",
+              "现场",
+              "schedule"
+            ]
+          },
+          "options": [
+            {
+              "value": "plain",
+              "label": "这关是在学“进程切换怎样保存旧现场并恢复新现场”。"
+            },
+            {
+              "value": "wrong-1",
+              "label": "这关主要是在记录 proc 文件内容。"
+            },
+            {
+              "value": "wrong-2",
+              "label": "这关只是把进程编号加一。"
+            },
+            {
+              "value": "wrong-3",
+              "label": "这关只是在学习启动扇区。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "plain"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：进程调度决策和底层现场切换不同"
+            },
+            {
+              "level": 3,
+              "text": "关键词是「现场」——这指的是 CPU 当前所有可见的执行状态（寄存器值 + 栈指针 + 指令指针）。其它选项都在改无关属性（编号 / 文件 / 启动扇区），但这些和「让 CPU 从 A 切到 B」毫无关系。找出唯一谈现场保存恢复的选项，但请用你自己的话解释为什么必须这样。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-starter-map-plain-boundary",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-1"
+              },
+              "feedback": "这里混淆了主题。基于内核栈切换的进程切换 的第一步是看懂：进程调度决策和底层现场切换不同。"
+            }
+          ],
+          "feedback": "这个选项没有说清这一关的系统问题。先回到右侧机制画板，把题目压成一句你能复述的话。",
+          "success": "对。你已经看清这一关的关键边界：切换进程不是改一个编号，而是保存旧进程现场，再恢复新进程在内核里的暂停点。",
+          "coach": {
+            "why": "进程切换不是「改一个 pid 变量」那么简单——它要让 CPU 从「正在运行 A」变成「正在运行 B」，意味着所有寄存器、栈指针、指令指针都要被替换。这一步先确认你抓住了「现场保存 + 恢复」这个核心动作。",
+            "observe": "正确选项点出「保存旧现场并恢复新现场」——这就是切换的本质。其它三个选项都把这一关搞错了：proc 文件是 Lab9、加进程编号毫无意义、启动扇区是 Lab2。",
+            "act": "选出唯一同时提到「保存现场」和「恢复现场」的那一项。",
+            "check": "你应该能说出：进程切换 = 保存当前 CPU 状态 + 恢复另一个进程的 CPU 状态。这两件事必须配对完成，否则进程要么停不住、要么醒不过来。",
+            "repair": "如果选了 proc：那是 Lab9 的题目（虚拟文件系统）。如果选了「编号加一」：你忽略了「编号只是身份，不是状态」——CPU 不依赖编号决定下一条指令在哪。如果选了「启动扇区」：那是 Lab2，和切换无关。"
+          }
+        },
+        {
+          "id": "lab5-prepare-choice",
+          "title": "抓住最容易混淆的边界",
+          "goal": "区分「进程调度决策和底层现场切换不同」",
+          "tracks": [
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "进程切换时，为什么不能只改一个当前进程编号？",
+          "context": "很多错误不是不会写代码，而是把两个层次当成一个层次。先把边界看清，后面操作才有方向。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "内核栈",
+              "现场",
+              "schedule",
+              "task_struct",
+              "上下文切换"
+            ]
+          },
+          "options": [
+            {
+              "value": "context",
+              "label": "还必须保存和恢复寄存器、栈指针等执行现场。"
+            },
+            {
+              "value": "name-only",
+              "label": "进程名字需要更好看。"
+            },
+            {
+              "value": "file-only",
+              "label": "只要把日志文件写满即可。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "context"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：进程调度决策和底层现场切换不同"
+            },
+            {
+              "level": 3,
+              "text": "区分两个层次：内核数据结构里的「当前是谁」（current 指针）和 CPU 寄存器里的「正在跑什么」。两者的同步靠的是切换代码——它把 esp、eip、通用寄存器从 A 的备份切到 B 的备份。只改 current 的话 CPU 不会感知，但具体为什么由你自己说。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-prepare-choice-boundary-mix",
+              "detect": {
+                "kind": "selected",
+                "value": "name-only"
+              },
+              "feedback": "这个选择把边界混在一起了。先记住：进程调度决策和底层现场切换不同。"
+            }
+          ],
+          "feedback": "这个选择还没有对准机制边界。回到心智模型，先分清对象和状态属于哪一层。",
+          "success": "判断正确。你已经抓住这一关的第一条边界：进程调度决策和底层现场切换不同。",
+          "coach": {
+            "why": "「只改 current 指针」是初学者最常见的误解。current 是个内核里的全局指针，但 CPU 不读它——CPU 读的是 esp、eip 这些自己的寄存器。改 current 不会让 CPU 跳到新进程的代码，必须切换实际寄存器和栈。",
+            "observe": "context 选项点出「寄存器 + 栈指针」——这才是 CPU 真正会用的状态。name-only 和 file-only 都跑题：进程名字 CPU 根本不看，日志文件和切换无关。",
+            "act": "选 context：除了改 current（标记），还要把 esp、eip 等寄存器和栈指针都切到新进程的值。",
+            "check": "你应该能说出：current 是「内核认为谁在跑」，CPU 寄存器是「CPU 实际在跑谁」——两者必须同时切，否则会出现「内核以为切了 B 但 CPU 还在跑 A」。",
+            "repair": "如果选了 name-only：那不会让 CPU 切到任何东西。如果选了 file-only：日志和切换是两件事。回到核心：CPU 的状态在寄存器里，不切寄存器就没切。"
+          }
+        },
+        {
+          "id": "lab5-prepare-trace",
+          "title": "把状态流排成因果链",
+          "goal": "按顺序说出「当前进程进入内核」到「恢复下一个进程执行」",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "trace",
+          "type": "trace",
+          "prompt": "把下面动作排成正确顺序，形成「基于内核栈切换的进程切换」的状态流。",
+          "context": "OS 实验的许多错误来自顺序错位。先排入口、状态变化、观察结果，再进入命令和代码。",
+          "simulator": {
+            "kind": "state-flow",
+            "nodes": [
+              "当前进程进入内核",
+              "保存当前现场",
+              "schedule 选择下一个进程",
+              "切换内核栈和上下文",
+              "恢复下一个进程执行"
+            ],
+            "highlightOnPass": [
+              "保存当前现场",
+              "schedule 选择下一个进程",
+              "切换内核栈和上下文"
+            ]
+          },
+          "items": [
+            "恢复下一个进程执行",
+            "切换内核栈和上下文",
+            "schedule 选择下一个进程",
+            "保存当前现场",
+            "当前进程进入内核"
+          ],
+          "checks": [
+            {
+              "kind": "orderedItems",
+              "answer": [
+                "当前进程进入内核",
+                "保存当前现场",
+                "schedule 选择下一个进程",
+                "切换内核栈和上下文",
+                "恢复下一个进程执行"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找到入口动作，再沿着状态变化往后排。"
+            },
+            {
+              "level": 2,
+              "text": "中间关键状态是：保存当前现场。"
+            },
+            {
+              "level": 3,
+              "text": "对每两个相邻动作问「上一步是不是为下一步准备了状态」。schedule 选下一个之前，当前进程的现场必须已存好（否则被 schedule 覆盖）；切换内核栈之后才能恢复——esp 切到 next 的栈才能出栈到 next 的寄存器。中间 3 步按这条因果排，但请你自己确认。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-prepare-trace-order-inverted",
+              "detect": {
+                "kind": "orderedBefore",
+                "item": "恢复下一个进程执行",
+                "before": "保存当前现场"
+              },
+              "feedback": "你把结果放到了状态变化之前。先发生 保存当前现场，后面才可能出现 恢复下一个进程执行。"
+            }
+          ],
+          "feedback": "顺序还不对。按“入口动作 -> 状态变化 -> 可观察证据”重新排列。",
+          "success": "顺序正确。你已经把这关看成连续状态流，而不是孤立名词。",
+          "coach": {
+            "why": "切换的因果链严格固定：进程必须先进内核（被中断或主动调用 schedule）→ 保存自己的现场 → 让 schedule 选下一个 → 切换内核栈和上下文 → 恢复新进程现场。常见错排是把「保存现场」放在 schedule 之后——但 schedule 还没开始时，当前现场必须已经存好。",
+            "observe": "5 个动作的状态变化：当前进程进入内核（被中断 / 主动 schedule）→ 保存当前现场（寄存器写入 task_struct 或栈）→ schedule 选下一个（看 ready 队列优先级）→ 切换内核栈和上下文（esp 切到 next 的内核栈）→ 恢复下一个进程执行（出栈到 next 的寄存器、跳到它的 eip）。",
+            "act": "把「当前进程进入内核」拖到第一位、「恢复下一个进程执行」拖到最后；中间 3 步按「先保存 → 再选 → 后切」排序。",
+            "check": "你应该能说出：保存必须在选择之前——否则你还没存好就被覆盖了；恢复必须在切栈之后——切栈后 esp 才指向 next 的现场备份，才能正确出栈。",
+            "repair": "如果你把「保存现场」放在 schedule 之后：schedule 函数本身要用栈和寄存器，会破坏掉你想保存的现场。如果把「切换内核栈」放在「保存现场」之前：保存写到哪里？写到 next 的栈？那就乱了。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "title": "观察",
+      "purpose": "先从可观察现象倒推状态变化，再决定应该检查哪个层次。",
+      "steps": [
+        {
+          "id": "lab5-observe-diagnose",
+          "title": "从现象回到错因",
+          "goal": "看到异常时先定位层次，而不是乱改代码",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "diagnose",
+          "type": "diagnose",
+          "prompt": "切换后进程从奇怪位置继续，最应该怀疑什么？",
+          "context": "观察阶段训练的是诊断顺序：先问现象违反了哪条状态规则，再决定检查哪个入口。",
+          "scenario": "日志显示调度到了下一个 pid，但执行路径返回到了不该返回的位置。",
+          "options": [
+            {
+              "value": "stack-frame",
+              "label": "内核栈或现场保存/恢复不完整。"
+            },
+            {
+              "value": "tty-buffer",
+              "label": "终端输入队列太短。"
+            },
+            {
+              "value": "image-old",
+              "label": "Bochs 没有加载显卡字体。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "stack-frame"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先看现象违反了哪条机制约束。"
+            },
+            {
+              "level": 2,
+              "text": "优先回到这个边界：进程调度决策和底层现场切换不同"
+            },
+            {
+              "level": 3,
+              "text": "切换异常的诊断三步走：① 看 switch_to 汇编里 push/pop 是不是对称（push 5 个 pop 必须 5 个）；② 看 esp 切换是不是发生在保存之后；③ 看 task_struct 里保存现场的字段有没有被别处篡改。具体顺序由你判断。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-observe-diagnose-wrong-layer",
+              "detect": {
+                "kind": "selected",
+                "value": "tty-buffer"
+              },
+              "feedback": "这个选项不能解释现象。优先检查：只改 current 却没有保存现场。"
+            }
+          ],
+          "feedback": "这个诊断不能解释给出的现象。先找状态在哪一步偏离预期。",
+          "success": "诊断正确。这个现象最能指向：只改 current 却没有保存现场。",
+          "beginnerTip": "把它当成“看现象找原因”的练习。不会术语也可以先判断是哪一层出了问题。",
+          "coach": {
+            "why": "「切换后从奇怪位置继续」是 Lab5 最经典的现象。原因几乎总是同一类：现场保存或恢复时漏了某个寄存器（比如忘了保存 ebp，恢复后栈帧错位）、或栈指针切换时机不对（切早了把 next 的现场写到了自己的栈）。",
+            "observe": "stack-frame 选项点出「栈或现场保存/恢复不完整」——这是切换错乱的真因。tty-buffer 和 image-old 都是无关因素：终端输入和切换没关系，显卡字体不影响 CPU 跳转。",
+            "act": "选 stack-frame：去检查 switch_to 汇编里 push/pop 的寄存器列表是否对齐、esp 切换的时机是否正确。",
+            "check": "你应该能说出：切换异常的根因永远在「现场保存/恢复」这条路径上——不会是无关的显卡或终端问题。",
+            "repair": "如果选了 tty-buffer 或 image-old：那是和切换正交的子系统。回到 Lab5：现场 = 寄存器列表 + 栈指针 + 指令指针，三者中任何一个不对都会让 CPU「从奇怪位置继续」——因为 CPU 严格按 eip 取指，eip 错了就跳错位置。"
+          }
+        },
+        {
+          "id": "lab5-observe-fill",
+          "title": "给关键状态贴上名字",
+          "goal": "能用术语说出 内核栈、schedule 的位置",
+          "tracks": [
+            "starter",
+            "full",
+            "exam"
+          ],
+          "interaction": "fill",
+          "type": "fill",
+          "prompt": "补全两个状态词，让它们和右侧机制画板对应。",
+          "context": "术语不是背诵用的，它让你能在报告和排查里准确指向状态。",
+          "simulator": {
+            "kind": "state-note",
+            "nodes": [
+              "内核栈",
+              "现场",
+              "schedule",
+              "task_struct"
+            ]
+          },
+          "blanks": [
+            {
+              "id": "stack",
+              "label": "进程进入内核后保存暂停点的重要栈",
+              "placeholder": "内核栈"
+            },
+            {
+              "id": "scheduler",
+              "label": "选择下一个可运行进程的函数",
+              "placeholder": "schedule"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "fills",
+              "answers": {
+                "stack": [
+                  "内核栈",
+                  "kernel stack"
+                ],
+                "scheduler": [
+                  "schedule"
+                ]
+              }
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先判断空格是在问对象、状态、动作还是证据。"
+            },
+            {
+              "level": 2,
+              "text": "这关最重要的状态之一是：寄存器和栈指针构成继续执行的现场"
+            },
+            {
+              "level": 3,
+              "text": "区分两个名字：内核栈（数据，进程在内核态时用的栈）vs schedule（函数，从 ready 队列挑下一个）。第一空找「位置」「栈」类的术语，第二空找「函数名」。提示语 placeholder 已经有线索，但请你确认为什么。"
+            }
+          ],
+          "feedback": "有空格还没对上。检查是否把相邻层次的名词混用了。",
+          "success": "填空正确。你已经把关键术语和状态位置对上了。",
+          "coach": {
+            "why": "内核栈和 schedule 是 Lab5 的两个核心名字——一个是「现场存放的物理位置」，一个是「决定谁是下一个的函数」。两者必须叫准，否则讨论切换时全在含糊其辞。",
+            "observe": "观察两个空的状态：第一空指向「进程在内核里跑代码时用的栈」（这是内核栈，每进程独立、不和用户栈共享）；第二空指向「内核里负责挑下一个 ready 进程的函数」（这是 schedule()）。两者一个是数据结构、一个是函数。",
+            "act": "stack 空填「内核栈」（也接受 kernel stack），scheduler 空填 schedule。",
+            "check": "你应该能说出：内核栈是「位置」（一段内存）、schedule 是「动作」（一个 C 函数）——两者各管一头。Lab5 的关键是 schedule 函数会改写 esp 切到目标进程的内核栈。",
+            "repair": "如果第一空填了「用户栈」：那是 Lab5 不研究的——切换发生时进程已经从用户态进了内核，用户栈早被冻结。如果第二空填了 fork 或 exit：那是别的进程动作，不是「选谁跑」的函数。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "operate",
+      "title": "操作",
+      "purpose": "在站内用命令、代码片段和解释练习表达关键状态转移。",
+      "steps": [
+        {
+          "id": "lab5-operate-command",
+          "title": "用命令表达证据链",
+          "goal": "把实验动作写成可检查的顺序",
+          "tracks": [
+            "starter",
+            "quick",
+            "full"
+          ],
+          "interaction": "command",
+          "type": "command",
+          "prompt": "写出进入 kernel 目录、构建、返回实验目录、启动 switch-trace 的四行动作。",
+          "context": "switch-trace 的意义是把抽象现场切换变成可观察的 pid 和返回位置线索。",
+          "simulator": {
+            "kind": "terminal",
+            "output": "$ cd oslab/linux-0.11/kernel\n$ make\n$ cd ../../\n$ ./run switch-trace\n# simulated: switch pid=1 -> pid=2 with saved stack"
+          },
+          "starter": "cd oslab/linux-0.11/kernel",
+          "checks": [
+            {
+              "kind": "commands",
+              "commands": [
+                "cd oslab/linux-0.11/kernel",
+                "make",
+                "cd ../../",
+                "./run switch-trace"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "命令模拟器只检查顺序，不会真实执行。"
+            },
+            {
+              "level": 2,
+              "text": "先进入会产生改动或证据的目录，再构建或启动观察。"
+            },
+            {
+              "level": 3,
+              "text": "Lab5 的命令链有两个细节：cd 进了 kernel 子目录（不是 linux-0.11 顶层），所以 cd 退要退两层（cd ../../）；./run 后接 switch-trace 参数指定加载切换观察。具体写法你自己来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-operate-command-missing-command",
+              "detect": {
+                "kind": "missingCommand",
+                "command": "make"
+              },
+              "feedback": "命令链缺少关键准备动作。真实实验里需要先完成「make」这一环，才有后续观察证据。"
+            }
+          ],
+          "feedback": "命令顺序或数量不匹配。按实验链路重新输入，每行一条命令。",
+          "success": "命令顺序正确。你表达出了从准备到观察证据的完整动作链。",
+          "beginnerTip": "这里不会真的运行命令，也不是考你背命令。你是在练习“先做什么、再做什么”。",
+          "coach": {
+            "why": "Lab5 修改的是内核里 kernel/sched.c 等文件，所以 cd 进 kernel 子目录后局部 make 就够了——不像 Lab1 是整体 make。这一步在让你区分「整体 make」和「针对子系统 make」。",
+            "observe": "starter 第一条 cd oslab/linux-0.11/kernel 把你站到内核 C 文件目录。下一条 make 只编译这一片（包括 sched.c、fork.c、signal.c）。再 cd ../../ 退两层到 oslab，最后 ./run switch-trace 启动并加载切换观察脚本。",
+            "act": "在第一条之后追加 make → cd ../../ → ./run switch-trace。注意 cd ../../ 是退两层（kernel → linux-0.11 → oslab）。",
+            "check": "你应该能说出：cd 进 kernel 而不是 linux-0.11，意味着你只编内核子系统而不重编整个内核——速度快但要求你确实改的是 kernel/ 下的文件。",
+            "repair": "如果 cd 只到 linux-0.11：你做的是整体 make，浪费时间。如果 cd .. 只退一层：./run 找不到（它在 oslab 根）。如果 ./run 没带 switch-trace：Bochs 启动了但没加载切换专用观察脚本。"
+          }
+        },
+        {
+          "id": "lab5-operate-code",
+          "title": "在代码片段里标出状态入口",
+          "goal": "用 task_struct、switch、stack 锚定关键机制",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "code",
+          "type": "code",
+          "prompt": "在片段中保留 task_struct、switch、stack，说明切换代码依赖进程结构和栈现场。",
+          "context": "这一步不要求实现完整汇编，只要求你标出切换必须保存和恢复的状态。",
+          "simulator": {
+            "kind": "code-context",
+            "nodes": [
+              "task_struct",
+              "switch",
+              "stack"
+            ]
+          },
+          "starter": "struct task_struct *next;\n/* save stack in task_struct before switch */\n/* switch to next kernel stack */",
+          "checks": [
+            {
+              "kind": "codeKeywords",
+              "keywords": [
+                "task_struct",
+                "switch",
+                "stack"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "这不是完整编程题，只检查你是否标出关键对象。"
+            },
+            {
+              "level": 2,
+              "text": "把片段和这个状态联系起来：寄存器和栈指针构成继续执行的现场"
+            },
+            {
+              "level": 3,
+              "text": "switch_to 函数的最小描述：从 task_struct 取 next 的栈指针、把当前栈指针存到 task_struct——三个关键词都自然涉及。不必写完整汇编，只要片段能体现这三件事的关系，但请用一句话连起来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-operate-code-missing-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "task_struct"
+              },
+              "feedback": "缺少 task_struct 会让片段失去关键锚点。先标出对象，再谈完整实现。"
+            }
+          ],
+          "feedback": "片段还缺少关键锚点。先不要写复杂实现，补上能说明机制的关键词。",
+          "success": "片段通过。你已经把代码中的名字和机制状态连接起来。",
+          "coach": {
+            "why": "切换代码的三个核心要素：被切换的对象（task_struct）、切换动作本身（switch）、被保存的关键数据（stack 现场）。这一步让你用三个关键词锚定切换代码必涉及的三件事——任何缺一就不是完整切换。",
+            "observe": "starter 给了 task_struct *next 和两行注释提示。task_struct 是被切换对象的描述（含 esp 字段保存内核栈位置）、switch 是动作、stack 是关键数据（current 进程的栈现场要存进 task_struct，next 进程的栈要被恢复）。",
+            "act": "保留 starter 的结构，确保 task_struct、switch、stack 三个词在你的片段里都出现，可以加一行注释（比如「switch_to(current, next): save current's stack ptr to current->kernel_stack, load next's」）。",
+            "check": "你应该能说出：切换的最小语义就是「把 current 的 esp 存到 current->task_struct，把 next 的 esp 从 next->task_struct 取出来」——三个关键词的角色互不替代。",
+            "repair": "如果你只用了 task_struct 和 switch 没用 stack：那等于说「我切换了一个对象」但没说切的是什么——切换的本质就是栈/寄存器现场。三个词缺一就缺一个层面。"
+          }
+        },
+        {
+          "id": "lab5-operate-explain",
+          "title": "解释失败的第一怀疑点",
+          "goal": "能把异常现象连接到具体边界和证据",
+          "tracks": [
+            "starter",
+            "full",
+            "exam",
+            "quick"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "用“内核栈、现场、调度”解释：为什么调度选择之后还必须做上下文切换。",
+          "context": "解释题不是写长段报告，而是训练你从现象回到最小可检查原因。",
+          "simulator": {
+            "kind": "failure-card",
+            "nodes": [
+              "内核栈",
+              "现场",
+              "调度"
+            ]
+          },
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 24,
+              "keywords": [
+                "内核栈",
+                "现场",
+                "调度"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：进程调度决策和底层现场切换不同"
+            },
+            {
+              "level": 3,
+              "text": "三个词的层次：调度（高层决策）→ 内核栈（中层载体）→ 现场（底层数据）。schedule 选完之后，必须沿着这条层次往下走完，才算切换完成。具体怎么写让用户跟着想清楚由你来。"
+            }
+          ],
+          "feedback": "解释还不够具体。请写出一个边界、一个状态变化和一个证据。",
+          "success": "解释通过。你已经能把现象、边界和证据连成一条排查路径。",
+          "coach": {
+            "why": "「为什么 schedule 之后还要切上下文」是初学者经常困惑的——schedule 不是已经选好了吗？答案是：schedule 只是「决策」（选谁），上下文切换才是「执行」（让 CPU 真切到那个进程）。决策不等于执行，必须配套。",
+            "observe": "三个关键词的因果：调度（决策：选下一个）→ 现场（决策完成后要保存当前 + 恢复目标）→ 内核栈（现场就保存在内核栈附近，esp 切到 next 的内核栈才能完成恢复）。三件事必须连续完成。",
+            "act": "写 2-3 句话，按「schedule 只是选 → 选完还要切 → 切的核心是内核栈现场」的顺序，三个词全用上。",
+            "check": "你应该能说出：调度是「计划」，切换是「执行」——只有计划没有执行，CPU 还在跑老进程。",
+            "repair": "如果只写了三个词没说因果：那是堆砌。补一句「schedule 决定下一个是 next，但 CPU 不知道；要把 esp、eip、寄存器从 current 切到 next，CPU 才会跑 next」。"
+          },
+          "misconceptions": [
+            {
+              "id": "lab5-operate-explain-missing-cause",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "内核栈"
+              },
+              "feedback": "解释里缺少 内核栈，会让排查点太空。把它和具体证据连接起来。"
+            }
+          ]
+        },
+        {
+          "id": "lab5-full-depth-1",
+          "title": "解释保存现场",
+          "goal": "把机制边界解释到可以迁移到真实实验",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "如果切换时不保存寄存器和内核栈信息，会出现什么问题？请说明恢复会缺哪类证据。",
+          "context": "完整路径需要你不只会选答案，还能说明为什么这个边界会改变实验现象。",
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 26,
+              "keywords": [
+                "现场",
+                "内核栈",
+                "恢复"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：进程调度决策和底层现场切换不同"
+            },
+            {
+              "level": 3,
+              "text": "把寄存器分类讨论：通用寄存器（eax-edx）丢了影响计算结果，栈寄存器（esp/ebp）丢了影响栈帧，控制寄存器（eip/eflags）丢了影响下一步执行。逐类说明丢失会出什么具体错——但具体写法你自己来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-full-depth-1-missing-depth-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "现场"
+              },
+              "feedback": "缺少 现场 会让解释脱离题目机制。请把它放回因果链里。"
+            }
+          ],
+          "feedback": "解释还停留在表面。请明确写出对象、状态、边界和证据。",
+          "success": "解释通过。你已经把这一层机制从操作提升成了可迁移理解。",
+          "coach": {
+            "why": "「不保存会怎样」是理解切换的反面问题——只有想清楚「丢了哪一类信息会出什么错」，你才真正理解每个保存动作的必要性。这一步用反向问题逼你检查每个寄存器/栈帧的角色。",
+            "observe": "三个关键词在 Lab5 的角色：现场（被保存的对象）、内核栈（保存的位置）、恢复（保存的对偶动作）。如果不保存：通用寄存器丢了 → 计算结果错；esp/ebp 丢了 → 栈帧解读错；eip 丢了 → 跳到任意地址；段寄存器丢了 → 内存访问错。",
+            "act": "写 3 句话以上：① 不保存通用寄存器会怎样（计算结果错）；② 不保存 esp/eip 会怎样（栈帧错位 + 跳错地址）；③ 内核栈本身的角色（既是保存位置，也是 esp 切换目标）。",
+            "check": "你应该能说出：每一类寄存器丢失都对应一种可观察的错误现象——这就是为什么切换代码要 push 整套寄存器。",
+            "repair": "如果你写得很泛（「会出错」「程序崩溃」）：那是没说清。补上具体——「丢了 eax 计算结果错，丢了 esp 出栈位置错，丢了 eip CPU 直接跳到随机地址」。"
+          }
+        },
+        {
+          "id": "lab5-full-depth-2",
+          "title": "区分用户栈和内核栈",
+          "goal": "把机制边界解释到可以迁移到真实实验",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "为什么进程切换实验特别关注内核栈，而不是只看用户栈？请结合切换发生的位置说明。",
+          "context": "完整路径需要你不只会选答案，还能说明为什么这个边界会改变实验现象。",
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 26,
+              "keywords": [
+                "用户栈",
+                "内核栈",
+                "切换"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：进程调度决策和底层现场切换不同"
+            },
+            {
+              "level": 3,
+              "text": "切换的位置很关键：它发生在 schedule 函数里，schedule 是内核函数，所以调用它时进程已经是内核态、当前 esp 指向内核栈。用户栈这时已被搁置——和切换无关。三个关键词必须连同「位置」一起说，但具体写法你自己给。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab5-full-depth-2-missing-depth-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "用户栈"
+              },
+              "feedback": "缺少 用户栈 会让解释脱离题目机制。请把它放回因果链里。"
+            }
+          ],
+          "feedback": "解释还停留在表面。请明确写出对象、状态、边界和证据。",
+          "success": "解释通过。你已经把这一层机制从操作提升成了可迁移理解。",
+          "coach": {
+            "why": "Lab5 关注内核栈而不是用户栈，是因为切换发生在「进程已经进了内核」的时候——schedule 是内核函数，调用它意味着进程已经从用户态切到内核态、esp 已经从用户栈切到内核栈。所以保存的是当下 CPU 用的栈，也就是内核栈。",
+            "observe": "三个关键词的关系：用户栈（用户态时用）vs 内核栈（内核态时用）vs 切换（发生的位置）。切换不会发生在用户态——用户态执行普通指令时不会主动 schedule，所以切换发生时已经在内核态了。",
+            "act": "写 3 句话以上：① 切换发生在哪（内核态 schedule 调用时）；② 那一刻 CPU 用的栈是什么（内核栈）；③ 用户栈是什么状态（已被冻结、不参与切换）。",
+            "check": "你应该能说出：「切换关注内核栈不关注用户栈」不是设计选择，是事实——切换那一刻用户栈根本没在用。",
+            "repair": "如果你说「内核栈更重要」：那是结论不是解释——补上「切换发生时进程已经在内核里跑，所以当前活跃的栈就是内核栈，用户栈这时已经冻结」。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "复盘",
+      "purpose": "把刚才的操作整理成能迁移到真实 Linux 0.11 实验的检查清单。",
+      "steps": [
+        {
+          "id": "lab5-reflect-summary",
+          "title": "写入学习档案",
+          "goal": "把本关理解压缩成以后能复用的检查清单",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "reflection",
+          "type": "reflection",
+          "prompt": "用三句话写入学习档案：1. 进程切换时，为什么内核栈会影响“从哪里停下、从哪里继续”？；2. 这关最重要的边界是什么；3. 迁移到真实实验时先看哪个证据。",
+          "context": "复盘不是抄答案，而是把你现在的理解保存下来，方便之后做真实实验时自查。",
+          "checks": [
+            {
+              "kind": "reflection",
+              "minLength": 12
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "用自己的话写，不要复制题面。"
+            },
+            {
+              "level": 2,
+              "text": "至少写出一个对象、一个状态变化、一个可观察证据。"
+            },
+            {
+              "level": 3,
+              "text": "压成 3 句：第一句答「内核栈如何承载停/续位置」；第二句指出最易混的边界（用户栈 vs 内核栈、决策 vs 执行）；第三句留真实实验时第一个要看的证据（switch_to 汇编 / task_struct.esp）。具体内容你自己来。"
+            }
+          ],
+          "feedback": "复盘太短。至少写出问题、边界和一个观察证据。",
+          "success": "已写入学习档案。你现在有了一段可以迁移到真实实验前的自查说明。",
+          "reflectionPrompt": "总结 基于内核栈切换的进程切换：我理解的核心机制是；我容易混淆的是；真实环境中我会先检查。",
+          "beginnerTip": "可以直接用“我现在知道……”开头。目标是确认你没有被术语吓住。",
+          "coach": {
+            "why": "复盘要把「切换 = 现场保存 + 恢复 + 内核栈是关键载体」沉淀下来。三句话的用途：第一句答驱动问题（说出内核栈为什么决定停/续位置）、第二句标记最易混的边界（用户栈 vs 内核栈、决策 vs 执行）、第三句给真实实验留具体证据。",
+            "observe": "驱动问题：「进程切换时，为什么内核栈会影响『从哪里停下、从哪里继续』？」第一句回答：因为停下来的位置（eip/esp）保存在内核栈附近的 task_struct 字段里，恢复时 esp 切回那个内核栈才能取出现场。",
+            "act": "三段：① 内核栈在切换中的角色（保存现场的载体 + esp 切换目标）；② 最易混的边界（用户栈 vs 内核栈、schedule 决策 vs switch_to 执行）；③ 真实实验时第一个看的证据（switch_to 的 push/pop 列表、task_struct 的 esp 字段、内核栈布局）。",
+            "check": "你应该能说出：以后遇到「切换异常」就能直接定位到「内核栈是不是切对了」「现场是不是存全了」——而不是乱猜。",
+            "repair": "如果三句话很泛：把每句换成具体动作（grep switch_to 看 push/pop / 看 task_struct 字段 / 加 trace 打 esp 值）。"
+          }
+        }
+      ]
+    }
+  ],
+  "beginner": {
+    "story": "进程像被暂停的电影。调度器选择下一部继续播放时，必须知道上一部停在哪一帧、下一部从哪一帧恢复。",
+    "why": "只理解调度策略还不够。真正切换时，栈和寄存器现场决定进程能否正确返回。",
+    "analogy": "像多人轮流写同一份草稿：每个人离开前要夹书签，回来时才能从自己的书签继续。内核栈就是重要书签之一。",
+    "firstGoal": "能说清保存现场、选择下一个进程、切换内核栈、恢复现场的顺序。",
+    "reassurance": "先不用掌握所有汇编。先理解“恢复谁的栈，就会沿谁的现场继续”。",
+    "glossary": [
+      {
+        "term": "内核栈",
+        "meaning": "进程进入内核后使用的栈，保存内核路径上的调用和返回信息。"
+      },
+      {
+        "term": "现场",
+        "meaning": "寄存器、栈指针、返回位置等继续执行所需状态。"
+      },
+      {
+        "term": "schedule",
+        "meaning": "选择下一个可运行进程的调度函数。"
+      },
+      {
+        "term": "task_struct",
+        "meaning": "保存进程管理信息的数据结构。"
+      }
+    ]
+  },
+  "drivingQuestion": "进程切换时，为什么内核栈会影响“从哪里停下、从哪里继续”？",
+  "plainLanguageGoal": "切换进程不是改一个编号，而是保存旧进程现场，再恢复新进程在内核里的暂停点。",
+  "mentalModel": {
+    "title": "保存旧现场，恢复新现场",
+    "explanation": "进程切换先保存当前进程在内核中的执行现场，调度器选择下一个进程，再切换到下一个进程的内核栈和上下文，让它从上次暂停处继续。",
+    "flow": [
+      "当前进程进入内核",
+      "保存当前现场",
+      "schedule 选择下一个进程",
+      "切换内核栈和上下文",
+      "恢复下一个进程执行"
+    ],
+    "checkpoints": [
+      "当前进程编号不是完整现场",
+      "用户栈和内核栈承担不同职责",
+      "恢复位置依赖保存过的栈和寄存器"
+    ]
+  },
+  "transferChecklist": [
+    "先列出需要保存的现场信息",
+    "区分用户态栈和内核路径中的栈",
+    "用切换日志验证恢复的是预期进程"
+  ],
+  "firstPrinciples": {
+    "actors": [
+      "当前进程交出 CPU",
+      "调度器选择下一个可运行进程",
+      "上下文切换代码保存和恢复现场"
+    ],
+    "state": [
+      "寄存器和栈指针构成继续执行的现场",
+      "内核栈保存进程在内核路径中的暂停点",
+      "task_struct 连接进程和它的上下文信息"
+    ],
+    "boundary": [
+      "进程调度决策和底层现场切换不同",
+      "用户栈和内核栈不同",
+      "保存旧状态和恢复新状态必须成对出现"
+    ],
+    "transition": [
+      "保存当前现场让旧进程以后能回来",
+      "切换栈指针让执行路径进入新进程现场",
+      "恢复寄存器让新进程继续上次位置"
+    ],
+    "evidence": [
+      "切换日志能显示 pid 交替",
+      "栈/现场字段能解释返回位置",
+      "异常返回或跑飞说明现场保存不完整"
+    ],
+    "failureModes": [
+      "只改 current 却没有保存现场",
+      "混淆用户栈和内核栈",
+      "恢复顺序错误导致返回到错误位置"
+    ]
+  }
+}

@@ -1,0 +1,811 @@
+{
+  "id": "lab2",
+  "title": "操作系统的引导",
+  "focus": "理解 BIOS、bootsect、setup、head.s 和内核入口之间的控制权交接",
+  "estimatedMinutes": 35,
+  "difficulty": "medium",
+  "concepts": [
+    "BIOS",
+    "bootsect",
+    "setup",
+    "保护模式",
+    "内核入口"
+  ],
+  "sourceRoute": {
+    "name": "HIT-OSlab Lab2",
+    "url": "https://github.com/Joker001014/HIT-OSlab"
+  },
+  "outcomes": [
+    "能解释启动接力链",
+    "能区分加载、搬移和跳转",
+    "能把早期启动失败定位到具体阶段"
+  ],
+  "reportPrompts": [
+    "画出 BIOS 到内核入口的控制权交接图。",
+    "说明为什么启动阶段不能跳过 bootsect/setup。",
+    "记录一个可观察信号如何证明某阶段已运行。"
+  ],
+  "phases": [
+    {
+      "id": "prepare",
+      "title": "预备",
+      "purpose": "先建立对象和边界，知道这一关到底在解释哪条系统链路。",
+      "steps": [
+        {
+          "id": "lab2-starter-map",
+          "title": "BIOS 之后，控制权落在哪里",
+          "goal": "先知道这关解决的系统问题，不急着背术语",
+          "tracks": [
+            "starter"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "如果给第一次接触 OS 实验的同学解释「操作系统的引导」，哪一句最接近？",
+          "context": "这是零基础路径的入口。先把题目翻成一句人话，确认你知道自己要观察哪条系统链路。",
+          "beginnerTip": "先不用背术语，先找这关在解决哪个真实问题。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "BIOS",
+              "bootsect",
+              "setup"
+            ]
+          },
+          "options": [
+            {
+              "value": "plain",
+              "label": "这关是在学“开机后控制权怎样一步步交给内核”。"
+            },
+            {
+              "value": "wrong-1",
+              "label": "这关主要是在学习信号量排队。"
+            },
+            {
+              "value": "wrong-2",
+              "label": "这关只是把文件复制到桌面。"
+            },
+            {
+              "value": "wrong-3",
+              "label": "这关只是在让 C 函数互相调用。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "plain"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：启动扇区空间和完整内核空间不同"
+            },
+            {
+              "level": 3,
+              "text": "关键词是「一步步」——其它选项都缺这种「接力」感。其它选项里的术语（信号量、文件、C 函数）都属于已经有 OS 之后的世界，但 Lab2 在 OS 还没起来时——找出那条描述「冷启动到内核就绪」的话，但请用你自己的话复述一遍。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab2-starter-map-plain-boundary",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-1"
+              },
+              "feedback": "这里混淆了主题。操作系统的引导 的第一步是看懂：启动扇区空间和完整内核空间不同。"
+            }
+          ],
+          "feedback": "这个选项没有说清这一关的系统问题。先回到右侧机制画板，把题目压成一句你能复述的话。",
+          "success": "对。你已经看清这一关的关键边界：把启动看成接力赛：每一小段代码只负责把下一段代码带到能继续跑的位置。",
+          "coach": {
+            "why": "刚开机时只有 BIOS，没有操作系统。Lab2 想让你看清「内核不是凭空跳起来的」——它是被一段段代码接力装入并启动的。这一步先确认你抓住了「接力」这个核心动作。",
+            "observe": "正确选项明确说「一步步交给内核」——这是接力的关键描述。其它选项把这关误读成了别的实验：信号量是 Lab6、文件复制不是引导、C 函数调用是普通程序而不是冷启动。",
+            "act": "选出唯一描述「控制权从 BIOS 一步步移交到内核」的那一项。",
+            "check": "你应该能说出：本关研究的是「冷启动后控制权怎么走」。冷启动 = CPU 处于实模式、内存里只有 BIOS——任何 OS 代码都得自己装入。",
+            "repair": "如果你选了「信号量排队」，是把 Lab6 的内容搬过来了；如果选「文件复制」，是把现代 OS 的高级动作放到了零起点；如果选「C 函数互相调用」，是忽略了「OS 还没起来时根本没有 C 运行时」。"
+          }
+        },
+        {
+          "id": "lab2-prepare-choice",
+          "title": "抓住最容易混淆的边界",
+          "goal": "区分「启动扇区空间和完整内核空间不同」",
+          "tracks": [
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "choice",
+          "type": "choice",
+          "prompt": "启动流程中，bootsect 最接近哪种角色？",
+          "context": "很多错误不是不会写代码，而是把两个层次当成一个层次。先把边界看清，后面操作才有方向。",
+          "simulator": {
+            "kind": "concept-map",
+            "nodes": [
+              "BIOS",
+              "bootsect",
+              "setup",
+              "保护模式",
+              "内核入口"
+            ]
+          },
+          "options": [
+            {
+              "value": "load-next",
+              "label": "第一棒：拿到控制权后继续装入后面的 setup/system。"
+            },
+            {
+              "value": "final-kernel",
+              "label": "它就是完整内核，负责所有进程调度。"
+            },
+            {
+              "value": "user-program",
+              "label": "它是用户态程序，靠系统调用进入内核。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "load-next"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找这一步在解决哪个真实问题，不要先挑看起来最专业的词。"
+            },
+            {
+              "level": 2,
+              "text": "把选项和这条边界对照：启动扇区空间和完整内核空间不同"
+            },
+            {
+              "level": 3,
+              "text": "bootsect 的物理限制是 512 字节（一个磁盘扇区）——这个尺寸只够做一件事，就是「把更大的代码读进来再跳过去」。在选项里找符合这种「装载器的装载器」角色的那一句，但具体为什么不是其他两个，请你自己解释。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab2-prepare-choice-boundary-mix",
+              "detect": {
+                "kind": "selected",
+                "value": "final-kernel"
+              },
+              "feedback": "这个选择把边界混在一起了。先记住：启动扇区空间和完整内核空间不同。"
+            }
+          ],
+          "feedback": "这个选择还没有对准机制边界。回到心智模型，先分清对象和状态属于哪一层。",
+          "success": "判断正确。你已经抓住这一关的第一条边界：启动扇区空间和完整内核空间不同。",
+          "coach": {
+            "why": "bootsect 是接力的「第一棒」，只有 512 字节。它不可能是完整内核（容不下），也不可能是用户态程序（OS 还没起来）。这一步在排除两类越级的误解：把它当终点 / 把它当顶层用户视角。",
+            "observe": "load-next 抓住了 bootsect 的核心职责——把后面的 setup/system 装入。final-kernel 把它当完整内核（数量级错了几千倍），user-program 把它当用户态（顺序倒了——用户态要在内核就绪后才存在）。",
+            "act": "选 load-next：bootsect 的工作就是「读后面的代码进内存，然后跳过去」。",
+            "check": "你应该能说出：bootsect 是「装载器的装载器」——它本身很小，只够把更大的 setup 读进来，让接力继续。",
+            "repair": "如果选了 final-kernel：你忽略了 bootsect 只占 512 字节的物理限制——一个完整内核装不下。如果选了 user-program：你跳过了「OS 还没起来怎么会有用户态」这个时序问题。"
+          }
+        },
+        {
+          "id": "lab2-prepare-trace",
+          "title": "把状态流排成因果链",
+          "goal": "按顺序说出「BIOS 读入 bootsect」到「head.s 跳入内核入口」",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "trace",
+          "type": "trace",
+          "prompt": "把下面动作排成正确顺序，形成「操作系统的引导」的状态流。",
+          "context": "OS 实验的许多错误来自顺序错位。先排入口、状态变化、观察结果，再进入命令和代码。",
+          "simulator": {
+            "kind": "state-flow",
+            "nodes": [
+              "BIOS 加载 bootsect",
+              "bootsect 读取 setup",
+              "setup 收集机器参数",
+              "进入保护模式",
+              "head.s 准备内核运行"
+            ],
+            "highlightOnPass": [
+              "bootsect 读取 setup",
+              "setup 收集机器参数",
+              "进入保护模式"
+            ]
+          },
+          "items": [
+            "head.s 准备内核运行",
+            "进入保护模式",
+            "setup 收集机器参数",
+            "bootsect 读取 setup",
+            "BIOS 加载 bootsect"
+          ],
+          "checks": [
+            {
+              "kind": "orderedItems",
+              "answer": [
+                "BIOS 加载 bootsect",
+                "bootsect 读取 setup",
+                "setup 收集机器参数",
+                "进入保护模式",
+                "head.s 准备内核运行"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先找到入口动作，再沿着状态变化往后排。"
+            },
+            {
+              "level": 2,
+              "text": "中间关键状态是：bootsect 加载 setup/system。"
+            },
+            {
+              "level": 3,
+              "text": "用「下一棒需要什么状态」反推：head.s 是 32 位代码 → 必须先在保护模式；setup 用 BIOS 中断 → 必须还在实模式；bootsect 装 setup → 自己得先被装入。把这三条因果接起来，顺序就出来了，但请你自己确认。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab2-prepare-trace-order-inverted",
+              "detect": {
+                "kind": "orderedBefore",
+                "item": "head.s 准备内核运行",
+                "before": "bootsect 读取 setup"
+              },
+              "feedback": "你把结果放到了状态变化之前。先发生 bootsect 读取 setup，后面才可能出现 head.s 准备内核运行。"
+            }
+          ],
+          "feedback": "顺序还不对。按“入口动作 -> 状态变化 -> 可观察证据”重新排列。",
+          "success": "顺序正确。你已经把这关看成连续状态流，而不是孤立名词。",
+          "coach": {
+            "why": "引导阶段的因果链非常严格：每一棒都为下一棒准备运行环境。常见错排是把「进入保护模式」放在 head.s 之后或 setup 之前，但实际是 setup 收集机器信息后切到保护模式，head.s 才能用 32 位代码运行。",
+            "observe": "5 个动作的状态变化：BIOS 加载 bootsect（CPU 跳到 0x7C00）→ bootsect 读取 setup（更多代码进内存）→ setup 收集机器参数（拿到内存大小、显卡等状态）→ 进入保护模式（CPU 模式从 16 位实模式切到 32 位保护模式）→ head.s 准备内核运行（建初始页表、跳到 main）。",
+            "act": "把「BIOS 加载 bootsect」拖到第一位、「head.s 准备内核运行」拖到最后；中间 3 步按「装入更多代码 → 收集机器信息 → 切 CPU 模式」排序。",
+            "check": "你应该能说出：保护模式的切换必须在 setup 之后、head.s 之前——因为 setup 是 16 位实模式代码，head.s 是 32 位保护模式代码，模式切换是它们之间的桥。",
+            "repair": "如果你把「进入保护模式」放在 head.s 之后：head.s 就跑不起来了，因为它是 32 位代码却在 16 位环境里。如果放在 setup 之前：setup 用 BIOS 中断收集机器信息，BIOS 中断只在实模式可用——切早了 setup 就坏了。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "title": "观察",
+      "purpose": "先从可观察现象倒推状态变化，再决定应该检查哪个层次。",
+      "steps": [
+        {
+          "id": "lab2-observe-diagnose",
+          "title": "从现象回到错因",
+          "goal": "看到异常时先定位层次，而不是乱改代码",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "diagnose",
+          "type": "diagnose",
+          "prompt": "你想观察 bootsect，却只在进入内核后才看到输出，主要错因是什么？",
+          "context": "观察阶段训练的是诊断顺序：先问现象违反了哪条状态规则，再决定检查哪个入口。",
+          "scenario": "屏幕直到内核初始化后才出现提示，早期阶段没有任何信号。",
+          "options": [
+            {
+              "value": "wrong-stage",
+              "label": "观察点放在了错误阶段，不能证明 bootsect 已执行。"
+            },
+            {
+              "value": "wrong-report-title",
+              "label": "实验报告标题不够长。"
+            },
+            {
+              "value": "wrong-semaphore",
+              "label": "P/V 操作位置放错。"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "choice",
+              "answer": "wrong-stage"
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先看现象违反了哪条机制约束。"
+            },
+            {
+              "level": 2,
+              "text": "优先回到这个边界：启动扇区空间和完整内核空间不同"
+            },
+            {
+              "level": 3,
+              "text": "观察一个阶段必须用那个阶段「能跑」的工具：bootsect 用 BIOS 中断或直接写显存，head.s 之后才能用更高级的工具。看不到输出不一定是没跑，更常见是观察点放错了——但具体是哪类放错的，请用你自己的话说出来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab2-observe-diagnose-wrong-layer",
+              "detect": {
+                "kind": "selected",
+                "value": "wrong-report-title"
+              },
+              "feedback": "这个选项不能解释现象。优先检查：把输出写到错误阶段导致看不到。"
+            }
+          ],
+          "feedback": "这个诊断不能解释给出的现象。先找状态在哪一步偏离预期。",
+          "success": "诊断正确。这个现象最能指向：把输出写到错误阶段导致看不到。",
+          "beginnerTip": "把它当成“看现象找原因”的练习。不会术语也可以先判断是哪一层出了问题。",
+          "coach": {
+            "why": "「想观察 bootsect 但只在内核里看到输出」——这是 OS 实验里的经典错觉。原因不是 bootsect 没跑，而是你的观察点（比如 printk）放在了 bootsect 看不到的位置。这一步在练「观察点要和被观察对象同处一个阶段」。",
+            "observe": "wrong-stage 直指核心：你的观察工具（比如 printk）是内核的设施，bootsect 阶段还没有内核——所以 bootsect 的状态根本不会被这种观察点记录。其它两个选项把锅扣在了无关的事情上。",
+            "act": "选 wrong-stage：观察点必须用 bootsect 阶段能用的方式（直接写显存、BIOS 0x10 中断打印），不能用还没存在的内核 API。",
+            "check": "你应该能说出：观察点必须在被观察阶段「能跑」的代码里——bootsect 阶段没有 printk，所以 printk 看不到 bootsect。",
+            "repair": "如果选了 wrong-report-title 或 wrong-semaphore：那是与现象无关的因素。回到现象：你看不到 bootsect 输出，是因为输出这个动作本身没在 bootsect 阶段执行——必须在 bootsect 自己的代码里直接打印（比如 BIOS int 0x10）。"
+          }
+        },
+        {
+          "id": "lab2-observe-fill",
+          "title": "给关键状态贴上名字",
+          "goal": "能用术语说出 bootsect、保护模式 的位置",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "fill",
+          "type": "fill",
+          "prompt": "补全两个状态词，让它们和右侧机制画板对应。",
+          "context": "术语不是背诵用的，它让你能在报告和排查里准确指向状态。",
+          "simulator": {
+            "kind": "state-note",
+            "nodes": [
+              "BIOS",
+              "bootsect",
+              "setup",
+              "保护模式"
+            ]
+          },
+          "blanks": [
+            {
+              "id": "first",
+              "label": "启动接力中 BIOS 读入的第一段代码",
+              "placeholder": "bootsect"
+            },
+            {
+              "id": "mode",
+              "label": "setup 之后常要进入的 CPU 运行模式",
+              "placeholder": "保护模式"
+            }
+          ],
+          "checks": [
+            {
+              "kind": "fills",
+              "answers": {
+                "first": [
+                  "bootsect"
+                ],
+                "mode": [
+                  "保护",
+                  "protected"
+                ]
+              }
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先判断空格是在问对象、状态、动作还是证据。"
+            },
+            {
+              "level": 2,
+              "text": "这关最重要的状态之一是：控制权保存在当前执行地址里"
+            },
+            {
+              "level": 3,
+              "text": "BIOS 在加电后只会自动读一个扇区到 0x7C00 ——这个扇区的代码就是第一空答案。CPU 启动时是 16 位实模式（兼容老 PC），要跑 32 位内核必须切到第二空的状态——但请用术语本身写答案。"
+            }
+          ],
+          "feedback": "有空格还没对上。检查是否把相邻层次的名词混用了。",
+          "success": "填空正确。你已经把关键术语和状态位置对上了。",
+          "coach": {
+            "why": "bootsect 和保护模式是 Lab2 的两个核心术语：一个是「接力第一棒的代码名字」，一个是「让 32 位内核能运行的 CPU 模式」。这一步在用最少的字让你确认这两个名字和它们的角色对得上。",
+            "observe": "第一空指向「BIOS 读入的第一段」——这个角色只对应 bootsect（占 512 字节、引导扇区）。第二空指向「setup 之后切的 CPU 模式」——这是从实模式（16 位）切到保护模式（32 位）的状态变化。",
+            "act": "first 空填 bootsect，mode 空填「保护模式」（也接受 protected）。",
+            "check": "你应该能说出：bootsect 是「人」（一段代码），保护模式是「环境」（CPU 的运行模式）——两者属于不同范畴，不会混淆。",
+            "repair": "如果第一空填了 setup：setup 是 bootsect 之后被装入的，不是「BIOS 直接读入的」。如果第二空写了「实模式」：那是 BIOS 阶段的状态，不是 setup 之后切去的目标。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "operate",
+      "title": "操作",
+      "purpose": "在站内用命令、代码片段和解释练习表达关键状态转移。",
+      "steps": [
+        {
+          "id": "lab2-operate-command",
+          "title": "用命令表达证据链",
+          "goal": "把实验动作写成可检查的顺序",
+          "tracks": [
+            "starter",
+            "quick",
+            "full"
+          ],
+          "interaction": "command",
+          "type": "command",
+          "prompt": "写出进入 boot 目录、构建、返回实验目录、启动观察的四行动作。",
+          "context": "命令顺序对应“修改早期引导代码后如何拿到观察证据”。",
+          "simulator": {
+            "kind": "terminal",
+            "output": "$ cd oslab/linux-0.11/boot\n$ make\n$ cd ../../\n$ ./run\n# simulated: boot message appears before kernel init"
+          },
+          "starter": "cd oslab/linux-0.11/boot",
+          "checks": [
+            {
+              "kind": "commands",
+              "commands": [
+                "cd oslab/linux-0.11/boot",
+                "make",
+                "cd ../../",
+                "./run"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "命令模拟器只检查顺序，不会真实执行。"
+            },
+            {
+              "level": 2,
+              "text": "先进入会产生改动或证据的目录，再构建或启动观察。"
+            },
+            {
+              "level": 3,
+              "text": "这次的 cd 进了 boot 子目录而不是 linux-0.11 顶层，所以最后 cd 要退两层而不是一层。每条命令的前提是它的前一条命令产生了正确状态——具体顺序由你写出来。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab2-operate-command-missing-command",
+              "detect": {
+                "kind": "missingCommand",
+                "command": "make"
+              },
+              "feedback": "命令链缺少关键准备动作。真实实验里需要先完成「make」这一环，才有后续观察证据。"
+            }
+          ],
+          "feedback": "命令顺序或数量不匹配。按实验链路重新输入，每行一条命令。",
+          "success": "命令顺序正确。你表达出了从准备到观察证据的完整动作链。",
+          "beginnerTip": "这里不会真的运行命令，也不是考你背命令。你是在练习“先做什么、再做什么”。",
+          "coach": {
+            "why": "和 Lab1 的 make 不同：Lab2 是单独编译 boot/ 目录下的引导代码，所以 cd 要进 boot 子目录。这一步在让你区分「整体 make」和「针对引导的 make」——位置错了产物就不对。",
+            "observe": "starter 第一条 cd oslab/linux-0.11/boot 把你站到了引导代码的目录。这里能看到 bootsect.s、setup.s、head.s 的源文件——下一条 make 才是只编译这一段。",
+            "act": "在第一条之后追加 make → cd ../../ → ./run。注意 cd ../../ 是退两层（boot → linux-0.11 → oslab），因为 ./run 在 oslab 根。",
+            "check": "你应该能说出：每条命令对应一次状态变化——cd 改当前目录、make 改 boot/ 下的产物（生成 bootsect 镜像）、cd ../../ 退到 oslab、./run 启动 Bochs 加载新镜像。",
+            "repair": "如果只 cd .. 一层：你停在了 linux-0.11，./run 找不到。如果省略 cd 直接 ./run：在 boot/ 目录里没有 run 脚本。如果 make 漏了：./run 启动的还是老引导代码——和你的修改无关。"
+          }
+        },
+        {
+          "id": "lab2-operate-code",
+          "title": "在代码片段里标出状态入口",
+          "goal": "用 print、register、setup 锚定关键机制",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "code",
+          "type": "code",
+          "prompt": "在片段里保留 print、register、setup，表示你要在 setup 阶段观察寄存器状态。",
+          "context": "早期引导阶段能观察的证据很少，最小输出应服务于“控制权跑到哪里”。",
+          "simulator": {
+            "kind": "code-context",
+            "nodes": [
+              "print",
+              "register",
+              "setup"
+            ]
+          },
+          "starter": "/* setup 阶段观察点：print register before mode switch */\nprint_hex(/* register from setup */);",
+          "checks": [
+            {
+              "kind": "codeKeywords",
+              "keywords": [
+                "print",
+                "register",
+                "setup"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "这不是完整编程题，只检查你是否标出关键对象。"
+            },
+            {
+              "level": 2,
+              "text": "把片段和这个状态联系起来：控制权保存在当前执行地址里"
+            },
+            {
+              "level": 3,
+              "text": "调试引导时，最常做的事是「在切到保护模式前打印寄存器值看 BIOS 给了什么」。三个关键词分别对应：观察手段、观察对象、观察阶段——把它们用一句话串起来即可，但句子要能说明你为什么选这个时机。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab2-operate-code-missing-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "print"
+              },
+              "feedback": "缺少 print 会让片段失去关键锚点。先标出对象，再谈完整实现。"
+            }
+          ],
+          "feedback": "片段还缺少关键锚点。先不要写复杂实现，补上能说明机制的关键词。",
+          "success": "片段通过。你已经把代码中的名字和机制状态连接起来。",
+          "coach": {
+            "why": "setup 阶段是观察寄存器状态的最后一个「实模式机会」——一旦切到保护模式，很多 BIOS 调用就用不了。在 setup 里打印寄存器值是引导调试的标准动作。这一步让你把这个观察意图写到代码里。",
+            "observe": "starter 注释已经点出「在 setup 阶段观察寄存器」。三个关键词的含义：print（打印动作）、register（被观察对象）、setup（被观察的阶段）——三者必须同时出现，才说明你抓住了「在哪里、看什么、用什么手段」。",
+            "act": "在 print_hex 调用里写出 register 名（比如 ax 或者直接注释「register from setup」），三个关键词都要出现在你的片段里。",
+            "check": "你应该能说出：观察寄存器状态最好的时机是模式切换之前——切换之后寄存器值会被 head.s 重写，再看就看不到原始机器信息了。",
+            "repair": "如果你写了 print 但没写 register：你观察了「打印这个动作」但没指明对象；写了 register 但没写 setup：你不清楚在哪个阶段观察。三个词缺一就缺一节信息。"
+          }
+        },
+        {
+          "id": "lab2-operate-explain",
+          "title": "解释失败的第一怀疑点",
+          "goal": "能把异常现象连接到具体边界和证据",
+          "tracks": [
+            "full",
+            "exam"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "用 BIOS、bootsect、setup 解释：为什么启动链路中某一棒没有跑到，后面就无法可靠继续。",
+          "context": "解释题不是写长段报告，而是训练你从现象回到最小可检查原因。",
+          "simulator": {
+            "kind": "failure-card",
+            "nodes": [
+              "BIOS",
+              "bootsect",
+              "setup"
+            ]
+          },
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 24,
+              "keywords": [
+                "BIOS",
+                "bootsect",
+                "setup"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：启动扇区空间和完整内核空间不同"
+            },
+            {
+              "level": 3,
+              "text": "三个词不是平级的标签，而是接力的三棒。BIOS 交付了「bootsect 在内存里」这个状态，bootsect 交付了「setup 在内存里」，setup 交付了「机器信息+保护模式」。任意一节断了下一节就拿不到必需状态——但请你自己写完整因果。"
+            }
+          ],
+          "feedback": "解释还不够具体。请写出一个边界、一个状态变化和一个证据。",
+          "success": "解释通过。你已经能把现象、边界和证据连成一条排查路径。",
+          "coach": {
+            "why": "引导是「不能跳步的接力」——上一棒没跑完，下一棒拿不到正确状态。理解这一点的方式不是死记顺序，而是说出「每棒为下棒准备了什么」：BIOS 把 bootsect 装到内存、bootsect 把 setup 装入、setup 收集机器信息并切模式。",
+            "observe": "三个关键词是接力的前三棒。失败时倒着追：内核不工作 → 看 head.s 是否进入 → 看 setup 是否完成 → 看 bootsect 是否被加载 → 看 BIOS 启动是否正常。每一节都靠前一节交付的状态。",
+            "act": "写 2-3 句话，按「BIOS 给了 bootsect 什么 → bootsect 给了 setup 什么 → setup 给了内核什么」的顺序，三个关键词全用上。",
+            "check": "你应该能说出：每一棒要么完整跑完并交出预期状态，要么根本没跑——没有「跑了一半」这种中间态可以让下棒可靠继续。",
+            "repair": "如果你只写了三个词但没说「谁给谁什么」：那是堆砌不是解释——重写时给每一对相邻的关键词加一句「上一棒交付的是 X，没有 X 下一棒就 Y」。"
+          },
+          "misconceptions": [
+            {
+              "id": "lab2-operate-explain-missing-cause",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "BIOS"
+              },
+              "feedback": "解释里缺少 BIOS，会让排查点太空。把它和具体证据连接起来。"
+            }
+          ]
+        },
+        {
+          "id": "lab2-full-depth-1",
+          "title": "解释引导为什么不能跳步",
+          "goal": "把机制边界解释到可以迁移到真实实验",
+          "tracks": [
+            "full"
+          ],
+          "interaction": "explain",
+          "type": "explain",
+          "prompt": "为什么不能把 BIOS、bootsect、setup 看成同一个阶段？请说明每一棒至少负责什么状态准备。",
+          "context": "完整路径需要你不只会选答案，还能说明为什么这个边界会改变实验现象。",
+          "checks": [
+            {
+              "kind": "keywords",
+              "minLength": 26,
+              "keywords": [
+                "BIOS",
+                "bootsect",
+                "setup"
+              ]
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "先用一句话说出现象。"
+            },
+            {
+              "level": 2,
+              "text": "再指出它碰到的边界：启动扇区空间和完整内核空间不同"
+            },
+            {
+              "level": 3,
+              "text": "把每棒的职责具体到「读什么/装什么/收集什么」级别。BIOS 的动作具体到字节（读一个扇区到 0x7C00），bootsect 的动作具体到跳转地址，setup 的动作具体到「BIOS 中断 + 切模式」。这种具体度才说明你真的懂——具体写法你自己给。"
+            }
+          ],
+          "misconceptions": [
+            {
+              "id": "lab2-full-depth-1-missing-depth-keyword",
+              "detect": {
+                "kind": "missingKeyword",
+                "keyword": "BIOS"
+              },
+              "feedback": "缺少 BIOS 会让解释脱离题目机制。请把它放回因果链里。"
+            }
+          ],
+          "feedback": "解释还停留在表面。请明确写出对象、状态、边界和证据。",
+          "success": "解释通过。你已经把这一层机制从操作提升成了可迁移理解。",
+          "coach": {
+            "why": "这一步要求更深：不仅说出「不能跳」，还要说出「每棒至少负责什么」。这是把「BIOS、bootsect、setup」从模糊概念变成可名状的接力关系。能写清楚的人后面看 boot.s 源码会非常顺。",
+            "observe": "三棒各负责一种状态准备：BIOS 负责让 bootsect 这 512 字节进内存（物理动作）；bootsect 负责把 setup 装入并跳过去（自己只是过路人）；setup 负责收集机器信息并切到保护模式（最关键的一棒）。",
+            "act": "每个关键词配一句具体职责。例如：BIOS 把磁盘第一扇区读到 0x7C00；bootsect 把后续若干扇区装入并 jmp 到 setup；setup 调 BIOS 中断拿内存大小、显卡参数，然后切到保护模式。",
+            "check": "你应该能说出：合并任何两棒都会让职责丢失——BIOS+bootsect 合并就没人去装 setup，bootsect+setup 合并就装不下 setup 那么多代码。",
+            "repair": "如果你写得太抽象（比如「BIOS 启动机器」「bootsect 引导」）：那等于没说。重写时给每棒配一个具体动作（读哪个扇区、跳哪个地址、收集什么信息）。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "title": "复盘",
+      "purpose": "把刚才的操作整理成能迁移到真实 Linux 0.11 实验的检查清单。",
+      "steps": [
+        {
+          "id": "lab2-reflect-summary",
+          "title": "写入学习档案",
+          "goal": "把本关理解压缩成以后能复用的检查清单",
+          "tracks": [
+            "starter",
+            "quick",
+            "full",
+            "exam"
+          ],
+          "interaction": "reflection",
+          "type": "reflection",
+          "prompt": "用三句话写入学习档案：1. 一台刚启动的机器，控制权怎样从 BIOS 一棒一棒交给 Linux 0.11 内核？；2. 这关最重要的边界是什么；3. 迁移到真实实验时先看哪个证据。",
+          "context": "复盘不是抄答案，而是把你现在的理解保存下来，方便之后做真实实验时自查。",
+          "checks": [
+            {
+              "kind": "reflection",
+              "minLength": 12
+            }
+          ],
+          "hints": [
+            {
+              "level": 1,
+              "text": "用自己的话写，不要复制题面。"
+            },
+            {
+              "level": 2,
+              "text": "至少写出一个对象、一个状态变化、一个可观察证据。"
+            },
+            {
+              "level": 3,
+              "text": "把这一关压成 3 句话：第一句写出 4-5 棒接力的简短链路；第二句写出最容易混淆的「实模式 vs 保护模式」或「装载器 vs 被装载者」；第三句给未来真实实验时第一个要查的证据。每句要在三个月后能直接复用——内容你自己来。"
+            }
+          ],
+          "feedback": "复盘太短。至少写出问题、边界和一个观察证据。",
+          "success": "已写入学习档案。你现在有了一段可以迁移到真实实验前的自查说明。",
+          "reflectionPrompt": "总结 操作系统的引导：我理解的核心机制是；我容易混淆的是；真实环境中我会先检查。",
+          "beginnerTip": "可以直接用“我现在知道……”开头。目标是确认你没有被术语吓住。",
+          "coach": {
+            "why": "复盘是把「冷启动接力」固化成你以后能复用的检查清单。三句话对应三个用途：第一句答驱动问题、第二句标记最容易翻车的边界（实模式/保护模式切换、装载器/被装载者）、第三句给真实实验留一个具体证据。",
+            "observe": "驱动问题：「控制权怎样从 BIOS 一棒一棒交给 Linux 0.11 内核？」你的第一句要直接回答它，不要绕弯。可以是：BIOS 加载 bootsect → bootsect 装 setup → setup 切保护模式 → head.s 进入内核 main。",
+            "act": "三段：① 接力链路（4-5 棒）；② 最易混的边界（实/保护模式切换、装载器/被装载者）；③ 真实实验时第一个看的证据（比如串口输出第一行来自哪一棒）。",
+            "check": "你应该能说出：以后调试引导问题时，这份清单能直接告诉你「先看哪一棒、再看哪一棒」——不用每次重新推导。",
+            "repair": "如果三句话都很笼统：等于没写。把每句改成具体动作（看哪个文件、看哪条输出、跑什么命令）。"
+          }
+        }
+      ]
+    }
+  ],
+  "beginner": {
+    "story": "开机不是一下子进入 C 语言内核。最早运行的代码空间很小，只能先加载下一段，再逐步准备运行环境。",
+    "why": "如果不理解启动顺序，你会把观察点放错阶段：想看 bootsect，却写到了内核已经启动之后。",
+    "analogy": "像接力赛：第一棒不跑完全程，只把下一棒送到正确赛道。bootsect、setup 和 head.s 都在完成交接。",
+    "firstGoal": "能按 BIOS -> bootsect -> setup -> head.s -> main 的顺序说明控制权怎样转移。",
+    "reassurance": "先不用背汇编细节。只要抓住“谁先运行、它加载谁、它跳到哪里”。",
+    "glossary": [
+      {
+        "term": "BIOS",
+        "meaning": "机器上电后最先工作的固件，负责把启动扇区读入内存。"
+      },
+      {
+        "term": "bootsect",
+        "meaning": "启动扇区代码，空间很小，主要负责继续装入后续启动材料。"
+      },
+      {
+        "term": "setup",
+        "meaning": "收集机器参数并准备进入更复杂的运行模式。"
+      },
+      {
+        "term": "保护模式",
+        "meaning": "CPU 进入更完整内存和权限管理前的重要模式切换。"
+      }
+    ]
+  },
+  "drivingQuestion": "一台刚启动的机器，控制权怎样从 BIOS 一棒一棒交给 Linux 0.11 内核？",
+  "plainLanguageGoal": "把启动看成接力赛：每一小段代码只负责把下一段代码带到能继续跑的位置。",
+  "mentalModel": {
+    "title": "启动阶段的控制权接力",
+    "explanation": "引导不是一次跳进内核，而是 BIOS 先交给 bootsect，bootsect 加载 setup，setup 准备模式和参数，head.s 再把环境整理到内核可运行。",
+    "flow": [
+      "BIOS 读入 bootsect",
+      "bootsect 加载 setup/system",
+      "setup 切换运行环境",
+      "head.s 跳入内核入口"
+    ],
+    "checkpoints": [
+      "加载代码和执行代码不是同一件事",
+      "每次跳转都依赖正确地址",
+      "早期输出只能证明对应阶段已经运行"
+    ]
+  },
+  "transferChecklist": [
+    "先确认要观察的是 bootsect、setup 还是内核阶段",
+    "在对应阶段放置最小输出信号",
+    "用输出顺序判断控制权交接是否完成"
+  ],
+  "firstPrinciples": {
+    "actors": [
+      "BIOS 负责找到第一段引导代码",
+      "bootsect/setup 负责继续加载和准备环境",
+      "head.s 与内核入口负责接住最终控制权"
+    ],
+    "state": [
+      "控制权保存在当前执行地址里",
+      "加载结果保存在指定内存位置",
+      "CPU 模式和寄存器决定后续代码能否运行"
+    ],
+    "boundary": [
+      "启动扇区空间和完整内核空间不同",
+      "实模式和保护模式不同",
+      "加载到内存和跳过去执行不同"
+    ],
+    "transition": [
+      "BIOS 读扇区让 bootsect 得到入口",
+      "bootsect/setup 继续搬运和准备状态",
+      "跳转指令把控制权交给下一阶段"
+    ],
+    "evidence": [
+      "早期打印说明某段引导代码执行到了观察点",
+      "寄存器或地址输出说明加载位置是否正确",
+      "成功进入内核说明接力链没有断"
+    ],
+    "failureModes": [
+      "把输出写到错误阶段导致看不到",
+      "加载地址错导致下一段代码不可执行",
+      "跳转前环境没准备好导致控制权丢失"
+    ]
+  }
+}

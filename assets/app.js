@@ -219,15 +219,26 @@
 
     const source = window.__PRACTICE_LABS__ || {};
     const tracks = source.tracks || [
-      { id: "quick", title: "快速体验", description: "先完成核心步骤，建立全局认识。" },
-      { id: "full", title: "完整实践", description: "按 Lab1 到 Lab9 完成全部阶段。" },
+      {
+        id: "quick",
+        title: "快速体验",
+        description: "先完成核心步骤，建立全局认识。",
+      },
+      {
+        id: "full",
+        title: "完整实践",
+        description: "按 Lab1 到 Lab9 完成全部阶段。",
+      },
       { id: "exam", title: "考前重点", description: "聚焦高频机制和易错点。" },
     ];
+    // labs 起初只有索引元数据（id / title / focus / phaseIds）。
+    // 完整内容（phases/steps/coach/...）通过 fetch('practice-labs/{labId}.json') 按需加载，加载后原地合并。
     const labs = normalizeLabs(source.labs || []);
     const key = "os-review-practice-workbench";
     const starterTrackId = tracks.some((track) => track.id === "starter")
       ? "starter"
       : tracks[0]?.id || "full";
+    const labFetchPromises = new Map();
 
     if (!labs.length) {
       mount.innerHTML = '<p class="practice-empty">暂无可用实践任务。</p>';
@@ -235,38 +246,37 @@
     }
 
     function normalizeLabs(inputLabs) {
-      return inputLabs.map((lab) => {
-        if (Array.isArray(lab.phases)) return lab;
-        const steps = (lab.tasks || []).map((task) => ({
-          id: task.id,
-          title: task.title,
-          goal: task.lesson || task.prompt,
-          tracks: ["quick", "full", "exam"],
-          interaction: task.type === "text" ? "explain" : task.type,
-          type: task.type,
-          prompt: task.prompt,
-          context: task.lesson || "完成这一步时，先说明它对应的操作系统机制。",
-          options: task.options,
-          blanks: task.blanks,
-          starter: task.starter,
-          checks: task.validator ? [task.validator] : [],
-          hints: [{ level: 1, text: task.hint || "先回到概念说明。" }],
-          feedback: task.feedback || "结果还不匹配。",
-          success: task.success || "这一步已经通过。",
-        }));
-        return {
-          ...lab,
-          estimatedMinutes: lab.estimatedMinutes || 30,
-          concepts: lab.concepts || [lab.focus || lab.title],
-          outcomes: lab.outcomes || [lab.goal || lab.focus || lab.title],
-          phases: [
-            { id: "prepare", title: "预备", purpose: "建立本 Lab 的对象边界。", steps: [] },
-            { id: "observe", title: "观察", purpose: "观察关键状态变化。", steps: [] },
-            { id: "operate", title: "操作", purpose: "完成浏览器内关键练习。", steps },
-            { id: "reflect", title: "复盘", purpose: "整理学习档案。", steps: [] },
-          ],
-        };
-      });
+      // v2 数据模型已是唯一形态（lab → phases → steps）。直接透传。
+      return inputLabs;
+    }
+
+    function isLabHydrated(lab) {
+      return Array.isArray(lab && lab.phases) && lab.phases.length > 0;
+    }
+
+    function ensureLabHydrated(labId) {
+      const lab = labs.find((x) => x.id === labId);
+      if (!lab) return Promise.resolve(null);
+      if (isLabHydrated(lab)) return Promise.resolve(lab);
+      if (labFetchPromises.has(labId)) return labFetchPromises.get(labId);
+      const promise = fetch(`practice-labs/${encodeURIComponent(labId)}.json`, {
+        cache: "force-cache",
+      })
+        .then((r) => {
+          if (!r.ok) throw new Error(`fetch ${labId} failed: ${r.status}`);
+          return r.json();
+        })
+        .then((full) => {
+          // 把完整字段合并回索引条目
+          Object.assign(lab, full);
+          return lab;
+        })
+        .catch((err) => {
+          console.warn("practice lab fetch failed", labId, err);
+          return lab;
+        });
+      labFetchPromises.set(labId, promise);
+      return promise;
     }
 
     function defaultState() {
@@ -295,7 +305,8 @@
       next.answers = saved.answers || {};
       next.passed = saved.passed || {};
       next.feedback = saved.feedback || {};
-      next.showPortfolio = saved.version >= 3 && !!(saved.showPortfolio || saved.showReport);
+      next.showPortfolio =
+        saved.version >= 3 && !!(saved.showPortfolio || saved.showReport);
       next.legacy = saved.version >= 2 ? saved.legacy || null : saved;
       if (saved.hintLevels) next.hintLevels = saved.hintLevels;
       else if (saved.hints) {
@@ -305,11 +316,17 @@
       }
       next.reflections = saved.reflections || {};
       next.misconceptions = saved.misconceptions || {};
-      if (saved.version >= 3 && saved.activeTrack && tracks.some((track) => track.id === saved.activeTrack)) {
+      if (
+        saved.version >= 3 &&
+        saved.activeTrack &&
+        tracks.some((track) => track.id === saved.activeTrack)
+      ) {
         next.activeTrack = saved.activeTrack;
       }
-      if (saved.version >= 3 && saved.activePhaseId) next.activePhaseId = saved.activePhaseId;
-      if (saved.version >= 3 && saved.activeStepId) next.activeStepId = saved.activeStepId;
+      if (saved.version >= 3 && saved.activePhaseId)
+        next.activePhaseId = saved.activePhaseId;
+      if (saved.version >= 3 && saved.activeStepId)
+        next.activeStepId = saved.activeStepId;
       return next;
     }
 
@@ -341,7 +358,9 @@
     }
 
     function currentTrack() {
-      return tracks.find((track) => track.id === state.activeTrack) || tracks[0];
+      return (
+        tracks.find((track) => track.id === state.activeTrack) || tracks[0]
+      );
     }
 
     function activeLab() {
@@ -349,12 +368,17 @@
     }
 
     function activePhase(lab) {
-      return lab.phases.find((phase) => phase.id === state.activePhaseId) || lab.phases[0];
+      return (
+        lab.phases.find((phase) => phase.id === state.activePhaseId) ||
+        lab.phases[0]
+      );
     }
 
     function stepTrackVisible(step) {
       const stepTracks = step.tracks || ["full"];
-      return stepTracks.includes(state.activeTrack) || state.activeTrack === "full";
+      return (
+        stepTracks.includes(state.activeTrack) || state.activeTrack === "full"
+      );
     }
 
     function visibleStepsForPhase(phase) {
@@ -377,7 +401,9 @@
 
     function labProgress(lab) {
       const steps = allVisibleSteps(lab);
-      const done = steps.filter((step) => state.passed[taskKey(lab.id, step.id)]).length;
+      const done = steps.filter(
+        (step) => state.passed[taskKey(lab.id, step.id)],
+      ).length;
       return { done, total: steps.length };
     }
 
@@ -410,13 +436,19 @@
     function focusedStepEntry(lab, phase) {
       const entries = visibleStepEntries(lab);
       if (!entries.length) return null;
-      const explicit = entries.find((entry) => entry.step.id === state.activeStepId);
+      const explicit = entries.find(
+        (entry) => entry.step.id === state.activeStepId,
+      );
       if (explicit) return explicit;
       const phaseEntry = visibleStepsForPhase(phase)
         .map((step) => ({ phase, step }))
         .find((entry) => !state.passed[taskKey(lab.id, entry.step.id)]);
       if (phaseEntry) return phaseEntry;
-      return entries.find((entry) => !state.passed[taskKey(lab.id, entry.step.id)]) || entries[0];
+      return (
+        entries.find(
+          (entry) => !state.passed[taskKey(lab.id, entry.step.id)],
+        ) || entries[0]
+      );
     }
 
     function nextStepInLearningPath(lab, stepId) {
@@ -430,14 +462,16 @@
     function answerFor(labId, step) {
       const saved = state.answers[taskKey(labId, step.id)];
       if (saved !== undefined) return saved;
-      if (step.interaction === "trace") return (step.items || step.checks?.[0]?.answer || []).slice();
+      // trace 默认为空数组：用户从候选区点选到答案区
+      if (step.interaction === "trace") return [];
       if (step.interaction === "fill") return {};
       return "";
     }
 
     function setAnswer(labId, step, value) {
       state.answers[taskKey(labId, step.id)] = value;
-      if (step.interaction === "reflection") state.reflections[taskKey(labId, step.id)] = value;
+      if (step.interaction === "reflection")
+        state.reflections[taskKey(labId, step.id)] = value;
       save(state);
     }
 
@@ -449,7 +483,10 @@
           .map(normalize)
           .filter(Boolean);
         const expected = (check.commands || []).map(normalize);
-        return got.length === expected.length && expected.every((cmd, i) => got[i] === cmd);
+        return (
+          got.length === expected.length &&
+          expected.every((cmd, i) => got[i] === cmd)
+        );
       }
       if (check.kind === "fills") {
         const obj = value || {};
@@ -461,16 +498,23 @@
       if (check.kind === "keywords") {
         const text = String(value || "");
         if (text.trim().length < (check.minLength || 0)) return false;
-        return (check.keywords || []).every((kw) => normalize(text).includes(normalize(kw)));
+        return (check.keywords || []).every((kw) =>
+          normalize(text).includes(normalize(kw)),
+        );
       }
       if (check.kind === "codeKeywords") {
         const code = String(value || "");
-        return (check.keywords || []).every((kw) => normalize(code).includes(normalize(kw)));
+        return (check.keywords || []).every((kw) =>
+          normalize(code).includes(normalize(kw)),
+        );
       }
       if (check.kind === "orderedItems") {
         const got = Array.isArray(value) ? value.map(normalize) : [];
         const expected = (check.answer || []).map(normalize);
-        return got.length === expected.length && expected.every((item, i) => got[i] === item);
+        return (
+          got.length === expected.length &&
+          expected.every((item, i) => got[i] === item)
+        );
       }
       if (check.kind === "reflection") {
         return String(value || "").trim().length >= (check.minLength || 12);
@@ -480,31 +524,44 @@
 
     function validate(step, value) {
       const checks = step.checks || [];
-      if (!checks.length && step.validator) return validateCheck(step.validator, value);
-      return checks.length > 0 && checks.every((check) => validateCheck(check, value));
+      if (!checks.length && step.validator)
+        return validateCheck(step.validator, value);
+      return (
+        checks.length > 0 &&
+        checks.every((check) => validateCheck(check, value))
+      );
     }
 
     function detectMisconception(step, value) {
       for (const item of step.misconceptions || []) {
         const detect = item.detect || {};
         if (detect.kind === "selected" && value === detect.value) return item;
-        if (detect.kind === "missingKeyword" && !normalize(value).includes(normalize(detect.keyword))) return item;
+        if (
+          detect.kind === "missingKeyword" &&
+          !normalize(value).includes(normalize(detect.keyword))
+        )
+          return item;
         if (detect.kind === "missingCommand") {
-          const lines = String(value || "").split(/\n+/).map(normalize);
+          const lines = String(value || "")
+            .split(/\n+/)
+            .map(normalize);
           if (!lines.includes(normalize(detect.command))) return item;
         }
         if (detect.kind === "orderedBefore" && Array.isArray(value)) {
           const normalized = value.map(normalize);
           const itemIndex = normalized.indexOf(normalize(detect.item));
           const beforeIndex = normalized.indexOf(normalize(detect.before));
-          if (itemIndex !== -1 && beforeIndex !== -1 && itemIndex < beforeIndex) return item;
+          if (itemIndex !== -1 && beforeIndex !== -1 && itemIndex < beforeIndex)
+            return item;
         }
       }
       return null;
     }
 
     function renderPracticeHeader(lab, phase, total, labP) {
-      const percent = total.total ? Math.round((total.done / total.total) * 100) : 0;
+      const percent = total.total
+        ? Math.round((total.done / total.total) * 100)
+        : 0;
       const menuOpen = !!state.trackMenuOpen;
       return `<section class="practice-workspace-head" aria-label="实践工作台状态">
         <div class="practice-workspace-copy">
@@ -521,7 +578,9 @@
             <div class="practice-track-menu${menuOpen ? " is-open" : ""}"${menuOpen ? "" : " hidden"}>
               ${tracks
                 .map(
-                  (track) => `<button type="button" class="practice-track-option${track.id === state.activeTrack ? " is-active" : ""}" data-practice-track="${escHtml(track.id)}">
+                  (
+                    track,
+                  ) => `<button type="button" class="practice-track-option${track.id === state.activeTrack ? " is-active" : ""}" data-practice-track="${escHtml(track.id)}">
                     <span>${escHtml(track.title)}</span>
                     <small>${escHtml(track.description)}</small>
                     ${track.id === "starter" ? "<em>新手推荐</em>" : ""}
@@ -555,7 +614,10 @@
           <h4>先认识 3 个词</h4>
           <dl class="practice-glossary">
             ${(lab.beginner.glossary || [])
-              .map((item) => `<div><dt>${escHtml(item.term)}</dt><dd>${escHtml(item.meaning)}</dd></div>`)
+              .map(
+                (item) =>
+                  `<div><dt>${escHtml(item.term)}</dt><dd>${escHtml(item.meaning)}</dd></div>`,
+              )
               .join("")}
           </dl>
         </div>
@@ -605,7 +667,9 @@
         ${lab.phases
           .map((phase, i) => {
             const steps = visibleStepsForPhase(phase);
-            const done = steps.filter((step) => state.passed[taskKey(lab.id, step.id)]).length;
+            const done = steps.filter(
+              (step) => state.passed[taskKey(lab.id, step.id)],
+            ).length;
             const complete = steps.length > 0 && done === steps.length;
             return `<button type="button" class="practice-phase-step${phase.id === activePhase(lab).id ? " is-active" : ""}${complete ? " is-complete" : ""}" data-practice-open-phase="${escHtml(phase.id)}">
               <span class="practice-phase-number">${i + 1}</span>
@@ -664,30 +728,72 @@
 
     function renderTrace(lab, step) {
       const order = answerFor(lab.id, step);
+      const allItems = step.items || step.checks?.[0]?.answer || [];
+      const placed = new Set(order);
+      const candidates = allItems.filter((item) => !placed.has(item));
       return `<div class="practice-trace" data-practice-trace="${escHtml(step.id)}">
-        ${order
-          .map(
-            (item, i) => `<div class="practice-trace-item">
-              <span>${i + 1}</span>
-              <strong>${escHtml(item)}</strong>
-              <div>
-                <button type="button" class="btn btn-mini" data-practice-trace-move="up" data-lab-id="${escHtml(lab.id)}" data-step-id="${escHtml(step.id)}" data-index="${i}" aria-label="上移 ${escHtml(item)}">↑</button>
-                <button type="button" class="btn btn-mini" data-practice-trace-move="down" data-lab-id="${escHtml(lab.id)}" data-step-id="${escHtml(step.id)}" data-index="${i}" aria-label="下移 ${escHtml(item)}">↓</button>
-              </div>
-            </div>`,
-          )
-          .join("")}
+        <div class="practice-trace-region practice-trace-candidates">
+          <p class="practice-kicker">候选项</p>
+          ${
+            candidates.length
+              ? candidates
+                  .map(
+                    (
+                      item,
+                    ) => `<button type="button" class="practice-trace-candidate" data-practice-trace-pick data-lab-id="${escHtml(lab.id)}" data-step-id="${escHtml(step.id)}" data-item="${escHtml(item)}" aria-label="加入答案：${escHtml(item)}">
+                      <span class="practice-trace-pick-mark" aria-hidden="true">+</span>
+                      ${escHtml(item)}
+                    </button>`,
+                  )
+                  .join("")
+              : `<p class="practice-empty-inline">所有候选项已加入下方顺序</p>`
+          }
+        </div>
+        <div class="practice-trace-region practice-trace-answer">
+          <p class="practice-kicker">你的顺序</p>
+          ${
+            order.length
+              ? order
+                  .map(
+                    (item, i) => `<div class="practice-trace-item">
+                      <span class="practice-trace-index">${i + 1}</span>
+                      <strong>${escHtml(item)}</strong>
+                      <div class="practice-trace-controls">
+                        <button type="button" class="btn btn-mini" data-practice-trace-move="up" data-lab-id="${escHtml(lab.id)}" data-step-id="${escHtml(step.id)}" data-index="${i}" aria-label="上移 ${escHtml(item)}" ${i === 0 ? "disabled" : ""}>↑</button>
+                        <button type="button" class="btn btn-mini" data-practice-trace-move="down" data-lab-id="${escHtml(lab.id)}" data-step-id="${escHtml(step.id)}" data-index="${i}" aria-label="下移 ${escHtml(item)}" ${i === order.length - 1 ? "disabled" : ""}>↓</button>
+                        <button type="button" class="btn btn-mini" data-practice-trace-remove data-lab-id="${escHtml(lab.id)}" data-step-id="${escHtml(step.id)}" data-index="${i}" aria-label="移回候选区：${escHtml(item)}">×</button>
+                      </div>
+                    </div>`,
+                  )
+                  .join("")
+              : `<p class="practice-empty-inline">点击上方候选项加入这里，按因果顺序排列</p>`
+          }
+        </div>
       </div>`;
     }
 
     function renderControl(lab, step) {
-      if (step.interaction === "choice" || step.interaction === "diagnose") return renderChoice(lab, step);
+      if (step.interaction === "choice" || step.interaction === "diagnose")
+        return renderChoice(lab, step);
       if (step.interaction === "fill") return renderFill(lab, step);
       if (step.interaction === "code") return renderCode(lab, step);
       if (step.interaction === "command") return renderCommand(lab, step);
       if (step.interaction === "trace") return renderTrace(lab, step);
-      if (step.interaction === "reflection") return renderTextarea(lab, step, "practice-textarea", 5, "写入你的复盘，学习档案会保存这段内容");
-      return renderTextarea(lab, step, "practice-textarea", 4, "用自己的话写出解释");
+      if (step.interaction === "reflection")
+        return renderTextarea(
+          lab,
+          step,
+          "practice-textarea",
+          5,
+          "写入你的复盘，学习档案会保存这段内容",
+        );
+      return renderTextarea(
+        lab,
+        step,
+        "practice-textarea",
+        4,
+        "用自己的话写出解释",
+      );
     }
 
     function renderHints(lab, step) {
@@ -696,7 +802,10 @@
       return `<div class="practice-hints">
         ${(step.hints || [])
           .slice(0, visible)
-          .map((hint) => `<p class="practice-hint"><strong>提示 ${hint.level}</strong>${escHtml(hint.text)}</p>`)
+          .map(
+            (hint) =>
+              `<p class="practice-hint"><strong>提示 ${hint.level}</strong>${escHtml(hint.text)}</p>`,
+          )
           .join("")}
       </div>`;
     }
@@ -709,28 +818,25 @@
         return `<section class="practice-coach-result is-ok" aria-label="通过后的理解确认">
           <p class="practice-kicker">检查通过</p>
           <h4>你现在应该能说明</h4>
-          <p>${escHtml(step.coach?.check || step.success)}</p>
+          <p>${escHtml(step.coach.check)}</p>
         </section>`;
       }
       const misconceptionId = state.misconceptions[keyForStep];
-      const misconception = (step.misconceptions || []).find((item) => item.id === misconceptionId);
+      const misconception = (step.misconceptions || []).find(
+        (item) => item.id === misconceptionId,
+      );
       return `<section class="practice-coach-result is-repair" aria-label="错因修正">
         <p class="practice-kicker">先修正一个混淆点</p>
         <h4>${misconception ? "你可能混淆了这里" : "这一步还没对上机制"}</h4>
         <p>${escHtml(feedback.message)}</p>
         <div class="practice-repair-drill">
           <strong>补救练习</strong>
-          <span>${escHtml(step.coach?.repair || lab.plainLanguageGoal || step.feedback)}</span>
+          <span>${escHtml(step.coach.repair)}</span>
         </div>
       </section>`;
     }
 
     function renderCoachStep(lab, phase, step, index) {
-      if (!step) {
-        return `<section class="practice-coach-card">
-          <p class="practice-empty">当前阶段没有需要完成的步骤。可以切换到其他阶段继续。</p>
-        </section>`;
-      }
       const keyForStep = taskKey(lab.id, step.id);
       const isPassed = !!state.passed[keyForStep];
       const hintLevel = state.hintLevels[keyForStep] || 0;
@@ -741,22 +847,22 @@
           <div>
             <p class="practice-kicker">${escHtml(phase.title)} · 第 ${index + 1} 步</p>
             <h3>${escHtml(step.title)}</h3>
-            <p>${escHtml(step.goal || lab.plainLanguageGoal || lab.focus)}</p>
+            <p>${escHtml(step.goal)}</p>
           </div>
           <span class="practice-task-type">${escHtml(step.interaction)}</span>
         </header>
         <section class="practice-coach-why">
           <h4>为什么先学这个</h4>
-          <p>${escHtml(step.coach?.why || step.context || lab.drivingQuestion)}</p>
+          <p>${escHtml(step.coach.why)}</p>
         </section>
         <section class="practice-coach-observe">
           <h4>先观察</h4>
-          <p>${escHtml(step.coach?.observe || step.context || phase.purpose)}</p>
+          <p>${escHtml(step.coach.observe)}</p>
           ${renderSimulator(step)}
         </section>
         <section class="practice-coach-action">
           <h4>现在只做这一步</h4>
-          <p class="practice-prompt">${escHtml(step.coach?.act || step.prompt)}</p>
+          <p class="practice-prompt">${escHtml(step.coach.act)}</p>
           ${renderControl(lab, step)}
         </section>
         <div class="practice-task-actions">
@@ -799,13 +905,55 @@
     function renderSimulator(step) {
       if (!step) return "";
       const sim = step.simulator || {};
-      if (sim.kind === "terminal") {
-        return `<pre class="practice-sim-terminal">${escHtml(sim.output || "# simulated output")}</pre>`;
+      const kind = sim.kind;
+      if (!kind) return "";
+      const nodes = sim.nodes || [];
+      const highlight = new Set(sim.highlightOnPass || []);
+
+      if (kind === "terminal") {
+        return `<pre class="practice-sim practice-sim-terminal" data-sim-kind="terminal">${escHtml(sim.output || "# simulated output")}</pre>`;
       }
-      const nodes = sim.nodes || sim.highlightOnPass || [];
-      return `<div class="practice-sim-flow">
-        ${nodes.map((node) => `<span>${escHtml(node)}</span>`).join("")}
-      </div>`;
+      if (kind === "concept-map") {
+        return `<div class="practice-sim practice-sim-concept-map" data-sim-kind="concept-map" aria-label="概念对象映射">
+          ${nodes
+            .map(
+              (n) =>
+                `<div class="practice-sim-concept-node"><strong>${escHtml(n)}</strong></div>`,
+            )
+            .join("")}
+        </div>`;
+      }
+      if (kind === "state-flow") {
+        return `<ol class="practice-sim practice-sim-state-flow" data-sim-kind="state-flow" aria-label="状态流">
+          ${nodes
+            .map(
+              (n) =>
+                `<li class="practice-sim-flow-node${highlight.has(n) ? " is-highlight" : ""}"><span class="practice-sim-flow-arrow" aria-hidden="true">→</span><span>${escHtml(n)}</span></li>`,
+            )
+            .join("")}
+        </ol>`;
+      }
+      if (kind === "state-note") {
+        return `<dl class="practice-sim practice-sim-state-note" data-sim-kind="state-note" aria-label="状态备忘">
+          ${nodes
+            .map(
+              (n) =>
+                `<div class="practice-sim-state-item"><dt>${escHtml(n)}</dt><dd>关注它在本步是否变化</dd></div>`,
+            )
+            .join("")}
+        </dl>`;
+      }
+      if (kind === "code-context") {
+        return `<pre class="practice-sim practice-sim-code-context" data-sim-kind="code-context" aria-label="关键词上下文"><code>${nodes.map((n) => `<span class="practice-sim-code-token">${escHtml(n)}</span>`).join("\n")}</code></pre>`;
+      }
+      if (kind === "failure-card") {
+        return `<aside class="practice-sim practice-sim-failure-card" data-sim-kind="failure-card" aria-label="故障线索">
+          <h5>故障线索</h5>
+          <ul>${nodes.map((n) => `<li>${escHtml(n)}</li>`).join("")}</ul>
+        </aside>`;
+      }
+      // 未知 kind：不渲染（暴露数据问题，不静默 fallback）
+      return "";
     }
 
     function renderFirstPrinciples(lab) {
@@ -817,7 +965,11 @@
         ["transition", "动作改变什么"],
         ["evidence", "证据怎么观察"],
         ["failureModes", "错了先查哪里"],
-      ].filter(([keyForGroup]) => Array.isArray(firstPrinciples[keyForGroup]) && firstPrinciples[keyForGroup].length);
+      ].filter(
+        ([keyForGroup]) =>
+          Array.isArray(firstPrinciples[keyForGroup]) &&
+          firstPrinciples[keyForGroup].length,
+      );
       if (!groups.length) return "";
       return `<section class="practice-side-card practice-first-principles">
         <p class="practice-kicker">第一性原理</p>
@@ -827,7 +979,10 @@
             .map(
               ([keyForGroup, label]) => `<div class="practice-principle">
                 <strong>${escHtml(label)}</strong>
-                <ul>${firstPrinciples[keyForGroup].slice(0, 3).map((item) => `<li>${escHtml(item)}</li>`).join("")}</ul>
+                <ul>${firstPrinciples[keyForGroup]
+                  .slice(0, 3)
+                  .map((item) => `<li>${escHtml(item)}</li>`)
+                  .join("")}</ul>
               </div>`,
             )
             .join("")}
@@ -837,73 +992,95 @@
 
     function renderMechanismBoard(lab, phase, step) {
       const model = lab.mentalModel || {};
-      const misconceptionCount = Object.entries(state.misconceptions).filter(([keyForStep]) => keyForStep.startsWith(`${lab.id}:`)).length;
+      const misconceptionCount = Object.entries(state.misconceptions).filter(
+        ([keyForStep]) => keyForStep.startsWith(`${lab.id}:`),
+      ).length;
+      const observeText = step
+        ? step.coach.observe
+        : phase.purpose || lab.focus;
       return `<aside class="practice-side practice-mechanism-board" aria-label="机制画板">
         <section class="practice-side-card practice-mechanism-card">
-          <p class="practice-kicker">机制画板</p>
-          <h3>${escHtml(model.title || `${lab.title} 的心智模型`)}</h3>
+          <p class="practice-kicker">这一关要回答</p>
+          <h3>${escHtml(lab.drivingQuestion || lab.focus)}</h3>
           <p>${escHtml(model.explanation || lab.focus)}</p>
           <div class="practice-model-flow">
             ${(model.flow || lab.concepts || []).map((item) => `<span>${escHtml(item)}</span>`).join("")}
           </div>
         </section>
         <section class="practice-side-card">
-          <h3>这一关要回答</h3>
-          <p>${escHtml(lab.drivingQuestion || lab.focus)}</p>
-          <p class="practice-beginner-tip">${escHtml(lab.plainLanguageGoal || lab.beginner?.firstGoal || "")}</p>
-        </section>
-        ${renderFirstPrinciples(lab)}
-        <section class="practice-side-card">
           <h3>当前步骤观察点</h3>
-          <p>${escHtml(step?.coach?.observe || step?.context || phase.purpose || lab.focus)}</p>
+          <p>${escHtml(observeText)}</p>
           ${(model.checkpoints || []).length ? `<ul>${model.checkpoints.map((x) => `<li>${escHtml(x)}</li>`).join("")}</ul>` : ""}
         </section>
-        ${
-          lab.beginner
-            ? `<section class="practice-side-card">
-                <h3>看不懂先看这 3 个词</h3>
-                <dl class="practice-glossary compact">
-                  ${(lab.beginner.glossary || [])
-                    .map((item) => `<div><dt>${escHtml(item.term)}</dt><dd>${escHtml(item.meaning)}</dd></div>`)
-                    .join("")}
-                </dl>
-              </section>`
-            : ""
-        }
-        <section class="practice-side-card">
-          <h3>迁移到真实实验</h3>
-          <ul>${(lab.transferChecklist || []).map((x) => `<li>${escHtml(x)}</li>`).join("")}</ul>
-          <p>已记录 ${misconceptionCount} 个错因。使用过三层提示的步骤会进入待复习列表。</p>
-          <button type="button" class="btn btn-primary" data-practice-report>查看学习档案</button>
-          <button type="button" class="btn" data-practice-reset>清空当前 Lab 进度</button>
-        </section>
+        ${renderFirstPrinciples(lab)}
+        <details class="practice-side-card practice-side-details">
+          <summary>更多参考</summary>
+          ${
+            lab.beginner
+              ? `<div class="practice-side-detail-block">
+                  <h4>看不懂先看这 3 个词</h4>
+                  <dl class="practice-glossary compact">
+                    ${(lab.beginner.glossary || [])
+                      .map(
+                        (item) =>
+                          `<div><dt>${escHtml(item.term)}</dt><dd>${escHtml(item.meaning)}</dd></div>`,
+                      )
+                      .join("")}
+                  </dl>
+                </div>`
+              : ""
+          }
+          <div class="practice-side-detail-block">
+            <h4>迁移到真实实验</h4>
+            <ul>${(lab.transferChecklist || []).map((x) => `<li>${escHtml(x)}</li>`).join("")}</ul>
+          </div>
+          <div class="practice-side-detail-block">
+            <p>已记录 ${misconceptionCount} 个错因。使用过三层提示的步骤会进入待复习列表。</p>
+            <button type="button" class="btn" data-practice-reset>清空当前 Lab 进度</button>
+          </div>
+        </details>
       </aside>`;
     }
 
     function renderLearningPortfolio() {
       if (!state.showPortfolio) return "";
-      const lines = ["# Lab Studio 学习档案", "", `当前路径：${currentTrack().title}`, ""];
+      const lines = [
+        "# Lab Studio 学习档案",
+        "",
+        `当前路径：${currentTrack().title}`,
+        "",
+      ];
       labs.forEach((lab) => {
         const p = labProgress(lab);
         lines.push(`## ${lab.title}`);
         lines.push(`完成度：${p.done}/${p.total}`);
-        const labReflections = Object.entries(state.reflections).filter(([keyForStep]) => keyForStep.startsWith(`${lab.id}:`));
+        const labReflections = Object.entries(state.reflections).filter(
+          ([keyForStep]) => keyForStep.startsWith(`${lab.id}:`),
+        );
         if (labReflections.length) {
           lines.push("", "### 我的复盘");
-          labReflections.forEach(([, value]) => lines.push(`- ${String(value).replace(/\n+/g, " ")}`));
+          labReflections.forEach(([, value]) =>
+            lines.push(`- ${String(value).replace(/\n+/g, " ")}`),
+          );
         }
-        const labMisconceptions = Object.entries(state.misconceptions).filter(([keyForStep]) => keyForStep.startsWith(`${lab.id}:`));
+        const labMisconceptions = Object.entries(state.misconceptions).filter(
+          ([keyForStep]) => keyForStep.startsWith(`${lab.id}:`),
+        );
         if (labMisconceptions.length) {
           lines.push("", "### 错因记录");
           labMisconceptions.forEach(([, value]) => lines.push(`- ${value}`));
         }
-        const deepHints = allSteps(lab).filter((step) => (state.hintLevels[taskKey(lab.id, step.id)] || 0) >= 3);
+        const deepHints = allSteps(lab).filter(
+          (step) => (state.hintLevels[taskKey(lab.id, step.id)] || 0) >= 3,
+        );
         if (deepHints.length) {
           lines.push("", "### 待复习步骤");
           deepHints.forEach((step) => lines.push(`- ${step.title}`));
         }
         lines.push("", "### 报告段落提示");
-        (lab.reportPrompts || []).forEach((prompt) => lines.push(`- ${prompt}`));
+        (lab.reportPrompts || []).forEach((prompt) =>
+          lines.push(`- ${prompt}`),
+        );
         lines.push("");
       });
       return `<aside class="practice-report-panel" data-practice-report-panel>
@@ -917,7 +1094,8 @@
 
     function render() {
       const lab = activeLab();
-      if (!lab.phases.some((phase) => phase.id === state.activePhaseId)) state.activePhaseId = lab.phases[0].id;
+      if (!lab.phases.some((phase) => phase.id === state.activePhaseId))
+        state.activePhaseId = lab.phases[0].id;
       const phase = activePhase(lab);
       const focused = focusedStepEntry(lab, phase);
       const activeEntry = focused || { phase, step: null };
@@ -925,7 +1103,10 @@
       const activePhaseNow = activeEntry.phase;
       const step = activeEntry.step;
       const routeEntries = visibleStepEntries(lab);
-      const stepIndex = Math.max(0, routeEntries.findIndex((entry) => step && entry.step.id === step.id));
+      const stepIndex = Math.max(
+        0,
+        routeEntries.findIndex((entry) => step && entry.step.id === step.id),
+      );
       const total = totalProgress();
       const labP = labProgress(lab);
       mount.innerHTML = `<div class="practice-studio">
@@ -946,7 +1127,11 @@
             ${renderBeginnerGuide(lab)}
             ${renderPhaseProgress(lab)}
             <div class="practice-coach-layout">
-              ${renderCoachStep(lab, activePhaseNow, step, stepIndex)}
+              ${
+                step
+                  ? renderCoachStep(lab, activePhaseNow, step, stepIndex)
+                  : `<section class="practice-coach-card"><p class="practice-empty">当前路径在这一阶段没有步骤，请切换到其他阶段或路径。</p></section>`
+              }
               ${renderLearningRoute(lab, step)}
             </div>
           </main>
@@ -1007,7 +1192,9 @@
     });
 
     mount.addEventListener("click", (e) => {
-      const trackMenuButton = e.target.closest("[data-practice-open-track-menu]");
+      const trackMenuButton = e.target.closest(
+        "[data-practice-open-track-menu]",
+      );
       if (trackMenuButton) {
         state.trackMenuOpen = !state.trackMenuOpen;
         render();
@@ -1046,7 +1233,9 @@
 
       const phaseButton = e.target.closest("[data-practice-open-phase]");
       if (phaseButton) {
-        state.activePhaseId = phaseButton.getAttribute("data-practice-open-phase");
+        state.activePhaseId = phaseButton.getAttribute(
+          "data-practice-open-phase",
+        );
         state.activeStepId = "";
         save(state);
         render();
@@ -1055,7 +1244,8 @@
 
       const routeStepButton = e.target.closest("[data-practice-route-step]");
       if (routeStepButton) {
-        state.activePhaseId = routeStepButton.getAttribute("data-phase-id") || state.activePhaseId;
+        state.activePhaseId =
+          routeStepButton.getAttribute("data-phase-id") || state.activePhaseId;
         state.activeStepId = routeStepButton.getAttribute("data-step-id") || "";
         save(state);
         render();
@@ -1064,12 +1254,15 @@
 
       const nextStepButton = e.target.closest("[data-practice-next-step]");
       if (nextStepButton) {
-        state.activePhaseId = nextStepButton.getAttribute("data-phase-id") || state.activePhaseId;
+        state.activePhaseId =
+          nextStepButton.getAttribute("data-phase-id") || state.activePhaseId;
         state.activeStepId = nextStepButton.getAttribute("data-step-id") || "";
         save(state);
         render();
         setTimeout(() => {
-          document.querySelector(`[data-practice-task="${state.activeStepId}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          document
+            .querySelector(`[data-practice-task="${state.activeStepId}"]`)
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 0);
         return;
       }
@@ -1093,6 +1286,38 @@
         return;
       }
 
+      const tracePick = e.target.closest("[data-practice-trace-pick]");
+      if (tracePick) {
+        const labId = tracePick.getAttribute("data-lab-id");
+        const stepId = tracePick.getAttribute("data-step-id");
+        const item = tracePick.getAttribute("data-item");
+        const { step } = findStep(labId, stepId);
+        if (!step || !item) return;
+        const order = answerFor(labId, step).slice();
+        if (!order.includes(item)) order.push(item);
+        state.activeStepId = stepId;
+        setAnswer(labId, step, order);
+        render();
+        return;
+      }
+
+      const traceRemove = e.target.closest("[data-practice-trace-remove]");
+      if (traceRemove) {
+        const labId = traceRemove.getAttribute("data-lab-id");
+        const stepId = traceRemove.getAttribute("data-step-id");
+        const { step } = findStep(labId, stepId);
+        if (!step) return;
+        const order = answerFor(labId, step).slice();
+        const index = Number(traceRemove.getAttribute("data-index"));
+        if (index >= 0 && index < order.length) {
+          order.splice(index, 1);
+          state.activeStepId = stepId;
+          setAnswer(labId, step, order);
+          render();
+        }
+        return;
+      }
+
       const hintButton = e.target.closest("[data-practice-toggle-hint]");
       if (hintButton) {
         const labId = hintButton.getAttribute("data-lab-id");
@@ -1101,7 +1326,10 @@
         if (!step) return;
         const keyForStep = taskKey(labId, stepId);
         state.activeStepId = stepId;
-        state.hintLevels[keyForStep] = Math.min((state.hintLevels[keyForStep] || 0) + 1, (step.hints || []).length || 1);
+        state.hintLevels[keyForStep] = Math.min(
+          (state.hintLevels[keyForStep] || 0) + 1,
+          (step.hints || []).length || 1,
+        );
         save(state);
         render();
         return;
@@ -1122,9 +1350,14 @@
         if (misconception) state.misconceptions[keyForStep] = misconception.id;
         state.feedback[keyForStep] = {
           ok,
-          message: ok ? step.success : misconception?.feedback || step.feedback || "还没有通过，请根据提示重新检查。",
+          message: ok
+            ? step.success
+            : misconception?.feedback ||
+              step.feedback ||
+              "还没有通过，请根据提示重新检查。",
         };
-        if (ok && step.interaction === "reflection") state.reflections[keyForStep] = value;
+        if (ok && step.interaction === "reflection")
+          state.reflections[keyForStep] = value;
         save(state);
         render();
         return;
@@ -1149,7 +1382,26 @@
       }
     });
 
-    render();
+    // 索引立即可用：渲染骨架；并行 hydrate 所有 lab，全部就绪再切到完整 render。
+    function renderLoadingShell() {
+      mount.innerHTML = `<div class="practice-studio">
+        <p class="practice-loading">正在加载实践数据...</p>
+      </div>`;
+    }
+
+    function bootstrap() {
+      const allHydrated = labs.every(isLabHydrated);
+      if (allHydrated) {
+        render();
+        return;
+      }
+      renderLoadingShell();
+      Promise.all(labs.map((lab) => ensureLabHydrated(lab.id))).then(() => {
+        render();
+      });
+    }
+
+    bootstrap();
   }
 
   /* ---- mermaid ---- */
