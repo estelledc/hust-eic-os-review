@@ -18,15 +18,13 @@ import json
 import re
 import shutil
 from pathlib import Path
-from typing import Iterable
-
-import markdown
-from markdown.extensions.toc import TocExtension
+from typing import Callable, Iterable
 
 ROOT = Path(__file__).parent
 CONTENT = ROOT / "content"
 ASSETS_REL = "assets"
 IMAGES_REL = "content/images"
+KNOWLEDGE_MANIFEST_REL = "content/knowledge-illustrations.json"
 
 # slug, source md (str or tuple of merged parts), display title, group, intro
 PAGES = [
@@ -73,6 +71,8 @@ SCRUB_PATTERNS: list[tuple[str, str]] = [
 
 FRONTMATTER_RE = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
 LEADING_H1_RE = re.compile(r"\A\s*#[^\n]*\n+", re.MULTILINE)
+KNOWLEDGE_HEADING_RE = re.compile(r"^(#{2,4})\s+(.+?)\s*$")
+FENCE_RE = re.compile(r"^\s*(```|~~~)")
 
 def scrub(text: str) -> str:
     text = FRONTMATTER_RE.sub("", text, count=1)
@@ -82,14 +82,75 @@ def scrub(text: str) -> str:
         text = re.sub(pat, rep, text)
     return text
 
+def load_knowledge_entries() -> dict[tuple[str, int], dict]:
+    path = ROOT / KNOWLEDGE_MANIFEST_REL
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    entries: dict[tuple[str, int], dict] = {}
+    for entry in data.get("entries", []):
+        source = str(entry.get("source", ""))
+        ordinal = int(entry.get("ordinal", 0))
+        if source and ordinal:
+            entries[(source, ordinal)] = entry
+    return entries
+
+def knowledge_figure_html(entry: dict) -> str:
+    image = html_mod.escape(str(entry.get("image", "")), quote=True)
+    alt = html_mod.escape(str(entry.get("alt", "")), quote=True)
+    title = html_mod.escape(str(entry.get("title", "")))
+    point_id = html_mod.escape(str(entry.get("id", "")), quote=True)
+    return (
+        f'<figure class="knowledge-figure" data-knowledge-id="{point_id}">\n'
+        f'  <img src="{image}" alt="{alt}" loading="lazy">\n'
+        f'  <figcaption>插图：{title}</figcaption>\n'
+        f'</figure>'
+    )
+
+def inject_knowledge_illustrations(
+    md_text: str,
+    source_name: str,
+    entries: dict[tuple[str, int], dict] | None = None,
+    image_exists: Callable[[str], bool] | None = None,
+) -> str:
+    entries = entries if entries is not None else load_knowledge_entries()
+    if not entries:
+        return md_text
+    image_exists = image_exists or (lambda image: (ROOT / image).exists())
+    source_rel = source_name if source_name.startswith("content/") else f"content/{source_name}"
+    ordinal = 0
+    in_fence = False
+    output: list[str] = []
+    for line in md_text.splitlines():
+        output.append(line)
+        if FENCE_RE.match(line):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        if not KNOWLEDGE_HEADING_RE.match(line):
+            continue
+        ordinal += 1
+        entry = entries.get((source_rel, ordinal))
+        if not entry:
+            continue
+        image = str(entry.get("image", ""))
+        if image and image_exists(image):
+            output.append("")
+            output.append(knowledge_figure_html(entry))
+    trailing_newline = "\n" if md_text.endswith("\n") else ""
+    return "\n".join(output) + trailing_newline
+
 def load_source(name) -> str:
     if isinstance(name, tuple):
         chunks = []
         for n in name:
-            chunks.append(scrub((CONTENT / n).read_text(encoding="utf-8")))
+            text = scrub((CONTENT / n).read_text(encoding="utf-8"))
+            chunks.append(inject_knowledge_illustrations(text, n))
         # Keep two newlines between merged parts so heading structure stays intact.
         return "\n\n".join(chunks)
-    return scrub((CONTENT / name).read_text(encoding="utf-8"))
+    text = scrub((CONTENT / name).read_text(encoding="utf-8"))
+    return inject_knowledge_illustrations(text, name)
 
 # --------- mermaid post-process ---------
 
@@ -130,15 +191,17 @@ def fix_images(html: str) -> str:
 
 # --------- rendering ---------
 
-MD_EXTENSIONS = [
-    "extra",        # tables, fenced_code, attr_list, footnotes, abbr, def_list
-    "sane_lists",
-    "smarty",
-    TocExtension(toc_depth="2-3", anchorlink=True, permalink=False),
-]
-
 def render(md_text: str) -> tuple[str, str]:
-    md = markdown.Markdown(extensions=MD_EXTENSIONS, output_format="html5")
+    import markdown
+    from markdown.extensions.toc import TocExtension
+
+    md_extensions = [
+        "extra",        # tables, fenced_code, attr_list, footnotes, abbr, def_list
+        "sane_lists",
+        "smarty",
+        TocExtension(toc_depth="2-3", anchorlink=True, permalink=False),
+    ]
+    md = markdown.Markdown(extensions=md_extensions, output_format="html5")
     html = md.convert(md_text)
     html = fix_mermaid(html)
     html = fix_images(html)

@@ -65,7 +65,17 @@
 </blockquote>
 <hr>
 <h2 id="41"><a class="toclink" href="#41">4.1 存储管理的目标</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k001">
+  <img src="content/images/knowledge/ch4-k001.webp" alt="知识点插图：4.1 存储管理的目标" loading="lazy">
+  <figcaption>插图：4.1 存储管理的目标</figcaption>
+</figure>
+
 <h3 id="411"><a class="toclink" href="#411">4.1.1 我们要解决什么问题</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k002">
+  <img src="content/images/knowledge/ch4-k002.webp" alt="知识点插图：4.1.1 我们要解决什么问题" loading="lazy">
+  <figcaption>插图：4.1.1 我们要解决什么问题</figcaption>
+</figure>
+
 <p><strong>类比</strong>：内存就像图书馆的&rdquo;开架阅览区&rdquo;——空间有限、想看的书很多、还不能让两个读者抢同一本书。OS 作为&rdquo;图书管理员&rdquo;要同时做四件事：</p>
 <ol>
 <li><strong>主存分配/回收</strong>：把有限的内存切给多个程序用，回收后还能给下一个用。</li>
@@ -74,6 +84,11 @@
 <li><strong>存储扩充</strong>：内存不够？让程序&rdquo;看上去&rdquo;有比物理内存大得多的空间——这就是后面虚存的根。</li>
 </ol>
 <h3 id="412-slide-008009010"><a class="toclink" href="#412-slide-008009010">4.1.2 三级存储器层次（slide-008/009/010）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k003">
+  <img src="content/images/knowledge/ch4-k003.webp" alt="知识点插图：4.1.2 三级存储器层次（slide-008/009/010）" loading="lazy">
+  <figcaption>插图：4.1.2 三级存储器层次（slide-008/009/010）</figcaption>
+</figure>
+
 <p><strong>核心矛盾</strong>：速度 vs 成本。越快的存储越贵越小，越慢的越便宜越大。</p>
 <table>
 <thead>
@@ -124,6 +139,11 @@
 <p><strong>面试要点</strong>：磁盘比主存慢 <strong>5 个数量级</strong>——这就是为什么&rdquo;缺页一次代价巨大&rdquo;，也是后面所有页面置换算法的优化动机。</p>
 <p>CPU 内部本身已经有多级存储（寄存器 + Cache + 段部件 + 分页部件），分页/分段不是 OS 凭空发明，而是硬件提供的能力。</p>
 <h3 id="413-vs"><a class="toclink" href="#413-vs">4.1.3 物理地址 vs 逻辑地址</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k004">
+  <img src="content/images/knowledge/ch4-k004.webp" alt="知识点插图：4.1.3 物理地址 vs 逻辑地址" loading="lazy">
+  <figcaption>插图：4.1.3 物理地址 vs 逻辑地址</figcaption>
+</figure>
+
 <ul>
 <li><strong>物理地址</strong>：内存按字节编号，0、1、2&hellip; 是一维线性的，唯一的。</li>
 <li><strong>逻辑地址（虚地址）</strong>：用户程序用的地址，<strong>总是从 0 开始</strong>。</li>
@@ -134,7 +154,17 @@
 </ul>
 <hr>
 <h2 id="42"><a class="toclink" href="#42">4.2 程序装入与链接</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k005">
+  <img src="content/images/knowledge/ch4-k005.webp" alt="知识点插图：4.2 程序装入与链接" loading="lazy">
+  <figcaption>插图：4.2 程序装入与链接</figcaption>
+</figure>
+
 <h3 id="421"><a class="toclink" href="#421">4.2.1 三种链接</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k006">
+  <img src="content/images/knowledge/ch4-k006.webp" alt="知识点插图：4.2.1 三种链接" loading="lazy">
+  <figcaption>插图：4.2.1 三种链接</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -162,6 +192,11 @@
 </tbody>
 </table>
 <h3 id="422"><a class="toclink" href="#422">4.2.2 三种装入</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k007">
+  <img src="content/images/knowledge/ch4-k007.webp" alt="知识点插图：4.2.2 三种装入" loading="lazy">
+  <figcaption>插图：4.2.2 三种装入</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -189,6 +224,11 @@
 </tbody>
 </table>
 <h3 id="423"><a class="toclink" href="#423">4.2.3 三种地址重定位</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k008">
+  <img src="content/images/knowledge/ch4-k008.webp" alt="知识点插图：4.2.3 三种地址重定位" loading="lazy">
+  <figcaption>插图：4.2.3 三种地址重定位</figcaption>
+</figure>
+
 <ul>
 <li><strong>静态重定位</strong>：装入时由装入程序把&rdquo;逻辑地址 + 装入基址&rdquo;算成物理地址。简单不要硬件，但程序装入后<strong>搬不动</strong>。</li>
 <li><strong>动态重定位</strong>（现代 OS 都用这个）：执行每条指令时由硬件<strong>重定位寄存器</strong>做加法。基址寄存器内容由 OS 用特权指令设置，程序可以随便搬家。</li>
@@ -207,15 +247,34 @@
 </pre>
 <p>每个程序内地址 d 装入后变成 <code>1000 + d</code>。这就是静态重定位的&rdquo;一次性改写&rdquo;，动态重定位则是 MMU 在每次访问时即时做这个加法。</p>
 <h3 id="424"><a class="toclink" href="#424">4.2.4 存储保护</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k009">
+  <img src="content/images/knowledge/ch4-k009.webp" alt="知识点插图：4.2.4 存储保护" loading="lazy">
+  <figcaption>插图：4.2.4 存储保护</figcaption>
+</figure>
+
 <ul>
 <li><strong>界地址寄存器</strong>（上限/下限）：CPU 检查每个访问地址 ∈ [下限, 上限]，越界就异常。</li>
 <li><strong>存储保护键</strong>：每块内存有一个键，PSW 里有&rdquo;钥匙&rdquo;，访问时比较——配钥匙才能开门。</li>
 </ul>
 <hr>
 <h2 id="43"><a class="toclink" href="#43">4.3 连续分配</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k010">
+  <img src="content/images/knowledge/ch4-k010.webp" alt="知识点插图：4.3 连续分配" loading="lazy">
+  <figcaption>插图：4.3 连续分配</figcaption>
+</figure>
+
 <h3 id="431"><a class="toclink" href="#431">4.3.1 单一连续分配</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k011">
+  <img src="content/images/knowledge/ch4-k011.webp" alt="知识点插图：4.3.1 单一连续分配" loading="lazy">
+  <figcaption>插图：4.3.1 单一连续分配</figcaption>
+</figure>
 <p>内存只装一个用户程序 + OS。早期单道系统用，现在没人用了。</p>
 <h3 id="432"><a class="toclink" href="#432">4.3.2 固定分区</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k012">
+  <img src="content/images/knowledge/ch4-k012.webp" alt="知识点插图：4.3.2 固定分区" loading="lazy">
+  <figcaption>插图：4.3.2 固定分区</figcaption>
+</figure>
+
 <p>把主存预先切成 N 个固定大小的分区，每个分区给一个作业用。</p>
 <ul>
 <li><strong>大小相等</strong>：管理简单；但小程序浪费、大程序装不下。</li>
@@ -225,6 +284,11 @@
 <p><strong>优点</strong>：管理简单，硬件只需一对界地址寄存器。
 <strong>缺点</strong>：必有<strong>内部碎片</strong>（程序比分区小，剩下空间浪费）；并发数固定。</p>
 <h3 id="433"><a class="toclink" href="#433">4.3.3 动态分区（可变分区）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k013">
+  <img src="content/images/knowledge/ch4-k013.webp" alt="知识点插图：4.3.3 动态分区（可变分区）" loading="lazy">
+  <figcaption>插图：4.3.3 动态分区（可变分区）</figcaption>
+</figure>
+
 <p>进程来了再动态切一块&rdquo;刚好够用&rdquo;的分区。</p>
 <p><strong>slide-037 例题（必考原型）</strong>：
 - 物理内存 2560KB，OS 占 0–400K
@@ -273,11 +337,20 @@
 </table>
 <p><strong>记忆点</strong>：动态分区天然产生<strong>外部碎片</strong>——所有空闲加起来够，但每块都太小。这是后续&rdquo;分页&rdquo;出现的动机。</p>
 <h4 id="_1"><a class="toclink" href="#_1">数据结构</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k014">
+  <img src="content/images/knowledge/ch4-k014.webp" alt="知识点插图：数据结构" loading="lazy">
+  <figcaption>插图：数据结构</figcaption>
+</figure>
 <ul>
 <li>已分配区表 + 未分配区表（FBT）</li>
 <li>链表法：空闲块自身存&rdquo;长度 + 下一块地址&rdquo;</li>
 </ul>
 <h4 id="_2"><a class="toclink" href="#_2">分配算法（必背）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k015">
+  <img src="content/images/knowledge/ch4-k015.webp" alt="知识点插图：分配算法（必背）" loading="lazy">
+  <figcaption>插图：分配算法（必背）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -321,8 +394,17 @@
 </table>
 <p><strong>slide-046 例题对比</strong>：内存有空隙序列，进程到达顺序不同，不同算法的成败也不同。<strong>结论：没有银弹</strong>。</p>
 <h4 id="_3"><a class="toclink" href="#_3">回收时合并</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k016">
+  <img src="content/images/knowledge/ch4-k016.webp" alt="知识点插图：回收时合并" loading="lazy">
+  <figcaption>插图：回收时合并</figcaption>
+</figure>
 <p>释放分区时检查上下相邻——合并相邻空闲分区（避免新生碎片）。</p>
 <h3 id="434-vs"><a class="toclink" href="#434-vs">4.3.4 内部碎片 vs 外部碎片（高频面试）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k017">
+  <img src="content/images/knowledge/ch4-k017.webp" alt="知识点插图：4.3.4 内部碎片 vs 外部碎片（高频面试）" loading="lazy">
+  <figcaption>插图：4.3.4 内部碎片 vs 外部碎片（高频面试）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -350,6 +432,11 @@
 </tbody>
 </table>
 <h3 id="435"><a class="toclink" href="#435">4.3.5 内存不足的应对</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k018">
+  <img src="content/images/knowledge/ch4-k018.webp" alt="知识点插图：4.3.5 内存不足的应对" loading="lazy">
+  <figcaption>插图：4.3.5 内存不足的应对</figcaption>
+</figure>
+
 <ul>
 <li><strong>移动技术（紧凑）</strong>：把零散程序挤到一头，腾出大空闲。<strong>必须用动态重定位</strong>，否则程序搬家就跑不起来。</li>
 <li><strong>对换（swapping）</strong>：低优先级或时间片用完的进程，整个 PCB 写到磁盘，腾内存给别人。</li>
@@ -357,7 +444,17 @@
 </ul>
 <hr>
 <h2 id="44"><a class="toclink" href="#44">4.4 分页存储管理</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k019">
+  <img src="content/images/knowledge/ch4-k019.webp" alt="知识点插图：4.4 分页存储管理" loading="lazy">
+  <figcaption>插图：4.4 分页存储管理</figcaption>
+</figure>
+
 <h3 id="441-slide-062"><a class="toclink" href="#441-slide-062">4.4.1 核心概念（slide-062 起）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k020">
+  <img src="content/images/knowledge/ch4-k020.webp" alt="知识点插图：4.4.1 核心概念（slide-062 起）" loading="lazy">
+  <figcaption>插图：4.4.1 核心概念（slide-062 起）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：图书馆把每本书都拆成大小一样的&rdquo;册&rdquo;（如 4KB），书架上每个格子也是同样大小。一本书的不同册可以放在书架的任意格子里——管理员靠一张&rdquo;目录表&rdquo;记录&rdquo;第几册放在第几格&rdquo;。</p>
 <table>
 <thead>
@@ -387,6 +484,11 @@
 </table>
 <p><strong>关键设计</strong>：页大小 = 页框大小，<strong>固定</strong>且通常是 2 的幂（如 4KB = 2¹²）。</p>
 <h3 id="442"><a class="toclink" href="#442">4.4.2 地址转换（必背公式）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k021">
+  <img src="content/images/knowledge/ch4-k021.webp" alt="知识点插图：4.4.2 地址转换（必背公式）" loading="lazy">
+  <figcaption>插图：4.4.2 地址转换（必背公式）</figcaption>
+</figure>
+
 <p>逻辑地址 A，页大小 L：</p>
 <pre><code>页号 p = INT[A / L]
 页内偏移 d = A mod L
@@ -398,6 +500,11 @@
 - 查页表，第 2 页 → 第 6 块
 - 物理地址 = 6 × 1024 + 817 = <strong>6961</strong></p>
 <h3 id="443-slide-065-mermaid"><a class="toclink" href="#443-slide-065-mermaid">4.4.3 slide-065 映射图直觉（原图已转 mermaid）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k022">
+  <img src="content/images/knowledge/ch4-k022.webp" alt="知识点插图：4.4.3 slide-065 映射图直觉（原图已转 mermaid）" loading="lazy">
+  <figcaption>插图：4.4.3 slide-065 映射图直觉（原图已转 mermaid）</figcaption>
+</figure>
+
 <p>三个作业的逻辑空间都被切成 1KB 等大页，物理主存按 1KB 分页框；OS 占 0–2K，下面交错装着各作业的页（作业 1 的 0/1/2 页可以散布在物理空间任意位置）。<strong>核心点</strong>：同一作业的页<strong>不要求物理连续</strong>——这就是分页的革命性突破。</p>
 <pre class="mermaid">flowchart LR
     subgraph J1["作业 1 逻辑 (0~2K-1)"]
@@ -433,6 +540,11 @@
 </pre>
 <p>页在主存中的次序由分配时决定——作业 1 三页可能错落在 6K/4K/9K，作业 2/3 同理，但每个作业自己看是连续的（0、1、2 页）。</p>
 <h3 id="444"><a class="toclink" href="#444">4.4.4 页表的烦恼 → 多级页表</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k023">
+  <img src="content/images/knowledge/ch4-k023.webp" alt="知识点插图：4.4.4 页表的烦恼 → 多级页表" loading="lazy">
+  <figcaption>插图：4.4.4 页表的烦恼 → 多级页表</figcaption>
+</figure>
+
 <p><strong>问题</strong>：32 位地址空间 + 4KB 页 → 1M 个页表项 × 4B = <strong>每进程 4MB 页表</strong>。100 个进程就 400MB！</p>
 <p><strong>多级页表</strong>思路：
 - 把页表本身<strong>也分页</strong>（页表页）
@@ -440,11 +552,21 @@
 - <strong>只有当前用到的页表页才装入主存</strong></p>
 <p>代价：访问数据要 3 次访存（页目录 → 页表页 → 数据）。<strong>TLB 就是来缓解这个的</strong>。</p>
 <h3 id="445-ipt"><a class="toclink" href="#445-ipt">4.4.5 反向页表（IPT）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k024">
+  <img src="content/images/knowledge/ch4-k024.webp" alt="知识点插图：4.4.5 反向页表（IPT）" loading="lazy">
+  <figcaption>插图：4.4.5 反向页表（IPT）</figcaption>
+</figure>
+
 <p><strong>思路反过来</strong>：不按逻辑页号建表，按<strong>物理页框号</strong>建表。
 - 表大小 = 物理页框数（与逻辑空间无关）
 - 用 hash 把虚拟页号映射到表项
 - <strong>64MB 主存 + 4KB 页只需 64KB 反向页表</strong>——非常省</p>
 <h3 id="446-tlbtranslation-lookaside-buffer"><a class="toclink" href="#446-tlbtranslation-lookaside-buffer">4.4.6 TLB（快表/Translation Lookaside Buffer）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k025">
+  <img src="content/images/knowledge/ch4-k025.webp" alt="知识点插图：4.4.6 TLB（快表/Translation Lookaside Buffer）" loading="lazy">
+  <figcaption>插图：4.4.6 TLB（快表/Translation Lookaside Buffer）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：图书管理员每查一次页表都要去远处书柜（主存）翻目录太慢，就在桌上摊开<strong>最近常用的几条目录</strong>——这就是 TLB，本质是关联高速缓存。</p>
 <p><strong>关键公式 — 平均访存时间 EAT</strong>：</p>
 <pre><code>EAT = (1 - p) × (TLB + 主存)
@@ -460,22 +582,47 @@
 <p><strong>例</strong>：TLB=20ns，主存=100ns，命中率 80%：
 - EAT = 0.8 × (20+100) + 0.2 × (20+200) = 96 + 44 = <strong>140ns</strong></p>
 <h3 id="447"><a class="toclink" href="#447">4.4.7 分页的优缺</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k026">
+  <img src="content/images/knowledge/ch4-k026.webp" alt="知识点插图：4.4.7 分页的优缺" loading="lazy">
+  <figcaption>插图：4.4.7 分页的优缺</figcaption>
+</figure>
+
 <ul>
 <li>优点：无外部碎片；只有每个进程<strong>最后一页</strong>有内部碎片（最多半页）</li>
 <li>缺点：必须<strong>一次全部装入</strong>；硬件支持成本高；不便于按逻辑共享</li>
 </ul>
 <hr>
 <h2 id="45"><a class="toclink" href="#45">4.5 分段存储管理</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k027">
+  <img src="content/images/knowledge/ch4-k027.webp" alt="知识点插图：4.5 分段存储管理" loading="lazy">
+  <figcaption>插图：4.5 分段存储管理</figcaption>
+</figure>
+
 <h3 id="451-slide-082"><a class="toclink" href="#451-slide-082">4.5.1 为什么分段（slide-082 起）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k028">
+  <img src="content/images/knowledge/ch4-k028.webp" alt="知识点插图：4.5.1 为什么分段（slide-082 起）" loading="lazy">
+  <figcaption>插图：4.5.1 为什么分段（slide-082 起）</figcaption>
+</figure>
+
 <p>分页是 OS 强加的<strong>等大切分</strong>（用户不感知，物理单位）。分段是程序员<strong>主动按逻辑模块</strong>切（用户感知段号，逻辑单位）。</p>
 <p><strong>典型分段</strong>：代码段 / 数据段 / 栈段 / 堆段 / 共享库段。每段功能独立、长度天然不同。</p>
 <h3 id="452"><a class="toclink" href="#452">4.5.2 段式逻辑地址（二维）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k029">
+  <img src="content/images/knowledge/ch4-k029.webp" alt="知识点插图：4.5.2 段式逻辑地址（二维）" loading="lazy">
+  <figcaption>插图：4.5.2 段式逻辑地址（二维）</figcaption>
+</figure>
+
 <pre><code>逻辑地址 V = (S, W)
 S = 段号
 W = 段内偏移
 </code></pre>
 <p>vs 分页的一维地址：分页地址 A 是一维的，硬件自动切成 (页号, 页内偏移)；分段则程序员<strong>显式</strong>给出 S 和 W。</p>
 <h3 id="453-slide-090"><a class="toclink" href="#453-slide-090">4.5.3 段表（slide-090 例子）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k030">
+  <img src="content/images/knowledge/ch4-k030.webp" alt="知识点插图：4.5.3 段表（slide-090 例子）" loading="lazy">
+  <figcaption>插图：4.5.3 段表（slide-090 例子）</figcaption>
+</figure>
+
 <p>每个进程一张段表，每行：</p>
 <table>
 <thead>
@@ -545,12 +692,22 @@ W = 段内偏移
 </table>
 <p>注意 5 个段在主存中<strong>完全不连续</strong>（1500、3200、5000、6000、8000），但作业 1 自己看仍是按段号 0~4 索引的二维地址空间——这就是分段在主存里的真实形态。</p>
 <h3 id="454-slide-088"><a class="toclink" href="#454-slide-088">4.5.4 地址转换（slide-088）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k031">
+  <img src="content/images/knowledge/ch4-k031.webp" alt="知识点插图：4.5.4 地址转换（slide-088）" loading="lazy">
+  <figcaption>插图：4.5.4 地址转换（slide-088）</figcaption>
+</figure>
+
 <pre><code>1. 用 S 查段表 → 得 (段长, 段基址)
 2. 检查 W &lt; 段长？否则越界异常
 3. 物理地址 = 段基址 + W
 </code></pre>
 <p>比分页多一步<strong>段长检查</strong>，安全性更高。</p>
 <h3 id="455"><a class="toclink" href="#455">4.5.5 分段优缺</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k032">
+  <img src="content/images/knowledge/ch4-k032.webp" alt="知识点插图：4.5.5 分段优缺" loading="lazy">
+  <figcaption>插图：4.5.5 分段优缺</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -584,25 +741,47 @@ W = 段内偏移
 </table>
 <hr>
 <h2 id="46"><a class="toclink" href="#46">4.6 段页式</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k033">
+  <img src="content/images/knowledge/ch4-k033.webp" alt="知识点插图：4.6 段页式" loading="lazy">
+  <figcaption>插图：4.6 段页式</figcaption>
+</figure>
+
 <p><strong>思路</strong>：段提供逻辑结构（共享、保护、模块化），页解决主存分配（无外部碎片）。</p>
 <h3 id="461"><a class="toclink" href="#461">4.6.1 划分</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k034">
+  <img src="content/images/knowledge/ch4-k034.webp" alt="知识点插图：4.6.1 划分" loading="lazy">
+  <figcaption>插图：4.6.1 划分</figcaption>
+</figure>
 <ul>
 <li>主存：等大页框（与分页相同）</li>
 <li>逻辑：先分段（按程序模块）→ 每段内部再分页</li>
 </ul>
 <h3 id="462"><a class="toclink" href="#462">4.6.2 三维逻辑地址</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k035">
+  <img src="content/images/knowledge/ch4-k035.webp" alt="知识点插图：4.6.2 三维逻辑地址" loading="lazy">
+  <figcaption>插图：4.6.2 三维逻辑地址</figcaption>
+</figure>
+
 <pre><code>V = (S, P, d)
 S = 段号
 P = 段内页号
 d = 页内偏移
 </code></pre>
 <h3 id="463"><a class="toclink" href="#463">4.6.3 数据结构（三层索引）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k036">
+  <img src="content/images/knowledge/ch4-k036.webp" alt="知识点插图：4.6.3 数据结构（三层索引）" loading="lazy">
+  <figcaption>插图：4.6.3 数据结构（三层索引）</figcaption>
+</figure>
 <ul>
 <li><strong>作业表</strong>：作业号 → 段表起址</li>
 <li><strong>段表</strong>：段号 → 该段页表起址 + 段是否在内存</li>
 <li><strong>页表</strong>：页号 → 页框号 + 页是否在内存</li>
 </ul>
 <h3 id="464"><a class="toclink" href="#464">4.6.4 地址转换</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k037">
+  <img src="content/images/knowledge/ch4-k037.webp" alt="知识点插图：4.6.4 地址转换" loading="lazy">
+  <figcaption>插图：4.6.4 地址转换</figcaption>
+</figure>
 <ol>
 <li>查 TLB（带 S+P 联合作为 key），命中直接拼地址</li>
 <li>缺失 → 段表查页表起址 → 页表查页框号</li>
@@ -610,13 +789,27 @@ d = 页内偏移
 <li>共需 <strong>3 次访存</strong>（段表 + 页表 + 数据），TLB 命中可降为 1 次</li>
 </ol>
 <h3 id="465"><a class="toclink" href="#465">4.6.5 优缺</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k038">
+  <img src="content/images/knowledge/ch4-k038.webp" alt="知识点插图：4.6.5 优缺" loading="lazy">
+  <figcaption>插图：4.6.5 优缺</figcaption>
+</figure>
 <ul>
 <li>优点：兼具段的共享/保护和页的高利用率</li>
 <li>缺点：每段平均一页内部碎片（比纯分页多）；硬件复杂；管理开销大</li>
 </ul>
 <hr>
 <h2 id="47"><a class="toclink" href="#47">4.7 虚拟存储管理（重头戏）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k039">
+  <img src="content/images/knowledge/ch4-k039.webp" alt="知识点插图：4.7 虚拟存储管理（重头戏）" loading="lazy">
+  <figcaption>插图：4.7 虚拟存储管理（重头戏）</figcaption>
+</figure>
+
 <h3 id="471"><a class="toclink" href="#471">4.7.1 局部性原理（虚存的理论基石）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k040">
+  <img src="content/images/knowledge/ch4-k040.webp" alt="知识点插图：4.7.1 局部性原理（虚存的理论基石）" loading="lazy">
+  <figcaption>插图：4.7.1 局部性原理（虚存的理论基石）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：你在一段时间内只看图书馆的几本相关书（<strong>空间局部性</strong>），一本书翻开后短时间内反复用（<strong>时间局部性</strong>）。所以——<strong>没必要把整个图书馆都搬到桌上</strong>。</p>
 <table>
 <thead>
@@ -641,11 +834,20 @@ d = 页内偏移
 </table>
 <p><strong>结论</strong>：进程不必全部装入内存就能跑——只把&rdquo;当前要用的部分&rdquo;调进来即可。剩下放在磁盘，需要时再换。</p>
 <h3 id="472"><a class="toclink" href="#472">4.7.2 虚拟存储器定义</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k041">
+  <img src="content/images/knowledge/ch4-k041.webp" alt="知识点插图：4.7.2 虚拟存储器定义" loading="lazy">
+  <figcaption>插图：4.7.2 虚拟存储器定义</figcaption>
+</figure>
+
 <blockquote>
 <p>在具有层次结构存储器的计算机系统中，采用<strong>自动</strong>实现部分装入和部分对换功能，为用户提供一个比物理内存容量大得多的、可寻址的&rdquo;内存储器&rdquo;。</p>
 </blockquote>
 <p><strong>类比</strong>：图书馆的&rdquo;开架阅览区&rdquo;（主存）只有 100 本书的座位，但全馆（外存）有 10 万本。读者（程序员）写借书条时<strong>假装</strong>可以借任何一本——管理员（OS+MMU）后台帮他换书，他感受不到。</p>
 <h3 id="473"><a class="toclink" href="#473">4.7.3 物质基础（实现条件）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k042">
+  <img src="content/images/knowledge/ch4-k042.webp" alt="知识点插图：4.7.3 物质基础（实现条件）" loading="lazy">
+  <figcaption>插图：4.7.3 物质基础（实现条件）</figcaption>
+</figure>
 <ul>
 <li>较大容量的辅存（页文件 / swap）</li>
 <li>一定容量的主存</li>
@@ -655,6 +857,11 @@ d = 页内偏移
 - <strong>指令地址场长度</strong>（主要原因）— 32 位机器最多 4GB 虚拟空间
 - 外存大小</p>
 <h3 id="474"><a class="toclink" href="#474">4.7.4 请求分页</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k043">
+  <img src="content/images/knowledge/ch4-k043.webp" alt="知识点插图：4.7.4 请求分页" loading="lazy">
+  <figcaption>插图：4.7.4 请求分页</figcaption>
+</figure>
+
 <p>实存分页要求&rdquo;一次全部装入&rdquo;，虚存改为&rdquo;用到才装&rdquo;。</p>
 <p><strong>页表扩展</strong>（必备字段）：</p>
 <table>
@@ -693,6 +900,11 @@ d = 页内偏移
 </table>
 <p>外页表：页号 → 磁盘物理地址（系统启动时建立，存磁盘上）。</p>
 <h3 id="475-slide-115-7"><a class="toclink" href="#475-slide-115-7">4.7.5 缺页中断处理流程（slide-115，必背 7 步）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k044">
+  <img src="content/images/knowledge/ch4-k044.webp" alt="知识点插图：4.7.5 缺页中断处理流程（slide-115，必背 7 步）" loading="lazy">
+  <figcaption>插图：4.7.5 缺页中断处理流程（slide-115，必背 7 步）</figcaption>
+</figure>
+
 <ol>
 <li><strong>挂起</strong>当前进程</li>
 <li>查<strong>外页表</strong>，找到该页在磁盘的位置</li>
@@ -704,6 +916,11 @@ d = 页内偏移
 </ol>
 <p><strong>关键细节</strong>：是&rdquo;重新执行&rdquo;那条访问指令，不是从断点继续——因为指令可能正执行到一半就缺页。</p>
 <h3 id="476"><a class="toclink" href="#476">4.7.6 缺页率公式</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k045">
+  <img src="content/images/knowledge/ch4-k045.webp" alt="知识点插图：4.7.6 缺页率公式" loading="lazy">
+  <figcaption>插图：4.7.6 缺页率公式</figcaption>
+</figure>
+
 <pre><code>缺页率 f = F / A
 其中  A = 总访问次数 = S（成功）+ F（缺页）
 </code></pre>
@@ -727,19 +944,36 @@ for (j=1; j&lt;=100; j++)
 - 替换算法
 - 程序特性（局部性好坏）</p>
 <h3 id="477"><a class="toclink" href="#477">4.7.7 页面置换算法（必考重点）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k046">
+  <img src="content/images/knowledge/ch4-k046.webp" alt="知识点插图：4.7.7 页面置换算法（必考重点）" loading="lazy">
+  <figcaption>插图：4.7.7 页面置换算法（必考重点）</figcaption>
+</figure>
+
 <h4 id="1-opt"><a class="toclink" href="#1-opt">(1) OPT — 最佳置换（理论基线）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k047">
+  <img src="content/images/knowledge/ch4-k047.webp" alt="知识点插图：(1) OPT — 最佳置换（理论基线）" loading="lazy">
+  <figcaption>插图：(1) OPT — 最佳置换（理论基线）</figcaption>
+</figure>
 <ul>
 <li>淘汰<strong>未来最久不被访问</strong>的页</li>
 <li>无法实现（要预知未来）</li>
 <li>用作其他算法的对比基准</li>
 </ul>
 <h4 id="2-fifo"><a class="toclink" href="#2-fifo">(2) FIFO — 先进先出</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k048">
+  <img src="content/images/knowledge/ch4-k048.webp" alt="知识点插图：(2) FIFO — 先进先出" loading="lazy">
+  <figcaption>插图：(2) FIFO — 先进先出</figcaption>
+</figure>
 <ul>
 <li>淘汰<strong>进入内存最早</strong>的页</li>
 <li>实现简单：维护页框队列</li>
 <li><strong>Belady 异常</strong>（slide-160）：访问串 4,3,2,1,4,3,5,4,3,2,1,5——分配 3 个页框 vs 4 个页框，<strong>4 个页框反而缺页更多</strong>！原因：FIFO 与局部性矛盾，被淘汰的不一定是不再用的。</li>
 </ul>
 <h4 id="3-lru"><a class="toclink" href="#3-lru">(3) LRU — 最近最少使用</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k049">
+  <img src="content/images/knowledge/ch4-k049.webp" alt="知识点插图：(3) LRU — 最近最少使用" loading="lazy">
+  <figcaption>插图：(3) LRU — 最近最少使用</figcaption>
+</figure>
 <ul>
 <li>淘汰<strong>最久没被访问</strong>的页（基于&rdquo;最近用过的还会用&rdquo;的假设）</li>
 <li><strong>不会有 Belady 异常</strong></li>
@@ -751,6 +985,11 @@ for (j=1; j&lt;=100; j++)
 </ul>
 <p><strong>slide-165–166 例子</strong>：3 个页框，访问 4,3,0,4,1,1,2,3,2，淘汰序列演变看得很清楚。</p>
 <h4 id="4-clock-os"><a class="toclink" href="#4-clock-os">(4) CLOCK — 时钟（OS 实际常用）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k050">
+  <img src="content/images/knowledge/ch4-k050.webp" alt="知识点插图：(4) CLOCK — 时钟（OS 实际常用）" loading="lazy">
+  <figcaption>插图：(4) CLOCK — 时钟（OS 实际常用）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：把所有页框排成一圈，有一根指针（时钟指针）。</p>
 <pre><code>基本 CLOCK：
   - 每页有引用位 R
@@ -766,8 +1005,17 @@ for (j=1; j&lt;=100; j++)
 4. (R=1, M=1) — 最近用且脏</p>
 <p>扫描两遍：第一遍找 (0,0)；找不到则第二遍找 (0,1)，过程中把 R 清 0。</p>
 <h4 id="5-second-chance"><a class="toclink" href="#5-second-chance">(5) Second Chance — 第二次机会</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k051">
+  <img src="content/images/knowledge/ch4-k051.webp" alt="知识点插图：(5) Second Chance — 第二次机会" loading="lazy">
+  <figcaption>插图：(5) Second Chance — 第二次机会</figcaption>
+</figure>
 <p>是 FIFO 的改进，碰到 R=1 的&rdquo;重新当作新页放队尾&rdquo;。CLOCK 是它的环形版本。</p>
 <h4 id="slide-180-2321524532523"><a class="toclink" href="#slide-180-2321524532523">slide-180 性能比较（同访问串 2,3,2,1,5,2,4,5,3,2,5,2，3 个页框）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k052">
+  <img src="content/images/knowledge/ch4-k052.webp" alt="知识点插图：slide-180 性能比较（同访问串 2,3,2,1,5,2,4,5,3,2,5,2，3 个页框）" loading="lazy">
+  <figcaption>插图：slide-180 性能比较（同访问串 2,3,2,1,5,2,4,5,3,2,5,2，3 个页框）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -796,8 +1044,18 @@ for (j=1; j&lt;=100; j++)
 </table>
 <p><strong>记忆</strong>：OPT &lt; LRU &lt; CLOCK &lt; FIFO（一般情况下）。</p>
 <h3 id="478"><a class="toclink" href="#478">4.7.8 工作集模型 / 抖动（高频考点）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k053">
+  <img src="content/images/knowledge/ch4-k053.webp" alt="知识点插图：4.7.8 工作集模型 / 抖动（高频考点）" loading="lazy">
+  <figcaption>插图：4.7.8 工作集模型 / 抖动（高频考点）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：你写论文时桌上摊开的几本最相关的书 = 工作集。窗口尺寸 Δ 就是你&rdquo;最近多久内用过的算&rdquo;——比如最近 30 分钟用过的书都摆桌上。</p>
 <h4 id="_4"><a class="toclink" href="#_4">工作集定义</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k054">
+  <img src="content/images/knowledge/ch4-k054.webp" alt="知识点插图：工作集定义" loading="lazy">
+  <figcaption>插图：工作集定义</figcaption>
+</figure>
+
 <pre><code>W(t, Δ) = {进程在时间窗口 (t-Δ, t] 内访问过的页面集合}
 </code></pre>
 <p>slide-185 经典图：
@@ -806,12 +1064,21 @@ for (j=1; j&lt;=100; j++)
 - 在 t2 时刻 → WS(t2) = {3, 4}（局部性变了，工作集也变了）</p>
 <p><strong>驻留集（resident set）</strong>：进程实际驻留在内存的页集合。</p>
 <h4 id="_5"><a class="toclink" href="#_5">工作集策略</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k055">
+  <img src="content/images/knowledge/ch4-k055.webp" alt="知识点插图：工作集策略" loading="lazy">
+  <figcaption>插图：工作集策略</figcaption>
+</figure>
 <ol>
 <li>监视每个进程的工作集</li>
 <li>仅当工作集<strong>全部</strong>装入内存时才让进程运行</li>
 <li>定期清出&rdquo;不在工作集&rdquo;的页</li>
 </ol>
 <h4 id="thrashing"><a class="toclink" href="#thrashing">抖动（Thrashing）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k056">
+  <img src="content/images/knowledge/ch4-k056.webp" alt="知识点插图：抖动（Thrashing）" loading="lazy">
+  <figcaption>插图：抖动（Thrashing）</figcaption>
+</figure>
+
 <ul>
 <li><strong>现象</strong>：CPU 大部分时间在处理缺页中断而非执行用户代码</li>
 <li><strong>原因</strong>：分给进程的页框 &lt; 工作集 → 频繁淘汰马上又要用的页 → 又缺页 → 恶性循环</li>
@@ -821,10 +1088,19 @@ for (j=1; j&lt;=100; j++)
 <li>实在不行：挂起一些进程（减少多道程度）</li>
 </ul>
 <h4 id="pff"><a class="toclink" href="#pff">缺页频率（PFF）算法</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k057">
+  <img src="content/images/knowledge/ch4-k057.webp" alt="知识点插图：缺页频率（PFF）算法" loading="lazy">
+  <figcaption>插图：缺页频率（PFF）算法</figcaption>
+</figure>
 <p>监测连续缺页之间的时间间隔：
 - 间隔 &gt; 阈值 τ → 工作集变了，移出窗口内未引用的页
 - 间隔 &lt; 阈值 τ → 进程页框不够，加分配</p>
 <h3 id="479"><a class="toclink" href="#479">4.7.9 页面分配/置换策略组合</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k058">
+  <img src="content/images/knowledge/ch4-k058.webp" alt="知识点插图：4.7.9 页面分配/置换策略组合" loading="lazy">
+  <figcaption>插图：4.7.9 页面分配/置换策略组合</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -858,7 +1134,17 @@ for (j=1; j&lt;=100; j++)
 </table>
 <hr>
 <h2 id="48"><a class="toclink" href="#48">4.8 章末速查 + 计算题模板</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k059">
+  <img src="content/images/knowledge/ch4-k059.webp" alt="知识点插图：4.8 章末速查 + 计算题模板" loading="lazy">
+  <figcaption>插图：4.8 章末速查 + 计算题模板</figcaption>
+</figure>
+
 <h3 id="481"><a class="toclink" href="#481">4.8.1 必背公式</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k060">
+  <img src="content/images/knowledge/ch4-k060.webp" alt="知识点插图：4.8.1 必背公式" loading="lazy">
+  <figcaption>插图：4.8.1 必背公式</figcaption>
+</figure>
+
 <pre><code>分页地址转换：
   p = INT[A / L]
   d = A mod L
@@ -874,6 +1160,11 @@ for (j=1; j&lt;=100; j++)
   虚拟空间 / 页大小 = 一级页表项数
 </code></pre>
 <h3 id="482"><a class="toclink" href="#482">4.8.2 地址转换计算题模板</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k061">
+  <img src="content/images/knowledge/ch4-k061.webp" alt="知识点插图：4.8.2 地址转换计算题模板" loading="lazy">
+  <figcaption>插图：4.8.2 地址转换计算题模板</figcaption>
+</figure>
+
 <blockquote>
 <p>题：32 位逻辑地址，页大小 4KB，进程页表如下，求逻辑地址 0x12345 的物理地址。</p>
 </blockquote>
@@ -885,6 +1176,11 @@ for (j=1; j&lt;=100; j++)
 <li>物理地址 = 0x7 × 0x1000 + 0x345 = <strong>0x7345</strong></li>
 </ol>
 <h3 id="483"><a class="toclink" href="#483">4.8.3 缺页计算题模板</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k062">
+  <img src="content/images/knowledge/ch4-k062.webp" alt="知识点插图：4.8.3 缺页计算题模板" loading="lazy">
+  <figcaption>插图：4.8.3 缺页计算题模板</figcaption>
+</figure>
+
 <blockquote>
 <p>题：进程分配 3 个页框，访问串 7,0,1,2,0,3,0,4,2,3,0,3,2，问 OPT/LRU/FIFO 各缺页几次？</p>
 </blockquote>
@@ -896,6 +1192,11 @@ for (j=1; j&lt;=100; j++)
 <strong>LRU 选淘汰的诀窍</strong>：往前看，谁最久没用就淘汰谁。
 <strong>FIFO</strong>：维护进入顺序队列，淘汰队首。</p>
 <h3 id="484"><a class="toclink" href="#484">4.8.4 概念区分速查</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k063">
+  <img src="content/images/knowledge/ch4-k063.webp" alt="知识点插图：4.8.4 概念区分速查" loading="lazy">
+  <figcaption>插图：4.8.4 概念区分速查</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -935,6 +1236,11 @@ for (j=1; j&lt;=100; j++)
 </tbody>
 </table>
 <h3 id="485"><a class="toclink" href="#485">4.8.5 面试高频问</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k064">
+  <img src="content/images/knowledge/ch4-k064.webp" alt="知识点插图：4.8.5 面试高频问" loading="lazy">
+  <figcaption>插图：4.8.5 面试高频问</figcaption>
+</figure>
+
 <ol>
 <li><strong>为什么有了分页还要分段</strong>？分页解决物理利用率，分段解决逻辑结构（共享、保护、动态扩展）。</li>
 <li><strong>TLB 命中率为什么能这么高</strong>？局部性原理 + 关联高速缓存的并行查找。</li>
@@ -945,6 +1251,11 @@ for (j=1; j&lt;=100; j++)
 </ol>
 <hr>
 <h2 id="slide-indexmd"><a class="toclink" href="#slide-indexmd">索引（按 slide 号回查 index.md）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch4-k065">
+  <img src="content/images/knowledge/ch4-k065.webp" alt="知识点插图：索引（按 slide 号回查 index.md）" loading="lazy">
+  <figcaption>插图：索引（按 slide 号回查 index.md）</figcaption>
+</figure>
+
 <ul>
 <li>三级层次：slide-008/009/010</li>
 <li>重定位类型：slide-17~21</li>

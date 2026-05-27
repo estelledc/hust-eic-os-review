@@ -5,3 +5,7 @@ __pycache__/
 .vscode/
 node_modules/
 .playwright-mcp/
+output/
+tmp/
+content/images/knowledge-no-text-v1/
+*-figures-check.png

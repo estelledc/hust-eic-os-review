@@ -67,16 +67,36 @@
 </blockquote>
 <hr>
 <h2 id="11"><a class="toclink" href="#11">1.1 什么是操作系统</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k001">
+  <img src="content/images/knowledge/ch1-k001.webp" alt="知识点插图：1.1 什么是操作系统" loading="lazy">
+  <figcaption>插图：1.1 什么是操作系统</figcaption>
+</figure>
+
 <h3 id="_1"><a class="toclink" href="#_1">一句话定义</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k002">
+  <img src="content/images/knowledge/ch1-k002.webp" alt="知识点插图：一句话定义" loading="lazy">
+  <figcaption>插图：一句话定义</figcaption>
+</figure>
+
 <p><strong>操作系统 (Operating System, OS) 是管理系统资源、控制程序执行、改善人机界面、提供各种服务，并为用户方便有效地使用计算机提供良好运行环境的一种系统软件。</strong></p>
 <p>教材里另一种更短的说法：<strong>用以控制和管理系统资源、方便用户使用计算机的程序集合。</strong></p>
 <h3 id="_2"><a class="toclink" href="#_2">日常类比</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k003">
+  <img src="content/images/knowledge/ch1-k003.webp" alt="知识点插图：日常类比" loading="lazy">
+  <figcaption>插图：日常类比</figcaption>
+</figure>
+
 <p>把一台计算机想象成一座大型餐厅：
 - <strong>硬件</strong> = 厨房的灶台、冰箱、刀具（物理设备，本身不会自己工作）
 - <strong>应用软件</strong> = 各种菜品订单（QQ、微信、Chrome、游戏，都是&rdquo;想完成的事&rdquo;）
 - <strong>操作系统</strong> = 餐厅经理 + 服务员</p>
 <p>订单不会直接冲进后厨抢锅；它通过经理（OS）登记、排队、分配灶台。<strong>用户和应用从不直接碰硬件，必须经过 OS 这个中介。</strong></p>
 <h3 id="os"><a class="toclink" href="#os">OS 在计算机系统中的位置（重要分层图）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k004">
+  <img src="content/images/knowledge/ch1-k004.webp" alt="知识点插图：OS 在计算机系统中的位置（重要分层图）" loading="lazy">
+  <figcaption>插图：OS 在计算机系统中的位置（重要分层图）</figcaption>
+</figure>
+
 <pre><code>            用户
              ↓
         应用软件     （Chrome / 微信 / Word ...）
@@ -89,6 +109,11 @@
 - <strong>对上</strong> 给应用提供统一接口，让应用不用关心硬件细节（比如不管你是固态盘还是机械盘，应用统一调 <code>write()</code>）
 - <strong>对下</strong> 统一管硬件资源，让多个应用能&rdquo;和平共享&rdquo;同一套硬件而不打架</p>
 <h3 id="os_1"><a class="toclink" href="#os_1">OS 的四种观察视角（考点：背熟这四个观点）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k005">
+  <img src="content/images/knowledge/ch1-k005.webp" alt="知识点插图：OS 的四种观察视角（考点：背熟这四个观点）" loading="lazy">
+  <figcaption>插图：OS 的四种观察视角（考点：背熟这四个观点）</figcaption>
+</figure>
+
 <p>教材给出<strong>四个观察视角</strong>，考试常出&rdquo;OS 的作用 / 角色&rdquo;简答题：</p>
 <table>
 <thead>
@@ -124,7 +149,17 @@
 <p>也可以记成两个角色：<strong>对内是&rdquo;管理员&rdquo;</strong>（管资源、调度进程），<strong>对外是&rdquo;服务员&rdquo;</strong>（给用户和应用提供接口）。</p>
 <hr>
 <h2 id="12-os"><a class="toclink" href="#12-os">1.2 OS 的功能与特性</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k006">
+  <img src="content/images/knowledge/ch1-k006.webp" alt="知识点插图：1.2 OS 的功能与特性" loading="lazy">
+  <figcaption>插图：1.2 OS 的功能与特性</figcaption>
+</figure>
+
 <h3 id="_3"><a class="toclink" href="#_3">五大功能（考点）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k007">
+  <img src="content/images/knowledge/ch1-k007.webp" alt="知识点插图：五大功能（考点）" loading="lazy">
+  <figcaption>插图：五大功能（考点）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -157,6 +192,11 @@
 </table>
 <p>第 2~6 章会一一展开。</p>
 <h3 id="_4"><a class="toclink" href="#_4">四大特性（考点 + 关系图）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k008">
+  <img src="content/images/knowledge/ch1-k008.webp" alt="知识点插图：四大特性（考点 + 关系图）" loading="lazy">
+  <figcaption>插图：四大特性（考点 + 关系图）</figcaption>
+</figure>
+
 <p>幻灯片 51 用一张图说明四特性的因果关系：<strong>并发是前提</strong>，由它派生出虚拟、共享、异步三性。</p>
 <pre class="mermaid">flowchart LR
     C[并发<br/>concurrency]
@@ -195,6 +235,11 @@
 </ul>
 <hr>
 <h2 id="13"><a class="toclink" href="#13">1.3 资源管理三大技术：复用 / 虚拟 / 抽象</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k009">
+  <img src="content/images/knowledge/ch1-k009.webp" alt="知识点插图：1.3 资源管理三大技术：复用 / 虚拟 / 抽象" loading="lazy">
+  <figcaption>插图：1.3 资源管理三大技术：复用 / 虚拟 / 抽象</figcaption>
+</figure>
+
 <p>这是 1.1 节的<strong>精髓</strong>，几乎每年考。三种技术解决的问题不同：</p>
 <table>
 <thead>
@@ -223,6 +268,11 @@
 </tbody>
 </table>
 <h3 id="1"><a class="toclink" href="#1">(1) 复用：分割共享一个物理资源</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k010">
+  <img src="content/images/knowledge/ch1-k010.webp" alt="知识点插图：(1) 复用：分割共享一个物理资源" loading="lazy">
+  <figcaption>插图：(1) 复用：分割共享一个物理资源</figcaption>
+</figure>
+
 <p>两种子方式：</p>
 <ul>
 <li><strong>空分复用</strong> — 把资源切成多个小单元，每个进程拿一块。例：内存被切成多个分区，A 进程占 100~200MB，B 占 200~400MB</li>
@@ -232,6 +282,11 @@
 </ul>
 <p>类比：教室是空分复用（每个人占一张桌子）；公共篮球场是时分复用（你打半小时下场让别人）。</p>
 <h3 id="2"><a class="toclink" href="#2">(2) 虚拟：创造&rdquo;虚假但好用&rdquo;的资源</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k011">
+  <img src="content/images/knowledge/ch1-k011.webp" alt="知识点插图：(2) 虚拟：创造&quot;虚假但好用&quot;的资源" loading="lazy">
+  <figcaption>插图：(2) 虚拟：创造&quot;虚假但好用&quot;的资源</figcaption>
+</figure>
+
 <p>通过转化、模拟、整合，把物理上的 1 个资源变成逻辑上的 N 个（或反过来）。</p>
 <p><strong>虚拟 vs 复用 的区别</strong>：复用是切分<strong>已存在的物理资源</strong>；虚拟是<strong>虚构假想的同类资源</strong>。</p>
 <p>经典例子：
@@ -241,6 +296,11 @@
 - <strong>虚拟屏幕</strong> (终端复用 / 多窗口)
 - <strong>虚拟信道</strong></p>
 <h3 id="3"><a class="toclink" href="#3">(3) 抽象：屏蔽硬件细节，提供易用接口</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k012">
+  <img src="content/images/knowledge/ch1-k012.webp" alt="知识点插图：(3) 抽象：屏蔽硬件细节，提供易用接口" loading="lazy">
+  <figcaption>插图：(3) 抽象：屏蔽硬件细节，提供易用接口</figcaption>
+</figure>
+
 <p><strong>抽象不解决&rdquo;数量&rdquo;问题，解决&rdquo;易用性&rdquo;问题。</strong> 通过软件包装硬件，让用户/程序员不需要懂硬件就能用。</p>
 <p>类比：你按手机相机 App 的拍照按钮，背后涉及 CMOS 传感器、ISP 处理、文件存储——但你只看到一个&rdquo;咔嚓&rdquo;按钮。这就是抽象。</p>
 <p><strong>单级抽象例子</strong>：把磁盘 I/O 包装成一个 <code>write()</code> 系统调用：</p>
@@ -259,6 +319,11 @@
 }
 </code></pre>
 <h3 id="4"><a class="toclink" href="#4">(4) 三技术的组合使用</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k013">
+  <img src="content/images/knowledge/ch1-k013.webp" alt="知识点插图：(4) 三技术的组合使用" loading="lazy">
+  <figcaption>插图：(4) 三技术的组合使用</figcaption>
+</figure>
+
 <p>实际系统对一类资源往往<strong>多种技术叠加</strong>：</p>
 <table>
 <thead>
@@ -283,6 +348,11 @@
 </tbody>
 </table>
 <h3 id="os_2"><a class="toclink" href="#os_2">OS 三大基础抽象（考点）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k014">
+  <img src="content/images/knowledge/ch1-k014.webp" alt="知识点插图：OS 三大基础抽象（考点）" loading="lazy">
+  <figcaption>插图：OS 三大基础抽象（考点）</figcaption>
+</figure>
+
 <p>OS 提供<strong>三个最核心的抽象</strong>，分别对应三种硬件资源：</p>
 <table>
 <thead>
@@ -316,6 +386,11 @@
 </code></pre>
 <p>文件依赖虚存（要把数据加载到地址空间），虚存依赖进程（要在某个执行上下文里访问）。</p>
 <h3 id="os_3"><a class="toclink" href="#os_3">OS 虚拟机概念</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k015">
+  <img src="content/images/knowledge/ch1-k015.webp" alt="知识点插图：OS 虚拟机概念" loading="lazy">
+  <figcaption>插图：OS 虚拟机概念</figcaption>
+</figure>
+
 <p><strong>OS 虚拟机 = 裸机 + 操作系统</strong></p>
 <p>裸机只懂机器语言，几乎不可用。加上 OS 后，程序员看到一台&rdquo;功能更强、更易用、更安全&rdquo;的机器，包含：</p>
 <ul>
@@ -327,6 +402,11 @@
 <p><strong>注意</strong>：这里说的&rdquo;OS 虚拟机&rdquo;是<strong>抽象层级上的虚拟机</strong>（OS 提供给应用的&rdquo;放大版机器&rdquo;），跟&rdquo;VMware/VirtualBox 那种虚拟机软件&rdquo;不是一回事——后者是 1.5 节会讲的&rdquo;虚拟机结构 OS&rdquo;。</p>
 <hr>
 <h2 id="14-os-os"><a class="toclink" href="#14-os-os">1.4 OS 接口：用户怎么和 OS 打交道</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k016">
+  <img src="content/images/knowledge/ch1-k016.webp" alt="知识点插图：1.4 OS 接口：用户怎么和 OS 打交道" loading="lazy">
+  <figcaption>插图：1.4 OS 接口：用户怎么和 OS 打交道</figcaption>
+</figure>
+
 <p>OS 提供<strong>两类接口</strong>：</p>
 <table>
 <thead>
@@ -350,6 +430,11 @@
 </tbody>
 </table>
 <h3 id="141"><a class="toclink" href="#141">1.4.1 程序接口与系统调用</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k017">
+  <img src="content/images/knowledge/ch1-k017.webp" alt="知识点插图：1.4.1 程序接口与系统调用" loading="lazy">
+  <figcaption>插图：1.4.1 程序接口与系统调用</figcaption>
+</figure>
+
 <p><strong>核心定义</strong>：内核提供一系列实现预定功能的<strong>内核函数</strong>，通过一组叫<strong>系统调用</strong>的接口暴露给用户程序。</p>
 <p><strong>关键性质</strong>：<strong>系统调用是应用程序获得 OS 服务的唯一途径</strong>。</p>
 <p>类比：去政府办事大厅，你不能自己跑进档案库翻文件（直接碰硬件），必须通过窗口（系统调用）让工作人员（内核）替你办——这样既保证安全（内核检查权限），又屏蔽细节（你不用懂内部流程）。</p>
@@ -411,6 +496,11 @@
 <p>调用链：<code>应用 → 库函数 (API) → 系统调用 → 内核</code></p>
 <p><strong>系统调用分类</strong>（6 类）：进程/作业管理、文件操作、设备管理、主存管理、信息维护、进程通信。</p>
 <h3 id="142"><a class="toclink" href="#142">1.4.2 操作接口与系统程序</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k018">
+  <img src="content/images/knowledge/ch1-k018.webp" alt="知识点插图：1.4.2 操作接口与系统程序" loading="lazy">
+  <figcaption>插图：1.4.2 操作接口与系统程序</figcaption>
+</figure>
+
 <p><strong>作业控制方式</strong>两种：</p>
 <table>
 <thead>
@@ -457,7 +547,17 @@
 - 其它工具</p>
 <hr>
 <h2 id="15-os-vs"><a class="toclink" href="#15-os-vs">1.5 OS 结构：单内核 vs 微内核</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k019">
+  <img src="content/images/knowledge/ch1-k019.webp" alt="知识点插图：1.5 OS 结构：单内核 vs 微内核" loading="lazy">
+  <figcaption>插图：1.5 OS 结构：单内核 vs 微内核</figcaption>
+</figure>
+
 <h3 id="151-os"><a class="toclink" href="#151-os">1.5.1 四种 OS 结构</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k020">
+  <img src="content/images/knowledge/ch1-k020.webp" alt="知识点插图：1.5.1 四种 OS 结构" loading="lazy">
+  <figcaption>插图：1.5.1 四种 OS 结构</figcaption>
+</figure>
+
 <p>教材列出 4 种结构，但<strong>只有单内核和微内核是当今主流</strong>，前两种主要是历史：</p>
 <table>
 <thead>
@@ -491,6 +591,11 @@
 </tbody>
 </table>
 <h3 id="152-kernel"><a class="toclink" href="#152-kernel">1.5.2 内核 (kernel) 概念</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k021">
+  <img src="content/images/knowledge/ch1-k021.webp" alt="知识点插图：1.5.2 内核 (kernel) 概念" loading="lazy">
+  <figcaption>插图：1.5.2 内核 (kernel) 概念</figcaption>
+</figure>
+
 <p><strong>定义</strong>：内核是作为可信软件，提供进程并发执行的基本功能和基本操作的一组程序模块。</p>
 <p><strong>性质</strong>：
 - 驻留<strong>内核空间</strong>，运行于<strong>核心态</strong>（特权模式）
@@ -508,6 +613,11 @@
 - 可使用特权指令</p>
 <p><strong>内核分两类</strong>：单内核（宏内核） vs 微内核——这是重点。</p>
 <h3 id="153-monolithic-kernel"><a class="toclink" href="#153-monolithic-kernel">1.5.3 单内核（宏内核, Monolithic Kernel）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k022">
+  <img src="content/images/knowledge/ch1-k022.webp" alt="知识点插图：1.5.3 单内核（宏内核, Monolithic Kernel）" loading="lazy">
+  <figcaption>插图：1.5.3 单内核（宏内核, Monolithic Kernel）</figcaption>
+</figure>
+
 <p>把内核<strong>整体作为一个大进程</strong>，所有内核服务运行在<strong>同一个地址空间</strong>，互相<strong>直接调用函数</strong>。</p>
 <p>代表：<strong>Linux</strong>、传统 UNIX。</p>
 <p>涵盖范围广：进程管理、内存管理、文件系统、设备驱动、网络协议栈——<strong>全部塞进内核</strong>。</p>
@@ -531,6 +641,11 @@
 </table>
 <p>类比：一家什么都自己做的小餐馆，老板兼厨师兼服务员，效率高但一个人病了店就关了。</p>
 <h3 id="154-microkernel"><a class="toclink" href="#154-microkernel">1.5.4 微内核 (Microkernel)</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k023">
+  <img src="content/images/knowledge/ch1-k023.webp" alt="知识点插图：1.5.4 微内核 (Microkernel)" loading="lazy">
+  <figcaption>插图：1.5.4 微内核 (Microkernel)</figcaption>
+</figure>
+
 <p>内核<strong>只保留最基本功能</strong>：进程调度、内存管理、IPC（进程间通信）。</p>
 <p>文件系统、设备驱动、网络协议栈——<strong>全部移到用户态</strong>，作为&rdquo;服务进程&rdquo;运行。进程间通过<strong>消息传递 (IPC)</strong> 通信。</p>
 <p>代表：<strong>Windows NT、Mac OS X (Darwin/Mach)、HarmonyOS、Minix、QNX</strong>。</p>
@@ -574,6 +689,11 @@
 </table>
 <p>类比：一家分工明确的连锁餐厅，前台只做接待（微内核），厨房、库房、清洁各自独立（用户态服务进程）；某天清洁出问题，餐厅照常开业。但每件事要经多次电话传递，效率不如夫妻店。</p>
 <h3 id="155-os"><a class="toclink" href="#155-os">1.5.5 OS 运行模型</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k024">
+  <img src="content/images/knowledge/ch1-k024.webp" alt="知识点插图：1.5.5 OS 运行模型" loading="lazy">
+  <figcaption>插图：1.5.5 OS 运行模型</figcaption>
+</figure>
+
 <p>OS 程序怎么在 CPU 上跑？两种模型：</p>
 <table>
 <thead>
@@ -595,7 +715,17 @@
 </table>
 <hr>
 <h2 id="16-os"><a class="toclink" href="#16-os">1.6 OS 发展历史</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k025">
+  <img src="content/images/knowledge/ch1-k025.webp" alt="知识点插图：1.6 OS 发展历史" loading="lazy">
+  <figcaption>插图：1.6 OS 发展历史</figcaption>
+</figure>
+
 <h3 id="_5"><a class="toclink" href="#_5">时间线</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k026">
+  <img src="content/images/knowledge/ch1-k026.webp" alt="知识点插图：时间线" loading="lazy">
+  <figcaption>插图：时间线</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -634,12 +764,22 @@
 </table>
 <p>每个阶段诞生的关键技术，都为了解决上一阶段的痛点。</p>
 <h3 id="161-194650s"><a class="toclink" href="#161-194650s">1.6.1 人工操作阶段（电子管，1946~50s）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k027">
+  <img src="content/images/knowledge/ch1-k027.webp" alt="知识点插图：1.6.1 人工操作阶段（电子管，1946~50s）" loading="lazy">
+  <figcaption>插图：1.6.1 人工操作阶段（电子管，1946~50s）</figcaption>
+</figure>
+
 <p><strong>工作方式</strong>：用户既是程序员又是操作员；用机器语言；通过纸带/卡片输入。</p>
 <p><strong>两个致命问题</strong>：
 - <strong>用户独占全机</strong> → 资源利用率极低
 - <strong>CPU 等用户</strong>（计算前后都要人工装卸纸带） → CPU 大量闲置</p>
 <p>幻灯片 107 的卡通画就是这个时代的写照：人坐在机器前，手工准备纸带、装入、取出。</p>
 <h3 id="162-50s-60s"><a class="toclink" href="#162-50s-60s">1.6.2 执行系统阶段（晶体管，50s 末~60s 中）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k028">
+  <img src="content/images/knowledge/ch1-k028.webp" alt="知识点插图：1.6.2 执行系统阶段（晶体管，50s 末~60s 中）" loading="lazy">
+  <figcaption>插图：1.6.2 执行系统阶段（晶体管，50s 末~60s 中）</figcaption>
+</figure>
+
 <p><strong>关键技术：脱机输入输出</strong></p>
 <p>把作业用磁带打包成&rdquo;作业批&rdquo;，由<strong>监督程序 (Monitor)</strong> 自动一个个跑，省去人工干预。</p>
 <p><strong>优点</strong>：自动化批处理 → 改善 CPU 和 I/O 设备利用率，提高吞吐量。</p>
@@ -648,6 +788,11 @@
 - 作业还得人工分类
 - 监督程序容易被用户程序破坏（那时还没有内存保护）</p>
 <h3 id="163-os-60s"><a class="toclink" href="#163-os-60s">1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k029">
+  <img src="content/images/knowledge/ch1-k029.webp" alt="知识点插图：1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）" loading="lazy">
+  <figcaption>插图：1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）</figcaption>
+</figure>
+
 <p><strong>关键技术：通道 + 中断</strong></p>
 <ul>
 <li><strong>通道</strong>：独立于 CPU 的 I/O 控制器，启动后能自己干活，<strong>实现 CPU 与 I/O 并行</strong></li>
@@ -655,6 +800,11 @@
 </ul>
 <p>有了这两件神器，<strong>多道程序设计</strong>才成为可能（这是后续所有 OS 概念的源头）。</p>
 <h3 id="_6"><a class="toclink" href="#_6">多道程序设计（核心概念，考点中的考点）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k030">
+  <img src="content/images/knowledge/ch1-k030.webp" alt="知识点插图：多道程序设计（核心概念，考点中的考点）" loading="lazy">
+  <figcaption>插图：多道程序设计（核心概念，考点中的考点）</figcaption>
+</figure>
+
 <p><strong>定义</strong>：允许多个程序<strong>同时进入主存</strong>并启动计算的方法。</p>
 <p><strong>起因</strong>：<strong>高速 CPU 与低速 I/O 设备不匹配</strong>——单道时 CPU 大量等 I/O，浪费严重。</p>
 <p><strong>根本目的</strong>：
@@ -667,6 +817,11 @@
 - <strong>宏观上并行</strong>：都处于运行状态，都没运行完
 - <strong>微观上串行</strong>：单 CPU 上各作业交替使用 CPU</p>
 <h4 id="vs"><a class="toclink" href="#vs">单道 vs 多道 对比（考点必出）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k031">
+  <img src="content/images/knowledge/ch1-k031.webp" alt="知识点插图：单道 vs 多道 对比（考点必出）" loading="lazy">
+  <figcaption>插图：单道 vs 多道 对比（考点必出）</figcaption>
+</figure>
+
 <p>把时间轴画出来一目了然（fallback slide-113 描述）：</p>
 <p><strong>单道批处理（程序排队）</strong>：</p>
 <pre><code>时间轴 →
@@ -712,6 +867,11 @@ C:           [CPU][I/O      ][CPU][I/O ]
 </table>
 <p><strong>记忆点</strong>：单道是&rdquo;程序排队&rdquo;；多道是&rdquo;程序并发&rdquo;。<strong>多道引入的关键就是&rdquo;当一个程序阻塞在 I/O 时，CPU 切到另一个就绪程序&rdquo;——这就是后续&rdquo;进程&rdquo;&ldquo;调度&rdquo;概念的源头</strong>。</p>
 <h4 id="cpu"><a class="toclink" href="#cpu">CPU 利用率公式（必背）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k032">
+  <img src="content/images/knowledge/ch1-k032.webp" alt="知识点插图：CPU 利用率公式（必背）" loading="lazy">
+  <figcaption>插图：CPU 利用率公式（必背）</figcaption>
+</figure>
+
 <p>设单个程序等待 I/O 的时间占运行时间比例为 p，主存中有 n 道程序时：</p>
 <pre><code>所有程序都在等 I/O 的概率 = p^n
 CPU 利用率 = 1 − p^n
@@ -732,18 +892,33 @@ CPU 利用率 = 1 − p^n
 - p=50%：n=4~5 才能拉满
 - p=80%：n=10 都没拉满（曲线还在涨）</p>
 <h4 id="_7"><a class="toclink" href="#_7">多道程序设计的代价</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k033">
+  <img src="content/images/knowledge/ch1-k033.webp" alt="知识点插图：多道程序设计的代价" loading="lazy">
+  <figcaption>插图：多道程序设计的代价</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>优点：提高 CPU/内存/I/O 利用率，提高吞吐量。
 缺点：单个作业的周转时间变长。</strong></p>
 </blockquote>
 <p>类比：一个人专心做一件事 30 分钟搞定；同时做三件事可能每件 1 小时——总产出多了，但每件慢了。</p>
 <h4 id="vs_1"><a class="toclink" href="#vs_1">多道程序 vs 多重处理</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k034">
+  <img src="content/images/knowledge/ch1-k034.webp" alt="知识点插图：多道程序 vs 多重处理" loading="lazy">
+  <figcaption>插图：多道程序 vs 多重处理</figcaption>
+</figure>
+
 <ul>
 <li><strong>多道程序设计</strong> = 软件层面的&rdquo;同时多个程序在主存&rdquo;，<strong>单 CPU 也能做</strong></li>
 <li><strong>多重处理 (multi-processor)</strong> = 硬件层面有<strong>多个物理 CPU</strong>，能真正并行</li>
 </ul>
 <p><strong>关系</strong>：多重处理系统<strong>必须采用</strong>多道程序设计才能发挥威力；但多道不需要多重处理。</p>
 <h4 id="3_1"><a class="toclink" href="#3_1">实现多道要解决的 3 个问题</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k035">
+  <img src="content/images/knowledge/ch1-k035.webp" alt="知识点插图：实现多道要解决的 3 个问题" loading="lazy">
+  <figcaption>插图：实现多道要解决的 3 个问题</figcaption>
+</figure>
+
 <ol>
 <li><strong>存储保护与程序浮动</strong>（多个程序在内存里不能互相破坏）</li>
 <li><strong>处理器的管理和调度</strong>（怎么决定哪个程序何时拿 CPU）</li>
@@ -751,6 +926,11 @@ CPU 利用率 = 1 − p^n
 </ol>
 <p>——这三个问题的解决方案就构成了<strong>现代 OS 的雏形</strong>。</p>
 <h3 id="164-70s"><a class="toclink" href="#164-70s">1.6.4 分时系统（70s）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k036">
+  <img src="content/images/knowledge/ch1-k036.webp" alt="知识点插图：1.6.4 分时系统（70s）" loading="lazy">
+  <figcaption>插图：1.6.4 分时系统（70s）</figcaption>
+</figure>
+
 <p><strong>为什么需要分时？</strong> 批处理两大痛点：
 - 用户交互性差（要等整个作业跑完才能调试）
 - 短作业周转慢（要排队等长作业跑完）</p>
@@ -777,6 +957,11 @@ CPU 利用率 = 1 − p^n
 - <strong>交互性</strong> — 用户能边算边看边改</p>
 <p><strong>代表系统</strong>：CTSS、TSS、Multics、<strong>UNIX</strong>。</p>
 <h4 id="vs_2"><a class="toclink" href="#vs_2">分时 vs 批处理（考点对比）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k037">
+  <img src="content/images/knowledge/ch1-k037.webp" alt="知识点插图：分时 vs 批处理（考点对比）" loading="lazy">
+  <figcaption>插图：分时 vs 批处理（考点对比）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -809,6 +994,11 @@ CPU 利用率 = 1 − p^n
 </tbody>
 </table>
 <h3 id="165"><a class="toclink" href="#165">1.6.5 实时系统</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k038">
+  <img src="content/images/knowledge/ch1-k038.webp" alt="知识点插图：1.6.5 实时系统" loading="lazy">
+  <figcaption>插图：1.6.5 实时系统</figcaption>
+</figure>
+
 <p><strong>实时操作系统 (RTOS)</strong>：对外部事件<strong>在规定时间内</strong>完成响应。</p>
 <p>类比：分时系统像饭馆——慢点没关系；实时系统像 ICU 监护仪——超时一秒可能出人命。</p>
 <p><strong>三种典型 RTOS</strong>：
@@ -817,6 +1007,11 @@ CPU 利用率 = 1 − p^n
 - 事务处理系统（银行业务）</p>
 <p><strong>处理流程</strong>：数据采集 → 加工处理 → 操作控制 → 反馈处理。</p>
 <h3 id="166"><a class="toclink" href="#166">1.6.6 进一步发展：网络/分布式/并行/嵌入式/云</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k039">
+  <img src="content/images/knowledge/ch1-k039.webp" alt="知识点插图：1.6.6 进一步发展：网络/分布式/并行/嵌入式/云" loading="lazy">
+  <figcaption>插图：1.6.6 进一步发展：网络/分布式/并行/嵌入式/云</figcaption>
+</figure>
+
 <p><strong>网络操作系统</strong>：在 OS 基础上加网络通信和服务功能（数据传输、资源管理、文件共享、网络管理、互操作）。</p>
 <p><strong>并行操作系统</strong> (multi-processor)：1975 前后出现。配多个 CPU，分两类：
 - <strong>SMP（对称多处理）</strong> — 每个 CPU 跑相同 OS，地位平等。<strong>现代多核 CPU 都是 SMP</strong>
@@ -885,6 +1080,11 @@ CPU 利用率 = 1 − p^n
 <p><strong>框计算 (Box Computing)</strong>：李彦宏 2009 年提出，强调前端用户需求；与云计算的&rdquo;后台资源整合&rdquo;是两端的设计哲学。</p>
 <hr>
 <h2 id="17-os"><a class="toclink" href="#17-os">1.7 常见 OS 类型一览</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k040">
+  <img src="content/images/knowledge/ch1-k040.webp" alt="知识点插图：1.7 常见 OS 类型一览" loading="lazy">
+  <figcaption>插图：1.7 常见 OS 类型一览</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -913,7 +1113,17 @@ CPU 利用率 = 1 − p^n
 </table>
 <hr>
 <h2 id="18"><a class="toclink" href="#18">1.8 章末考试要点速查</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k041">
+  <img src="content/images/knowledge/ch1-k041.webp" alt="知识点插图：1.8 章末考试要点速查" loading="lazy">
+  <figcaption>插图：1.8 章末考试要点速查</figcaption>
+</figure>
+
 <h3 id="_8"><a class="toclink" href="#_8">必背名词解释</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k042">
+  <img src="content/images/knowledge/ch1-k042.webp" alt="知识点插图：必背名词解释" loading="lazy">
+  <figcaption>插图：必背名词解释</figcaption>
+</figure>
+
 <ol>
 <li><strong>操作系统</strong>：管理资源、控制程序、改善人机界面、提供服务的系统软件</li>
 <li><strong>多道程序设计</strong>：允许多个程序同时进入主存并启动计算的方法</li>
@@ -926,6 +1136,11 @@ CPU 利用率 = 1 − p^n
 <li><strong>OS 虚拟机</strong>：裸机 + OS，对应用呈现的&rdquo;放大版&rdquo;机器</li>
 </ol>
 <h3 id="_9"><a class="toclink" href="#_9">必背概念辨析</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k043">
+  <img src="content/images/knowledge/ch1-k043.webp" alt="知识点插图：必背概念辨析" loading="lazy">
+  <figcaption>插图：必背概念辨析</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -969,9 +1184,19 @@ CPU 利用率 = 1 − p^n
 </tbody>
 </table>
 <h3 id="_10"><a class="toclink" href="#_10">必背计算</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k044">
+  <img src="content/images/knowledge/ch1-k044.webp" alt="知识点插图：必背计算" loading="lazy">
+  <figcaption>插图：必背计算</figcaption>
+</figure>
+
 <p><strong>CPU 利用率公式</strong>：1 − pⁿ（p=I/O 等待比例，n=多道道数）</p>
 <p>会算：给 p、n 求利用率；给目标利用率求 n。</p>
 <h3 id="_11"><a class="toclink" href="#_11">必背关系图</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k045">
+  <img src="content/images/knowledge/ch1-k045.webp" alt="知识点插图：必背关系图" loading="lazy">
+  <figcaption>插图：必背关系图</figcaption>
+</figure>
+
 <ol>
 <li><strong>四特性关系</strong>：并发是前提，派生虚拟、共享、异步</li>
 <li><strong>三抽象包含关系</strong>：文件 ⊃ 虚存 ⊃ 进程</li>
@@ -979,6 +1204,11 @@ CPU 利用率 = 1 − p^n
 <li><strong>系统调用流程</strong>：陷入指令 → 保护现场 → 查表 → 处理 → 恢复现场 → 返回</li>
 </ol>
 <h3 id="_12"><a class="toclink" href="#_12">高频简答题套路</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k046">
+  <img src="content/images/knowledge/ch1-k046.webp" alt="知识点插图：高频简答题套路" loading="lazy">
+  <figcaption>插图：高频简答题套路</figcaption>
+</figure>
+
 <ul>
 <li>&ldquo;OS 的定义和作用？&rdquo; → 一句话定义 + 四观点（服务用户/进程交互/系统实现/资源管理）</li>
 <li>&ldquo;OS 五大功能？&rdquo; → 处理器/存储/设备/文件/网络</li>
@@ -992,6 +1222,11 @@ CPU 利用率 = 1 − p^n
 </ul>
 <hr>
 <h2 id="_13"><a class="toclink" href="#_13">附录：对应原始幻灯片范围映射表</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k047">
+  <img src="content/images/knowledge/ch1-k047.webp" alt="知识点插图：附录：对应原始幻灯片范围映射表" loading="lazy">
+  <figcaption>插图：附录：对应原始幻灯片范围映射表</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -1048,6 +1283,11 @@ CPU 利用率 = 1 − p^n
 </blockquote>
 <hr>
 <h2 id="_14"><a class="toclink" href="#_14">写作中遗留的疑问点</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch1-k048">
+  <img src="content/images/knowledge/ch1-k048.webp" alt="知识点插图：写作中遗留的疑问点" loading="lazy">
+  <figcaption>插图：写作中遗留的疑问点</figcaption>
+</figure>
+
 <ol>
 <li><strong>OS 虚拟机 vs 虚拟机结构 OS</strong> —— 这是两个不同概念，但教材都用&rdquo;虚拟机&rdquo;一词，初学时易混。本笔记在 1.3 末尾做了提示，但课程后续是否会更明确区分需要留意。</li>
 <li><strong>图 slide-051</strong>（四特性关系图）我读出来是&rdquo;并发→虚拟/共享/异步&rdquo;的&rdquo;前提&rdquo;关系；但教材文字（幻灯片 50）只是平铺四特性。这种因果归纳是图作者的整理，考试若问&rdquo;四特性的关系&rdquo;建议按图回答，以&rdquo;并发是前提&rdquo;破题。</li>

@@ -66,6 +66,11 @@
 </blockquote>
 <hr>
 <h2 id="13"><a class="toclink" href="#13">一、章节地图（中 1/3）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k001">
+  <img src="content/images/knowledge/tutorial-2-k001.webp" alt="知识点插图：一、章节地图（中 1/3）" loading="lazy">
+  <figcaption>插图：一、章节地图（中 1/3）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -290,13 +295,33 @@
 </table>
 <hr>
 <h2 id="3-p121-128"><a class="toclink" href="#3-p121-128">二、第 3 章存储管理收尾（p121-128）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k002">
+  <img src="content/images/knowledge/tutorial-2-k002.webp" alt="知识点插图：二、第 3 章存储管理收尾（p121-128）" loading="lazy">
+  <figcaption>插图：二、第 3 章存储管理收尾（p121-128）</figcaption>
+</figure>
+
 <h3 id="343"><a class="toclink" href="#343">3.4.3 段页式存储管理</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k003">
+  <img src="content/images/knowledge/tutorial-2-k003.webp" alt="知识点插图：3.4.3 段页式存储管理" loading="lazy">
+  <figcaption>插图：3.4.3 段页式存储管理</figcaption>
+</figure>
+
 <h4 id="1"><a class="toclink" href="#1">1) 基本思想</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k004">
+  <img src="content/images/knowledge/tutorial-2-k004.webp" alt="知识点插图：1) 基本思想" loading="lazy">
+  <figcaption>插图：1) 基本思想</figcaption>
+</figure>
+
 <ul>
 <li>段页式 = 段式管理 + 页式管理。<strong>每一段不必占据连续的存储空间，而是存放在不连续的主存页框中</strong>。</li>
 <li>同样可以扩充成虚拟存储管理：只要装入进程的部分段、或这些段中的部分页面，进程就可以运行。</li>
 </ul>
 <h4 id="2"><a class="toclink" href="#2">2) 地址结构与转换</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k005">
+  <img src="content/images/knowledge/tutorial-2-k005.webp" alt="知识点插图：2) 地址结构与转换" loading="lazy">
+  <figcaption>插图：2) 地址结构与转换</figcaption>
+</figure>
+
 <pre><code>逻辑地址：[段号 s | 页号 p | 页内地址 d]
 </code></pre>
 <p>地址转换流程（图 3-18）：</p>
@@ -308,6 +333,11 @@
 <li>同时把 (段号, 页号, 页框号) 登记入快表</li>
 </ol>
 <h4 id="3-3-19"><a class="toclink" href="#3-3-19">3) 段页式虚拟存储（图 3-19 流程）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k006">
+  <img src="content/images/knowledge/tutorial-2-k006.webp" alt="知识点插图：3) 段页式虚拟存储（图 3-19 流程）" loading="lazy">
+  <figcaption>插图：3) 段页式虚拟存储（图 3-19 流程）</figcaption>
+</figure>
+
 <p>按逻辑地址查快表 → 否，查段表 → 段表是否在主存？否 → <strong>缺段中断</strong>；是 → 该页超出页表长？是 → <strong>越界中断</strong>；否 → 该页在主存？否 → <strong>缺页中断</strong>；是 → 形成物理地址。</p>
 <blockquote>
 <p>共四种中断：缺段、越界、缺页、保护。</p>
@@ -315,6 +345,11 @@
 <p><strong>对应学校 ch3（存储管理）末尾</strong></p>
 <hr>
 <h3 id="p123-124"><a class="toclink" href="#p123-124">第三章本章小结要点（p123-124）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k007">
+  <img src="content/images/knowledge/tutorial-2-k007.webp" alt="知识点插图：第三章本章小结要点（p123-124）" loading="lazy">
+  <figcaption>插图：第三章本章小结要点（p123-124）</figcaption>
+</figure>
+
 <ul>
 <li>存储管理基本功能：<strong>存储分配 / 地址转换 / 存储保护 / 存储共享 / 存储扩充</strong></li>
 <li>地址转换：通过静态或动态地址重定位将逻辑地址映射到物理地址</li>
@@ -323,6 +358,11 @@
 <li>关键问题：缺页中断、抖动（thrashing）、页面置换（OPT/FIFO/LRU/LFU/Clock）、Belady 异常</li>
 </ul>
 <h3 id="p124-128"><a class="toclink" href="#p124-128">习题三关键题（p124-128 摘录）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k008">
+  <img src="content/images/knowledge/tutorial-2-k008.webp" alt="知识点插图：习题三关键题（p124-128 摘录）" loading="lazy">
+  <figcaption>插图：习题三关键题（p124-128 摘录）</figcaption>
+</figure>
+
 <blockquote>
 <p>这些题型在校考中高频出现，建议重点记。</p>
 </blockquote>
@@ -342,8 +382,23 @@
 <p><strong>(24) 数组遍历顺序对缺页的影响</strong>：<code>int A[100][100]</code> 按行存储，3 页内存，每页 200 整数；按行遍历 vs 按列遍历</p>
 <hr>
 <h2 id="4-p129-162"><a class="toclink" href="#4-p129-162">三、第 4 章 设备管理（p129-162）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k009">
+  <img src="content/images/knowledge/tutorial-2-k009.webp" alt="知识点插图：三、第 4 章 设备管理（p129-162）" loading="lazy">
+  <figcaption>插图：三、第 4 章 设备管理（p129-162）</figcaption>
+</figure>
+
 <h3 id="41"><a class="toclink" href="#41">4.1 设备管理基础</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k010">
+  <img src="content/images/knowledge/tutorial-2-k010.webp" alt="知识点插图：4.1 设备管理基础" loading="lazy">
+  <figcaption>插图：4.1 设备管理基础</figcaption>
+</figure>
+
 <h4 id="411-p129-131"><a class="toclink" href="#411-p129-131">4.1.1 设备管理概述（p129-131）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k011">
+  <img src="content/images/knowledge/tutorial-2-k011.webp" alt="知识点插图：4.1.1 设备管理概述（p129-131）" loading="lazy">
+  <figcaption>插图：4.1.1 设备管理概述（p129-131）</figcaption>
+</figure>
+
 <ul>
 <li><strong>I/O 设备 = 外围设备 = 外部设备 = 外设</strong></li>
 <li>I/O 系统 = I/O 设备 + 接口电路 + 控制部件 + 通道 + 管理软件</li>
@@ -354,6 +409,11 @@
 <li>用途（输入/输出/存储）</li>
 </ul>
 <h4 id="412-io-p132-134"><a class="toclink" href="#412-io-p132-134">4.1.2 I/O 控制方式（p132-134）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k012">
+  <img src="content/images/knowledge/tutorial-2-k012.webp" alt="知识点插图：4.1.2 I/O 控制方式（p132-134）" loading="lazy">
+  <figcaption>插图：4.1.2 I/O 控制方式（p132-134）</figcaption>
+</figure>
+
 <p>四种控制方式按 CPU 参与程度递减排列：</p>
 <table>
 <thead>
@@ -393,13 +453,28 @@
 4. <strong>通道状态字（CSW）</strong> 寄存器保存通道 I/O 进展状况</p>
 <p>通道分类：<strong>字节多路通道 / 选择通道 / 数组多路通道</strong></p>
 <h4 id="413-iop135-138"><a class="toclink" href="#413-iop135-138">4.1.3 总线与 I/O（p135-138）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k013">
+  <img src="content/images/knowledge/tutorial-2-k013.webp" alt="知识点插图：4.1.3 总线与 I/O（p135-138）" loading="lazy">
+  <figcaption>插图：4.1.3 总线与 I/O（p135-138）</figcaption>
+</figure>
+
 <ul>
 <li>单总线 → 三级总线 → 含南北桥的多级总线 → 含 I/O 通道的多级总线</li>
 <li>总线层级和 Cache 层级共同决定计算机性能差距</li>
 </ul>
 <hr>
 <h3 id="42"><a class="toclink" href="#42">4.2 设备管理软件</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k014">
+  <img src="content/images/knowledge/tutorial-2-k014.webp" alt="知识点插图：4.2 设备管理软件" loading="lazy">
+  <figcaption>插图：4.2 设备管理软件</figcaption>
+</figure>
+
 <h4 id="421-io-p139-140"><a class="toclink" href="#421-io-p139-140">4.2.1 I/O 软件实现层次（p139-140）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k015">
+  <img src="content/images/knowledge/tutorial-2-k015.webp" alt="知识点插图：4.2.1 I/O 软件实现层次（p139-140）" loading="lazy">
+  <figcaption>插图：4.2.1 I/O 软件实现层次（p139-140）</figcaption>
+</figure>
+
 <p>I/O 软件设计四大目标/原则：
 1. <strong>设备无关性</strong>（编程时不关心物理设备）
 2. <strong>出错处理</strong>（尽量在低层处理，离硬件近）
@@ -415,11 +490,21 @@
 中断处理程序（最底层；唤醒等待设备的进程）
 </code></pre>
 <h4 id="422-p141-142"><a class="toclink" href="#422-p141-142">4.2.2 设备驱动程序（p141-142）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k016">
+  <img src="content/images/knowledge/tutorial-2-k016.webp" alt="知识点插图：4.2.2 设备驱动程序（p141-142）" loading="lazy">
+  <figcaption>插图：4.2.2 设备驱动程序（p141-142）</figcaption>
+</figure>
+
 <p>驱动程序三大功能：
 1. <strong>设备初始化</strong>（系统启动或传输前预置状态）
 2. <strong>执行设备驱动例程</strong>（启动设备、传输数据；通道系统还要生成通道指令）
 3. <strong>调用与执行中断处理程序</strong>（处理设备/控制器/通道的中断）</p>
 <h4 id="423-io-p143-145"><a class="toclink" href="#423-io-p143-145">4.2.3 I/O 缓冲区（p143-145）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k017">
+  <img src="content/images/knowledge/tutorial-2-k017.webp" alt="知识点插图：4.2.3 I/O 缓冲区（p143-145）" loading="lazy">
+  <figcaption>插图：4.2.3 I/O 缓冲区（p143-145）</figcaption>
+</figure>
+
 <p>为何要缓冲？
 - CPU 与设备速度不匹配
 - 逻辑记录 ≠ 物理记录
@@ -435,13 +520,28 @@
 3. 提供高速缓存操作（写缓存、延迟写、读缓存、预读）</p>
 <hr>
 <h3 id="43-p139-141"><a class="toclink" href="#43-p139-141">4.3 独占型外围设备的分配（p139-141）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k018">
+  <img src="content/images/knowledge/tutorial-2-k018.webp" alt="知识点插图：4.3 独占型外围设备的分配（p139-141）" loading="lazy">
+  <figcaption>插图：4.3 独占型外围设备的分配（p139-141）</figcaption>
+</figure>
+
 <h4 id="431"><a class="toclink" href="#431">4.3.1 设备独立性</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k019">
+  <img src="content/images/knowledge/tutorial-2-k019.webp" alt="知识点插图：4.3.1 设备独立性" loading="lazy">
+  <figcaption>插图：4.3.1 设备独立性</figcaption>
+</figure>
+
 <ul>
 <li><strong>设备独立性</strong>：用户应用与具体物理设备无关；增减设备无需改源码</li>
 <li>实现：用户用<strong>逻辑设备名</strong>，OS 维护&rdquo;逻辑名 ↔ 物理名&rdquo; 对照表</li>
 <li>优点：① 可移植 ② 容错（一台坏自动换） ③ 资源利用率高</li>
 </ul>
 <h4 id="432"><a class="toclink" href="#432">4.3.2 分配方式</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k020">
+  <img src="content/images/knowledge/tutorial-2-k020.webp" alt="知识点插图：4.3.2 分配方式" loading="lazy">
+  <figcaption>插图：4.3.2 分配方式</figcaption>
+</figure>
+
 <ul>
 <li><strong>静态分配</strong>：作业执行前分配，结束后回收。简单、防死锁，但利用率低（如打印机被占着不打）</li>
 <li><strong>动态分配</strong>：用时分配，用完即收。利用率高，<strong>但有死锁风险</strong></li>
@@ -452,7 +552,17 @@
 <p>数据结构：<strong>设备类表 + 设备表</strong></p>
 <hr>
 <h3 id="44-p143-148"><a class="toclink" href="#44-p143-148">4.4 共享型外围设备的驱动（p143-148）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k021">
+  <img src="content/images/knowledge/tutorial-2-k021.webp" alt="知识点插图：4.4 共享型外围设备的驱动（p143-148）" loading="lazy">
+  <figcaption>插图：4.4 共享型外围设备的驱动（p143-148）</figcaption>
+</figure>
+
 <h4 id="441-p143-144"><a class="toclink" href="#441-p143-144">4.4.1 磁盘驱动（p143-144）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k022">
+  <img src="content/images/knowledge/tutorial-2-k022.webp" alt="知识点插图：4.4.1 磁盘驱动（p143-144）" loading="lazy">
+  <figcaption>插图：4.4.1 磁盘驱动（p143-144）</figcaption>
+</figure>
+
 <p>磁盘读写周期组成（图 4-12）：</p>
 <pre><code>等待设备 + 等待通道 + 寻道 + 旋转延迟 + 数据传输
 </code></pre>
@@ -468,6 +578,11 @@
 <li><code>b/(rN)</code>：传输时间</li>
 </ul>
 <h4 id="442"><a class="toclink" href="#442">4.4.2 磁盘驱动调度</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k023">
+  <img src="content/images/knowledge/tutorial-2-k023.webp" alt="知识点插图：4.4.2 磁盘驱动调度" loading="lazy">
+  <figcaption>插图：4.4.2 磁盘驱动调度</figcaption>
+</figure>
+
 <h5 id="5"><a class="toclink" href="#5">移臂调度算法（5 种）</a></h5>
 <table>
 <thead>
@@ -519,7 +634,17 @@
 <p><strong>集簇读写</strong>：一次读多个扇区；一组逻辑数据放在同一柱面。</p>
 <hr>
 <h3 id="45-spoolingp148-152"><a class="toclink" href="#45-spoolingp148-152">4.5 虚拟设备 SPOOLing（p148-152）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k024">
+  <img src="content/images/knowledge/tutorial-2-k024.webp" alt="知识点插图：4.5 虚拟设备 SPOOLing（p148-152）" loading="lazy">
+  <figcaption>插图：4.5 虚拟设备 SPOOLing（p148-152）</figcaption>
+</figure>
+
 <h4 id="1_1"><a class="toclink" href="#1_1">1) 概念</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k025">
+  <img src="content/images/knowledge/tutorial-2-k025.webp" alt="知识点插图：1) 概念" loading="lazy">
+  <figcaption>插图：1) 概念</figcaption>
+</figure>
+
 <ul>
 <li><strong>SPOOL</strong> = Simultaneous Peripheral Operations On-Line</li>
 <li>又称&rdquo;假脱机&rdquo;操作：用磁盘 + 缓冲区模拟独占型物理设备</li>
@@ -527,6 +652,11 @@
 <li>是一种&rdquo;<strong>速度匹配技术</strong>&ldquo;</li>
 </ul>
 <h4 id="2-4-14"><a class="toclink" href="#2-4-14">2) 系统组成（图 4-14）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k026">
+  <img src="content/images/knowledge/tutorial-2-k026.webp" alt="知识点插图：2) 系统组成（图 4-14）" loading="lazy">
+  <figcaption>插图：2) 系统组成（图 4-14）</figcaption>
+</figure>
+
 <pre><code>          ┌─────────────┐
 输入设备 →│预输入程序   │→ 磁盘输入井（输入缓冲区）
           └─────────────┘
@@ -546,6 +676,11 @@
 </blockquote>
 <hr>
 <h3 id="4-p152-153"><a class="toclink" href="#4-p152-153">第 4 章本章小结（p152-153）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k027">
+  <img src="content/images/knowledge/tutorial-2-k027.webp" alt="知识点插图：第 4 章本章小结（p152-153）" loading="lazy">
+  <figcaption>插图：第 4 章本章小结（p152-153）</figcaption>
+</figure>
+
 <ul>
 <li>设备管理是 OS 中最庞杂、琐碎的部分</li>
 <li>I/O 设备 = 机械部件 + 电子部件（设备控制器）</li>
@@ -556,6 +691,11 @@
 <li>虚拟设备技术：SPOOLing 为代表</li>
 </ul>
 <h3 id="p154-156"><a class="toclink" href="#p154-156">习题四关键应用题（p154-156）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k028">
+  <img src="content/images/knowledge/tutorial-2-k028.webp" alt="知识点插图：习题四关键应用题（p154-156）" loading="lazy">
+  <figcaption>插图：习题四关键应用题（p154-156）</figcaption>
+</figure>
+
 <blockquote>
 <p>重点记 (1)(3)(11)(12)(14)(15) — 校考核心题型。</p>
 </blockquote>
@@ -581,8 +721,23 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 - 双缓冲：max(T1, T2+T3) × n + 首块开销</p>
 <hr>
 <h2 id="5-p163-196"><a class="toclink" href="#5-p163-196">四、第 5 章 文件管理（p163-196）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k029">
+  <img src="content/images/knowledge/tutorial-2-k029.webp" alt="知识点插图：四、第 5 章 文件管理（p163-196）" loading="lazy">
+  <figcaption>插图：四、第 5 章 文件管理（p163-196）</figcaption>
+</figure>
+
 <h3 id="51-p163-167"><a class="toclink" href="#51-p163-167">5.1 文件系统概述（p163-167）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k030">
+  <img src="content/images/knowledge/tutorial-2-k030.webp" alt="知识点插图：5.1 文件系统概述（p163-167）" loading="lazy">
+  <figcaption>插图：5.1 文件系统概述（p163-167）</figcaption>
+</figure>
+
 <h4 id="_1"><a class="toclink" href="#_1">文件四大概念</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k031">
+  <img src="content/images/knowledge/tutorial-2-k031.webp" alt="知识点插图：文件四大概念" loading="lazy">
+  <figcaption>插图：文件四大概念</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -613,6 +768,11 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 <p>关系：1 卷含多块；1 文件由多记录组成；1 块可存放多记录（<strong>成组</strong>）或 1 记录跨多块（<strong>跨块</strong>）。</p>
 </blockquote>
 <h4 id="_2"><a class="toclink" href="#_2">文件命名</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k032">
+  <img src="content/images/knowledge/tutorial-2-k032.webp" alt="知识点插图：文件命名" loading="lazy">
+  <figcaption>插图：文件命名</figcaption>
+</figure>
+
 <ul>
 <li>文件名 + 扩展名（用圆点分隔）</li>
 <li>MS-DOS：8.3 格式（8 字符名 + 3 字符扩展）</li>
@@ -621,18 +781,33 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 <li>扩展名习惯：<code>.com .exe .lib .bat .obj .txt .asm .c</code></li>
 </ul>
 <h4 id="_3"><a class="toclink" href="#_3">文件分类</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k033">
+  <img src="content/images/knowledge/tutorial-2-k033.webp" alt="知识点插图：文件分类" loading="lazy">
+  <figcaption>插图：文件分类</figcaption>
+</figure>
+
 <p>按用途：系统/库/用户文件
 按保护：只读/读写/不保护
 按数据类型：源程序文件/可执行文件
 按设备：磁盘/磁带/光盘/软盘
 按结构：逻辑结构 vs 物理结构</p>
 <h4 id="_4"><a class="toclink" href="#_4">引入文件的优点</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k034">
+  <img src="content/images/knowledge/tutorial-2-k034.webp" alt="知识点插图：引入文件的优点" loading="lazy">
+  <figcaption>插图：引入文件的优点</figcaption>
+</figure>
+
 <ol>
 <li>用户使用方便（按名存取）</li>
 <li>文件安全可靠（系统提供保护）</li>
 <li>系统管理统一（所有外存设备的信息抽象成文件）</li>
 </ol>
 <h4 id="5-1"><a class="toclink" href="#5-1">文件系统的组成（图 5-1）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k035">
+  <img src="content/images/knowledge/tutorial-2-k035.webp" alt="知识点插图：文件系统的组成（图 5-1）" loading="lazy">
+  <figcaption>插图：文件系统的组成（图 5-1）</figcaption>
+</figure>
+
 <pre><code>文件系统
 ├── 文件的组织
 │   ├── 组织方法：流式 / 记录式
@@ -646,12 +821,27 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 </code></pre>
 <hr>
 <h3 id="52-p167-172"><a class="toclink" href="#52-p167-172">5.2 文件的组织（p167-172）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k036">
+  <img src="content/images/knowledge/tutorial-2-k036.webp" alt="知识点插图：5.2 文件的组织（p167-172）" loading="lazy">
+  <figcaption>插图：5.2 文件的组织（p167-172）</figcaption>
+</figure>
+
 <h4 id="521"><a class="toclink" href="#521">5.2.1 文件的存储</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k037">
+  <img src="content/images/knowledge/tutorial-2-k037.webp" alt="知识点插图：5.2.1 文件的存储" loading="lazy">
+  <figcaption>插图：5.2.1 文件的存储</figcaption>
+</figure>
+
 <ul>
 <li>存储介质：磁带、光盘、磁盘</li>
 <li><strong>卷</strong> = 物理单位；<strong>块</strong> = 存储介质上由连续信息组成的区域</li>
 </ul>
 <h4 id="522"><a class="toclink" href="#522">5.2.2 文件的逻辑结构</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k038">
+  <img src="content/images/knowledge/tutorial-2-k038.webp" alt="知识点插图：5.2.2 文件的逻辑结构" loading="lazy">
+  <figcaption>插图：5.2.2 文件的逻辑结构</figcaption>
+</figure>
+
 <ul>
 <li><strong>流式文件</strong>（无结构，UNIX/Linux）：字节流，无逻辑记录</li>
 <li><strong>记录式文件</strong>（有结构）：由若干逻辑记录组成</li>
@@ -663,6 +853,11 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 <li><strong>成组</strong>（写）+ <strong>分解</strong>（读）需要 OS 提供 I/O 缓冲区</li>
 </ul>
 <h4 id="523"><a class="toclink" href="#523">5.2.3 文件的物理结构</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k039">
+  <img src="content/images/knowledge/tutorial-2-k039.webp" alt="知识点插图：5.2.3 文件的物理结构" loading="lazy">
+  <figcaption>插图：5.2.3 文件的物理结构</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -696,24 +891,49 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 </table>
 <p>DOS 的 <strong>FAT 文件系统</strong> 是连接文件改良：把每块的连接字抽出来集中放在文件分配表中。</p>
 <h4 id="_5"><a class="toclink" href="#_5">散列法冲突处理</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k040">
+  <img src="content/images/knowledge/tutorial-2-k040.webp" alt="知识点插图：散列法冲突处理" loading="lazy">
+  <figcaption>插图：散列法冲突处理</figcaption>
+</figure>
+
 <ul>
 <li>一种散列算法的好坏 = 不同关键字映射到相同地址的概率</li>
 <li>常见解决：开放地址 / 链地址 / 再散列</li>
 </ul>
 <hr>
 <h3 id="53-p172-178"><a class="toclink" href="#53-p172-178">5.3 文件目录（p172-178）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k041">
+  <img src="content/images/knowledge/tutorial-2-k041.webp" alt="知识点插图：5.3 文件目录（p172-178）" loading="lazy">
+  <figcaption>插图：5.3 文件目录（p172-178）</figcaption>
+</figure>
+
 <h4 id="1-fcb"><a class="toclink" href="#1-fcb">1) 文件控制块 FCB</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k042">
+  <img src="content/images/knowledge/tutorial-2-k042.webp" alt="知识点插图：1) 文件控制块 FCB" loading="lazy">
+  <figcaption>插图：1) 文件控制块 FCB</figcaption>
+</figure>
+
 <ul>
 <li>每个文件对应一个 FCB（保存文件属性）</li>
 <li>内容：文件名、类型、长度、物理位置、存取权限、时间戳…</li>
 </ul>
 <h4 id="2_1"><a class="toclink" href="#2_1">2) 文件目录</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k043">
+  <img src="content/images/knowledge/tutorial-2-k043.webp" alt="知识点插图：2) 文件目录" loading="lazy">
+  <figcaption>插图：2) 文件目录</figcaption>
+</figure>
+
 <ul>
 <li><strong>文件目录</strong> = FCB 的集合</li>
 <li><strong>目录文件</strong> = 把目录信息也存为文件</li>
 <li>一级目录、二级目录、<strong>树形（多级）目录</strong></li>
 </ul>
 <h4 id="3-5-8unix"><a class="toclink" href="#3-5-8unix">3) 树形层次目录（图 5-8，UNIX 示例）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k044">
+  <img src="content/images/knowledge/tutorial-2-k044.webp" alt="知识点插图：3) 树形层次目录（图 5-8，UNIX 示例）" loading="lazy">
+  <figcaption>插图：3) 树形层次目录（图 5-8，UNIX 示例）</figcaption>
+</figure>
+
 <pre><code>            /
    ┌───┬───┴───┬───┬───┐
   bin unix   user etc tmp dev
@@ -729,13 +949,28 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 <li><strong>相对路径名</strong>：从当前目录开始</li>
 </ul>
 <h4 id="4-mount"><a class="toclink" href="#4-mount">4) 嫁接（mount）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k045">
+  <img src="content/images/knowledge/tutorial-2-k045.webp" alt="知识点插图：4) 嫁接（mount）" loading="lazy">
+  <figcaption>插图：4) 嫁接（mount）</figcaption>
+</figure>
+
 <ul>
 <li>UNIX：通过 <code>mount</code> 把子树挂载到现有树的某个节点；最终形成一棵大树</li>
 <li>Windows：每个分区独立有自己的盘符 → &ldquo;森林&rdquo;结构</li>
 </ul>
 <hr>
 <h3 id="54-p176-179"><a class="toclink" href="#54-p176-179">5.4 文件的共享、保护和保密（p176-179）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k046">
+  <img src="content/images/knowledge/tutorial-2-k046.webp" alt="知识点插图：5.4 文件的共享、保护和保密（p176-179）" loading="lazy">
+  <figcaption>插图：5.4 文件的共享、保护和保密（p176-179）</figcaption>
+</figure>
+
 <h4 id="541"><a class="toclink" href="#541">5.4.1 文件共享</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k047">
+  <img src="content/images/knowledge/tutorial-2-k047.webp" alt="知识点插图：5.4.1 文件共享" loading="lazy">
+  <figcaption>插图：5.4.1 文件共享</figcaption>
+</figure>
+
 <h5 id="1_2"><a class="toclink" href="#1_2">1) 静态共享</a></h5>
 <ul>
 <li>多用户共享同一文件 → 文件的多个目录项指向同一 FCB</li>
@@ -754,17 +989,37 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 <li>缺点：搜索路径开销大</li>
 </ul>
 <h4 id="542"><a class="toclink" href="#542">5.4.2 文件保护</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k048">
+  <img src="content/images/knowledge/tutorial-2-k048.webp" alt="知识点插图：5.4.2 文件保护" loading="lazy">
+  <figcaption>插图：5.4.2 文件保护</figcaption>
+</figure>
+
 <ul>
 <li>控制存取权限：读 / 写 / 执行</li>
 <li>UNIX 模型：拥有者 / 组 / 其他用户 × rwx</li>
 </ul>
 <h4 id="543"><a class="toclink" href="#543">5.4.3 文件保密</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k049">
+  <img src="content/images/knowledge/tutorial-2-k049.webp" alt="知识点插图：5.4.3 文件保密" loading="lazy">
+  <figcaption>插图：5.4.3 文件保密</figcaption>
+</figure>
+
 <ul>
 <li>加密文件系统</li>
 </ul>
 <hr>
 <h3 id="55-p180-184"><a class="toclink" href="#55-p180-184">5.5 文件的使用（p180-184）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k050">
+  <img src="content/images/knowledge/tutorial-2-k050.webp" alt="知识点插图：5.5 文件的使用（p180-184）" loading="lazy">
+  <figcaption>插图：5.5 文件的使用（p180-184）</figcaption>
+</figure>
+
 <h4 id="551"><a class="toclink" href="#551">5.5.1 文件的存取方法</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k051">
+  <img src="content/images/knowledge/tutorial-2-k051.webp" alt="知识点插图：5.5.1 文件的存取方法" loading="lazy">
+  <figcaption>插图：5.5.1 文件的存取方法</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -795,6 +1050,11 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 <p>连接文件<strong>只能</strong>顺序存取（因为没有索引和连续地址）。</p>
 </blockquote>
 <h4 id="552"><a class="toclink" href="#552">5.5.2 文件的使用（系统调用）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k052">
+  <img src="content/images/knowledge/tutorial-2-k052.webp" alt="知识点插图：5.5.2 文件的使用（系统调用）" loading="lazy">
+  <figcaption>插图：5.5.2 文件的使用（系统调用）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -831,7 +1091,17 @@ c = ((x-1) % (k×m)) % k + 1 —— 由 x 求块号
 </table>
 <hr>
 <h3 id="56-p185-190"><a class="toclink" href="#56-p185-190">5.6 文件系统的实现（p185-190）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k053">
+  <img src="content/images/knowledge/tutorial-2-k053.webp" alt="知识点插图：5.6 文件系统的实现（p185-190）" loading="lazy">
+  <figcaption>插图：5.6 文件系统的实现（p185-190）</figcaption>
+</figure>
+
 <h4 id="561"><a class="toclink" href="#561">5.6.1 文件存储空间管理</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k054">
+  <img src="content/images/knowledge/tutorial-2-k054.webp" alt="知识点插图：5.6.1 文件存储空间管理" loading="lazy">
+  <figcaption>插图：5.6.1 文件存储空间管理</figcaption>
+</figure>
+
 <h5 id="_6"><a class="toclink" href="#_6">文件分配方式</a></h5>
 <table>
 <thead>
@@ -894,6 +1164,11 @@ ELSE
     第 1 单元置归还号
 </code></pre>
 <h4 id="562-5-14"><a class="toclink" href="#562-5-14">5.6.2 文件系统的实现层次（图 5-14）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k055">
+  <img src="content/images/knowledge/tutorial-2-k055.webp" alt="知识点插图：5.6.2 文件系统的实现层次（图 5-14）" loading="lazy">
+  <figcaption>插图：5.6.2 文件系统的实现层次（图 5-14）</figcaption>
+</figure>
+
 <pre><code>用户接口  → 接收系统调用，进行语法检查
 逻辑文件控制子系统  → 路径名搜索目录、建活动文件表、转逻辑记录到物理块号
 文件保护子系统  → 验证存取权限
@@ -902,6 +1177,11 @@ I/O 控制子系统  → 执行物理 I/O
 </code></pre>
 <hr>
 <h3 id="_8"><a class="toclink" href="#_8">第五章本章小结要点</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k056">
+  <img src="content/images/knowledge/tutorial-2-k056.webp" alt="知识点插图：第五章本章小结要点" loading="lazy">
+  <figcaption>插图：第五章本章小结要点</figcaption>
+</figure>
+
 <ul>
 <li>文件 = 一组相关信息按某种结构组织</li>
 <li>4 个核心概念：卷 / 块 / 记录 / 文件</li>
@@ -911,6 +1191,11 @@ I/O 控制子系统  → 执行物理 I/O
 <li>实现：FCB、空闲管理（位示图/成组连接）、5 层结构</li>
 </ul>
 <h3 id="p191-194"><a class="toclink" href="#p191-194">习题五关键题（p191-194）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k057">
+  <img src="content/images/knowledge/tutorial-2-k057.webp" alt="知识点插图：习题五关键题（p191-194）" loading="lazy">
+  <figcaption>插图：习题五关键题（p191-194）</figcaption>
+</figure>
+
 <p><strong>思考题精选</strong>：
 - (1) 给卷/块/记录/文件定义并说明关系
 - (4) 文件的物理结构有哪几种组织方式？
@@ -925,8 +1210,23 @@ I/O 控制子系统  → 执行物理 I/O
 - <strong>(19) 多级索引计算最大文件页数 + 读某页最少启动磁盘次数</strong>：每磁盘块 512B，地址 4B；前 10 个直接、后 3 个分别一级/二级/三级索引</p>
 <hr>
 <h2 id="6-p197-240"><a class="toclink" href="#6-p197-240">五、第 6 章 并发程序设计（p197-240，前半）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k058">
+  <img src="content/images/knowledge/tutorial-2-k058.webp" alt="知识点插图：五、第 6 章 并发程序设计（p197-240，前半）" loading="lazy">
+  <figcaption>插图：五、第 6 章 并发程序设计（p197-240，前半）</figcaption>
+</figure>
+
 <h3 id="61-p197-200"><a class="toclink" href="#61-p197-200">6.1 顺序与并发程序设计（p197-200）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k059">
+  <img src="content/images/knowledge/tutorial-2-k059.webp" alt="知识点插图：6.1 顺序与并发程序设计（p197-200）" loading="lazy">
+  <figcaption>插图：6.1 顺序与并发程序设计（p197-200）</figcaption>
+</figure>
+
 <h4 id="_9"><a class="toclink" href="#_9">顺序程序设计的特性</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k060">
+  <img src="content/images/knowledge/tutorial-2-k060.webp" alt="知识点插图：顺序程序设计的特性" loading="lazy">
+  <figcaption>插图：顺序程序设计的特性</figcaption>
+</figure>
+
 <ol>
 <li><strong>顺序性</strong>：严格按序执行</li>
 <li><strong>封闭性</strong>：独占资源，状态只由自身决定</li>
@@ -937,6 +1237,11 @@ I/O 控制子系统  → 执行物理 I/O
 <p>优点：编程调试方便；缺点：系统效率低。</p>
 </blockquote>
 <h4 id="_10"><a class="toclink" href="#_10">多道程序设计</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k061">
+  <img src="content/images/knowledge/tutorial-2-k061.webp" alt="知识点插图：多道程序设计" loading="lazy">
+  <figcaption>插图：多道程序设计</figcaption>
+</figure>
+
 <p>例（图 6-1）：<code>while(true) {input; process; output;}</code> 顺序结构 → 处理器利用率仅 35%。</p>
 <p>把程序拆为三部分：</p>
 <pre><code>while(true) { input; send; }
@@ -945,6 +1250,11 @@ while(true) { receive; output; }
 </code></pre>
 <p>→ I/O 设备和 CPU 并行 → 系统效率大幅提升。</p>
 <h4 id="_11"><a class="toclink" href="#_11">并发程序的特征（与顺序对应）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k062">
+  <img src="content/images/knowledge/tutorial-2-k062.webp" alt="知识点插图：并发程序的特征（与顺序对应）" loading="lazy">
+  <figcaption>插图：并发程序的特征（与顺序对应）</figcaption>
+</figure>
+
 <ol>
 <li><strong>失去封闭性</strong>：进程间资源共享 → 互相影响</li>
 <li><strong>失去可再现性</strong>：执行结果可能与速度有关 → &ldquo;<strong>与时间相关的错误</strong>&ldquo;</li>
@@ -952,7 +1262,17 @@ while(true) { receive; output; }
 </ol>
 <hr>
 <h3 id="62-p201-205"><a class="toclink" href="#62-p201-205">6.2 临界区管理（p201-205）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k063">
+  <img src="content/images/knowledge/tutorial-2-k063.webp" alt="知识点插图：6.2 临界区管理（p201-205）" loading="lazy">
+  <figcaption>插图：6.2 临界区管理（p201-205）</figcaption>
+</figure>
+
 <h4 id="621"><a class="toclink" href="#621">6.2.1 与时间相关的错误</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k064">
+  <img src="content/images/knowledge/tutorial-2-k064.webp" alt="知识点插图：6.2.1 与时间相关的错误" loading="lazy">
+  <figcaption>插图：6.2.1 与时间相关的错误</figcaption>
+</figure>
+
 <h5 id="1_3"><a class="toclink" href="#1_3">例 1：飞机票售票问题</a></h5>
 <pre><code>T1: X1 = A[j];              /* X1 = m, m&gt;0 */
 T2: X2 = A[j];              /* X2 = m */
@@ -975,6 +1295,11 @@ void return(int B) {
 </code></pre>
 <p>错误情景：进程 P 比较 B&gt;X 后被抢占；进程 Q 调用 return() 把 X 增大；但 P 还没进等待队列，Q 的&rdquo;释放等待进程&rdquo;等于空操作；之后 P 才进队列，从此<strong>永远等待</strong>。</p>
 <h4 id="622"><a class="toclink" href="#622">6.2.2 临界区与互斥</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k065">
+  <img src="content/images/knowledge/tutorial-2-k065.webp" alt="知识点插图：6.2.2 临界区与互斥" loading="lazy">
+  <figcaption>插图：6.2.2 临界区与互斥</figcaption>
+</figure>
+
 <ul>
 <li><strong>临界资源</strong>：必须互斥访问的共享资源</li>
 <li><strong>临界区</strong>：访问临界资源的代码段</li>
@@ -985,6 +1310,11 @@ void return(int B) {
   4. <strong>让权等待</strong>：等待时不应占用 CPU</li>
 </ul>
 <h4 id="623-p205"><a class="toclink" href="#623-p205">6.2.3 临界区管理的硬件实现（p205）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k066">
+  <img src="content/images/knowledge/tutorial-2-k066.webp" alt="知识点插图：6.2.3 临界区管理的硬件实现（p205）" loading="lazy">
+  <figcaption>插图：6.2.3 临界区管理的硬件实现（p205）</figcaption>
+</figure>
+
 <h5 id="1_4"><a class="toclink" href="#1_4">1) 关中断</a></h5>
 <ul>
 <li>进入临界区前关中断，退出后开中断</li>
@@ -1010,7 +1340,17 @@ void return(int B) {
 <p>类似 TS，原子地交换两个变量。</p>
 <hr>
 <h3 id="63-pv-p206-218"><a class="toclink" href="#63-pv-p206-218">6.3 PV 操作（p206-218）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k067">
+  <img src="content/images/knowledge/tutorial-2-k067.webp" alt="知识点插图：6.3 PV 操作（p206-218）" loading="lazy">
+  <figcaption>插图：6.3 PV 操作（p206-218）</figcaption>
+</figure>
+
 <h4 id="631-pv-p206-208"><a class="toclink" href="#631-pv-p206-208">6.3.1 信号量与 PV 原语（p206-208）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k068">
+  <img src="content/images/knowledge/tutorial-2-k068.webp" alt="知识点插图：6.3.1 信号量与 PV 原语（p206-208）" loading="lazy">
+  <figcaption>插图：6.3.1 信号量与 PV 原语（p206-208）</figcaption>
+</figure>
+
 <ul>
 <li>信号量 <code>s</code>：含 <code>value</code> 整数 + 等待队列 <code>list</code></li>
 <li>信号量分类：整型 / 记录型 / AND型 / 信号量集</li>
@@ -1036,6 +1376,11 @@ procedure V(semaphore s) {
 <li>P 操作通常意味&rdquo;申请资源&rdquo;；V 操作意味&rdquo;释放资源&rdquo;</li>
 </ol>
 <h4 id="632-pv-p209"><a class="toclink" href="#632-pv-p209">6.3.2 PV 解决进程互斥（p209）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k069">
+  <img src="content/images/knowledge/tutorial-2-k069.webp" alt="知识点插图：6.3.2 PV 解决进程互斥（p209）" loading="lazy">
+  <figcaption>插图：6.3.2 PV 解决进程互斥（p209）</figcaption>
+</figure>
+
 <pre><code class="language-c">semaphore mutex;
 mutex = 1;
 cobegin
@@ -1073,6 +1418,11 @@ cobegin
 coend
 </code></pre>
 <h4 id="633-pv-"><a class="toclink" href="#633-pv-">6.3.3 PV 解决进程同步（生产者-消费者）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k070">
+  <img src="content/images/knowledge/tutorial-2-k070.webp" alt="知识点插图：6.3.3 PV 解决进程同步（生产者-消费者）" loading="lazy">
+  <figcaption>插图：6.3.3 PV 解决进程同步（生产者-消费者）</figcaption>
+</figure>
+
 <h5 id="_14"><a class="toclink" href="#_14">单缓冲区（一生产者一消费者）</a></h5>
 <ul>
 <li>设两同步信号量 <code>sget</code>（缓冲区有产品数）、<code>sput</code>（缓冲区空位数）</li>
@@ -1109,6 +1459,11 @@ coend
 <h5 id="_15"><a class="toclink" href="#_15">多生产者多消费者</a></h5>
 <p>还要加一个 <code>mutex</code> 信号量保护 <code>B</code>、<code>putptr</code>、<code>getptr</code>。</p>
 <h4 id="634-p215-218"><a class="toclink" href="#634-p215-218">6.3.4 经典同步问题（p215-218）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k071">
+  <img src="content/images/knowledge/tutorial-2-k071.webp" alt="知识点插图：6.3.4 经典同步问题（p215-218）" loading="lazy">
+  <figcaption>插图：6.3.4 经典同步问题（p215-218）</figcaption>
+</figure>
+
 <ul>
 <li><strong>哲学家进餐</strong>：5 哲学家 5 筷子；防死锁策略：① 至多 4 人同时拿 ② 编号奇偶不同顺序 ③ 同时拿两根筷子（AND 信号量）</li>
 <li><strong>读者-写者</strong>：多读者可并发；写者独占</li>
@@ -1117,12 +1472,27 @@ coend
 </ul>
 <hr>
 <h3 id="64-p219-225"><a class="toclink" href="#64-p219-225">6.4 管程（p219-225）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k072">
+  <img src="content/images/knowledge/tutorial-2-k072.webp" alt="知识点插图：6.4 管程（p219-225）" loading="lazy">
+  <figcaption>插图：6.4 管程（p219-225）</figcaption>
+</figure>
+
 <h4 id="1_5"><a class="toclink" href="#1_5">1) 管程的提出动机</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k073">
+  <img src="content/images/knowledge/tutorial-2-k073.webp" alt="知识点插图：1) 管程的提出动机" loading="lazy">
+  <figcaption>插图：1) 管程的提出动机</figcaption>
+</figure>
+
 <ul>
 <li>PV 操作分散在程序各处 → 易错（顺序错、漏 V、漏 P）</li>
 <li>管程把&rdquo;共享变量 + 操作过程&rdquo;封装起来，编译器保证互斥</li>
 </ul>
 <h4 id="2_4"><a class="toclink" href="#2_4">2) 管程的组成</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k074">
+  <img src="content/images/knowledge/tutorial-2-k074.webp" alt="知识点插图：2) 管程的组成" loading="lazy">
+  <figcaption>插图：2) 管程的组成</figcaption>
+</figure>
+
 <pre><code>type 管程 = monitor {
     共享变量;
     条件变量;
@@ -1137,6 +1507,11 @@ coend
 <li><strong>条件变量</strong>操作：<code>wait(c)</code>、<code>signal(c)</code></li>
 </ul>
 <h4 id="3-hoare"><a class="toclink" href="#3-hoare">3) 霍尔（Hoare）管程</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k075">
+  <img src="content/images/knowledge/tutorial-2-k075.webp" alt="知识点插图：3) 霍尔（Hoare）管程" loading="lazy">
+  <figcaption>插图：3) 霍尔（Hoare）管程</figcaption>
+</figure>
+
 <ul>
 <li>实现需 <code>mutex</code>（互斥进入，初值 1）+ <code>next</code>（被释放进程阻塞自己，初值 0）+ <code>next_count</code></li>
 <li><code>signal</code> 唤醒等待进程后，调用 <code>signal</code> 的进程要阻塞在 <code>next</code> 上</li>
@@ -1149,10 +1524,20 @@ coend
 }
 </code></pre>
 <h4 id="4-hansen"><a class="toclink" href="#4-hansen">4) 汉森（Hansen）管程</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k076">
+  <img src="content/images/knowledge/tutorial-2-k076.webp" alt="知识点插图：4) 汉森（Hansen）管程" loading="lazy">
+  <figcaption>插图：4) 汉森（Hansen）管程</figcaption>
+</figure>
+
 <ul>
 <li><code>signal</code> 必须是过程体的最后一个操作 → 简化但限制大</li>
 </ul>
 <h4 id="5-"><a class="toclink" href="#5-">5) 管程实现读者-写者</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k077">
+  <img src="content/images/knowledge/tutorial-2-k077.webp" alt="知识点插图：5) 管程实现读者-写者" loading="lazy">
+  <figcaption>插图：5) 管程实现读者-写者</figcaption>
+</figure>
+
 <pre><code class="language-c">procedure end_read() {
     rc = rc - 1;
     if(rc == 0) signal(W, Wc, IM);
@@ -1165,28 +1550,58 @@ procedure end_write() {
 </code></pre>
 <hr>
 <h3 id="65-p226-235"><a class="toclink" href="#65-p226-235">6.5 进程通信（p226-235，前段）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k078">
+  <img src="content/images/knowledge/tutorial-2-k078.webp" alt="知识点插图：6.5 进程通信（p226-235，前段）" loading="lazy">
+  <figcaption>插图：6.5 进程通信（p226-235，前段）</figcaption>
+</figure>
+
 <h4 id="651"><a class="toclink" href="#651">6.5.1 通信级别</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k079">
+  <img src="content/images/knowledge/tutorial-2-k079.webp" alt="知识点插图：6.5.1 通信级别" loading="lazy">
+  <figcaption>插图：6.5.1 通信级别</figcaption>
+</figure>
+
 <ul>
 <li><strong>低级通信</strong>：信号量 + PV，只能传少量信息</li>
 <li><strong>高级通信</strong>：进程间通信机制（IPC）传递大量数据</li>
 </ul>
 <h4 id="652"><a class="toclink" href="#652">6.5.2 进程直接通信</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k080">
+  <img src="content/images/knowledge/tutorial-2-k080.webp" alt="知识点插图：6.5.2 进程直接通信" loading="lazy">
+  <figcaption>插图：6.5.2 进程直接通信</figcaption>
+</figure>
+
 <ul>
 <li>必须显式指定发/收方</li>
 <li>原语：<code>send(目标, 消息)</code> / <code>receive(源, 消息)</code></li>
 </ul>
 <h4 id="653"><a class="toclink" href="#653">6.5.3 进程间接通信（信箱）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k081">
+  <img src="content/images/knowledge/tutorial-2-k081.webp" alt="知识点插图：6.5.3 进程间接通信（信箱）" loading="lazy">
+  <figcaption>插图：6.5.3 进程间接通信（信箱）</figcaption>
+</figure>
+
 <ul>
 <li>通过中间实体——<strong>信箱</strong></li>
 <li>进程发消息到信箱；进程从信箱取消息</li>
 <li>解耦发送方/接收方</li>
 </ul>
 <h4 id="654"><a class="toclink" href="#654">6.5.4 共享存储系统</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k082">
+  <img src="content/images/knowledge/tutorial-2-k082.webp" alt="知识点插图：6.5.4 共享存储系统" loading="lazy">
+  <figcaption>插图：6.5.4 共享存储系统</figcaption>
+</figure>
+
 <ul>
 <li>多个进程映射同一物理页面到各自虚地址空间</li>
 <li>通信效率最高，但需 PV 同步保护</li>
 </ul>
 <h4 id="655"><a class="toclink" href="#655">6.5.5 基于流的通信（管道、套接字）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k083">
+  <img src="content/images/knowledge/tutorial-2-k083.webp" alt="知识点插图：6.5.5 基于流的通信（管道、套接字）" loading="lazy">
+  <figcaption>插图：6.5.5 基于流的通信（管道、套接字）</figcaption>
+</figure>
+
 <pre><code>发送进程 1 ─write(字节流)→ 管道/多路转接器/套接字 ─read(字节流)→ 接收进程 1
 发送进程 M ─write(字节流)→                                  ─read(字节流)→ 接收进程 N
 </code></pre>
@@ -1194,6 +1609,11 @@ procedure end_write() {
 <li>字节流；按 FIFO；自带缓冲；自动同步（满阻塞写，空阻塞读）</li>
 </ul>
 <h4 id="656-rpc"><a class="toclink" href="#656-rpc">6.5.6 RPC（远程过程调用）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k084">
+  <img src="content/images/knowledge/tutorial-2-k084.webp" alt="知识点插图：6.5.6 RPC（远程过程调用）" loading="lazy">
+  <figcaption>插图：6.5.6 RPC（远程过程调用）</figcaption>
+</figure>
+
 <ul>
 <li>把单机过程调用拓展到分布式环境</li>
 <li>客户机存根 client stub + 服务器存根 server stub</li>
@@ -1201,14 +1621,29 @@ procedure end_write() {
 </ul>
 <hr>
 <h3 id="66-p236-240"><a class="toclink" href="#66-p236-240">6.6 死锁（开端，p236-240 早段）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k085">
+  <img src="content/images/knowledge/tutorial-2-k085.webp" alt="知识点插图：6.6 死锁（开端，p236-240 早段）" loading="lazy">
+  <figcaption>插图：6.6 死锁（开端，p236-240 早段）</figcaption>
+</figure>
+
 <blockquote>
 <p>此处只覆盖到死锁概念与必要条件、银行家算法开篇；<strong>详见后段笔记</strong>。</p>
 </blockquote>
 <h4 id="_16"><a class="toclink" href="#_16">死锁定义</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k086">
+  <img src="content/images/knowledge/tutorial-2-k086.webp" alt="知识点插图：死锁定义" loading="lazy">
+  <figcaption>插图：死锁定义</figcaption>
+</figure>
+
 <blockquote>
 <p>一组进程中每个进程都在等待<strong>只能由该组其他进程才能引发</strong>的事件，这种永久等待状态称为死锁。</p>
 </blockquote>
 <h4 id="_17"><a class="toclink" href="#_17">死锁四必要条件</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k087">
+  <img src="content/images/knowledge/tutorial-2-k087.webp" alt="知识点插图：死锁四必要条件" loading="lazy">
+  <figcaption>插图：死锁四必要条件</figcaption>
+</figure>
+
 <ol>
 <li><strong>互斥使用</strong></li>
 <li><strong>占有并等待</strong>（hold and wait）</li>
@@ -1218,7 +1653,17 @@ procedure end_write() {
 <p>四条件<strong>同时满足才会</strong>死锁。打破任一条件即可避免死锁。</p>
 <hr>
 <h2 id="_18"><a class="toclink" href="#_18">六、跨章对比与关键思维</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k088">
+  <img src="content/images/knowledge/tutorial-2-k088.webp" alt="知识点插图：六、跨章对比与关键思维" loading="lazy">
+  <figcaption>插图：六、跨章对比与关键思维</figcaption>
+</figure>
+
 <h3 id="1_6"><a class="toclink" href="#1_6">1) 三大基础抽象的统一</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k089">
+  <img src="content/images/knowledge/tutorial-2-k089.webp" alt="知识点插图：1) 三大基础抽象的统一" loading="lazy">
+  <figcaption>插图：1) 三大基础抽象的统一</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -1250,16 +1695,31 @@ procedure end_write() {
 </tbody>
 </table>
 <h3 id="2_5"><a class="toclink" href="#2_5">2) &ldquo;缓冲匹配速度差&rdquo;的反复出现</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k090">
+  <img src="content/images/knowledge/tutorial-2-k090.webp" alt="知识点插图：2) &quot;缓冲匹配速度差&quot;的反复出现" loading="lazy">
+  <figcaption>插图：2) &quot;缓冲匹配速度差&quot;的反复出现</figcaption>
+</figure>
+
 <ul>
 <li>I/O 缓冲区（4.2.3）：CPU - 设备</li>
 <li>文件系统缓冲（5.6）：内存 - 磁盘</li>
 <li>SPOOLing 输入井 / 输出井（4.5）：作业 - 独占设备</li>
 </ul>
 <h3 id="3"><a class="toclink" href="#3">3) 互斥实现路径</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k091">
+  <img src="content/images/knowledge/tutorial-2-k091.webp" alt="知识点插图：3) 互斥实现路径" loading="lazy">
+  <figcaption>插图：3) 互斥实现路径</figcaption>
+</figure>
+
 <pre><code>关中断（最原始） → TS 指令 / Swap（硬件原子） → PV 操作（OS 原语） → 管程（语言级）
 </code></pre>
 <p>每往上一层抽象都更易用、更安全，但需要更多基础支撑。</p>
 <h3 id="4"><a class="toclink" href="#4">4) 必背计算公式</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k092">
+  <img src="content/images/knowledge/tutorial-2-k092.webp" alt="知识点插图：4) 必背计算公式" loading="lazy">
+  <figcaption>插图：4) 必背计算公式</figcaption>
+</figure>
+
 <pre><code>磁盘存取时间        Ta = Ts + 1/(2r) + b/(rN)
 块号正向转换        x = k×m×a + k×B + c
 块号反向转换        a = (x-1)/(km), b = ((x-1) mod km)/k, c = ((x-1) mod km) mod k + 1
@@ -1269,6 +1729,11 @@ procedure end_write() {
 </code></pre>
 <hr>
 <h2 id="_19"><a class="toclink" href="#_19">七、对应关系总览</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k093">
+  <img src="content/images/knowledge/tutorial-2-k093.webp" alt="知识点插图：七、对应关系总览" loading="lazy">
+  <figcaption>插图：七、对应关系总览</figcaption>
+</figure>
+
 <blockquote>
 <p>标注本笔记各节对应学校 OS 课程的章节。</p>
 </blockquote>
@@ -1304,6 +1769,11 @@ procedure end_write() {
 </table>
 <hr>
 <h2 id="_20"><a class="toclink" href="#_20">八、疑点与待补</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k094">
+  <img src="content/images/knowledge/tutorial-2-k094.webp" alt="知识点插图：八、疑点与待补" loading="lazy">
+  <figcaption>插图：八、疑点与待补</figcaption>
+</figure>
+
 <ol>
 <li><strong>银行家算法的完整步骤</strong>在本段末仅起头，详细推导需在后段笔记补全</li>
 <li><strong>p138 (img-138) 第 4 章封面页</strong>未读，但章节起首在 p129 已展开</li>
@@ -1319,6 +1789,11 @@ p121-123, 125, 128, 130, 133, 136, 139, 140, 143, 146, 150, 152, 155, 156, 158, 
 </blockquote>
 <hr>
 <h2 id="p121-240"><a class="toclink" href="#p121-240">九、图清理报告（p121-240）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-2-k095">
+  <img src="content/images/knowledge/tutorial-2-k095.webp" alt="知识点插图：九、图清理报告（p121-240）" loading="lazy">
+  <figcaption>插图：九、图清理报告（p121-240）</figcaption>
+</figure>
+
 <ul>
 <li><strong>范围</strong>：PDF 页 121-240（120 张候选），文件名格式 <code>img-{N}-{P}.jpg</code>（N=P+1）。</li>
 <li><strong>删除</strong>：79 张（纯文字段落、习题题面、过渡页、微视频二维码）— notes-part2 已用文字完整覆盖，无图片嵌入引用。</li>
