@@ -428,6 +428,32 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
   box-shadow: var(--shadow-sm);
 }
 
+.knowledge-figure {
+  margin: .75rem 0 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-sm);
+}
+.knowledge-figure img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.knowledge-figure figcaption {
+  margin: 0;
+  padding: .45rem .65rem .55rem;
+  color: var(--fg-mute);
+  border-top: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--bg-soft) 58%, transparent);
+  font-size: .82rem;
+  line-height: 1.45;
+}
+
 /* heading anchor permalinks (markdown.toc anchorlink=True) */
 .prose .headerlink {
   opacity: 0;

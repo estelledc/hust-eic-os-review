@@ -65,7 +65,17 @@
 </blockquote>
 <hr>
 <h2 id="6-66-p230-p239-img-241250"><a class="toclink" href="#6-66-p230-p239-img-241250">第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k001">
+  <img src="content/images/knowledge/tutorial-3-k001.webp" alt="知识点插图：第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）" loading="lazy">
+  <figcaption>插图：第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）</figcaption>
+</figure>
+
 <h3 id="661"><a class="toclink" href="#661">6.6.1 死锁的产生</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k002">
+  <img src="content/images/knowledge/tutorial-3-k002.webp" alt="知识点插图：6.6.1 死锁的产生" loading="lazy">
+  <figcaption>插图：6.6.1 死锁的产生</figcaption>
+</figure>
+
 <p><strong>死锁定义</strong>：一组进程处于死锁状态——若进程集合中每个进程都在等待&rdquo;只能由该集合中的另一个进程才能引发的事件&rdquo;，则称这组进程或系统发生了死锁。形式上：n 个进程 P1,&hellip;,Pn，每个 Pi 因申请不到资源 Rj 而处于等待状态，而 Rj 又被 Pi+1 占有，Pn 申请的资源被 P1 占有——形成永无解的循环等待。</p>
 <p><strong>死锁举例</strong>（教材 p231-233 给出 6 个例子，按死锁起因分类）：</p>
 <ul>
@@ -75,6 +85,11 @@
 <li>例 6 — 临时性资源使用不加限制：P1 等 P3 信件 S3 才发 S1；P2 等 P1 信件 S1 才发 S2；P3 等 P2 信件 S2 才发 S3 → 循环等待。</li>
 </ul>
 <h3 id="662"><a class="toclink" href="#662">6.6.2 死锁的防止</a></h3>
+<p><figure class="knowledge-figure" data-knowledge-id="tutorial-3-k003">
+  <img src="content/images/knowledge/tutorial-3-k003.webp" alt="知识点插图：6.6.2 死锁的防止" loading="lazy">
+<br>
+<figcaption>插图：6.6.2 死锁的防止</figcaption></p>
+</figure>
 <p><strong>Coffman（1971）总结的 4 个必要条件</strong>（前三个为必要不充分；第四个是前三个同时存在的结果）：</p>
 <table>
 <thead>
@@ -116,6 +131,11 @@
 <li><strong>层次分配策略</strong>：资源分多个层次，进程只能按层次顺序申请；要释放某层资源必须先释放更高层资源。破坏&rdquo;循环等待&rdquo;。比静态分配资源利用率高，但若进程使用资源的次序与系统层次次序不一致，仍有空闲浪费（例如规定磁带机层次低于绘图仪，进程使用绘图仪前必须先申请磁带机，导致磁带机长时间空闲）。</li>
 </ol>
 <h3 id="663-dijkstra-1965"><a class="toclink" href="#663-dijkstra-1965">6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k004">
+  <img src="content/images/knowledge/tutorial-3-k004.webp" alt="知识点插图：6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）" loading="lazy">
+  <figcaption>插图：6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）</figcaption>
+</figure>
+
 <p><strong>思想</strong>：在为申请者分配资源前先测试系统状态，若分配会产生死锁则拒绝；否则分配。仅当申请者可能无条件归还它所申请的全部资源时，才分配资源。</p>
 <p><strong>经典例题</strong>（教材 p236）：</p>
 <p>设系统有 3 个进程 P、Q、R，共 10 个同类资源。当前分配状态：</p>
@@ -153,6 +173,11 @@
 <p><strong>正确性证明思想</strong>：按银行家算法分配后，系统中至少存在一个进程，单独让它执行下去能获其全部所需资源 → 它可结束并归还资源；归还后又可让下一个进程满足……所以不会有进程永远等待。</p>
 <p><strong>缺点</strong>：保守、资源利用率低；且每次分配前都要检查每个进程对各类资源的最大需求，<strong>时间开销大</strong>。</p>
 <h3 id="664"><a class="toclink" href="#664">6.6.4 死锁的检测</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k005">
+  <img src="content/images/knowledge/tutorial-3-k005.webp" alt="知识点插图：6.6.4 死锁的检测" loading="lazy">
+  <figcaption>插图：6.6.4 死锁的检测</figcaption>
+</figure>
+
 <p><strong>思路</strong>：不限制资源分配，但定时跑一个死锁检测程序，发现死锁则解除。</p>
 <p><strong>两张表格法</strong>：</p>
 <ul>
@@ -178,6 +203,11 @@
 <p>检测死锁是否出现 + 死锁后实际恢复的代价 &gt; 防止/避免的代价；但死锁不常出现时这种做法仍值得。<strong>检测代价依赖于频率，恢复代价是时间损失。</strong></p>
 </blockquote>
 <h3 id="66-p239"><a class="toclink" href="#66-p239">6.6 本章小结（书 p239）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k006">
+  <img src="content/images/knowledge/tutorial-3-k006.webp" alt="知识点插图：6.6 本章小结（书 p239）" loading="lazy">
+  <figcaption>插图：6.6 本章小结（书 p239）</figcaption>
+</figure>
+
 <p>并发进程间存在两种基本关系：<strong>竞争</strong>（互斥）和<strong>协作</strong>（同步）。</p>
 <ul>
 <li>并发进程中与互斥共享变量有关的程序段称为<strong>临界区</strong>。实现临界区管理的硬件方式（关中断、测试并设置指令等）最大缺点是采用忙式等待测试，<strong>浪费 CPU 时间</strong>。</li>
@@ -192,6 +222,11 @@
 <li><strong>死锁</strong>：一组并发进程因等待其他进程占有资源而永远不能向前推进的僵化状态。4 个必要条件：互斥、占有和等待、不剥夺、循环等待。三种解决策略：死锁防止、死锁避免、死锁检测和解除。</li>
 </ul>
 <h3 id="p240-246-img-251257"><a class="toclink" href="#p240-246-img-251257">习题六（书 p240-246 / img-251~257）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k007">
+  <img src="content/images/knowledge/tutorial-3-k007.webp" alt="知识点插图：习题六（书 p240-246 / img-251~257）" loading="lazy">
+  <figcaption>插图：习题六（书 p240-246 / img-251~257）</figcaption>
+</figure>
+
 <p><strong>1. 思考题（部分）</strong>：（5）进程互斥与进程同步的异同；（7）临界区管理的基本原则；（10）为什么 PV 操作必须是不可分割的原语操作；（11）管程与进程的不同点；（13）霍尔（Hoare）管程的实现方法；（17）产生死锁的必要条件；（18）死锁防止策略列举；（19）银行家算法基本思想；（20）如何判断系统内是否发生死锁。</p>
 <p><strong>2. 应用题精选</strong>（共 24 题，涵盖 PV 与管程经典综合）：</p>
 <ul>
@@ -221,12 +256,27 @@
 </ul>
 <hr>
 <h2 id="7-p247-p302-img-258313"><a class="toclink" href="#7-p247-p302-img-258313">第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）</a></h2>
+<p><figure class="knowledge-figure" data-knowledge-id="tutorial-3-k008">
+  <img src="content/images/knowledge/tutorial-3-k008.webp" alt="知识点插图：第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）" loading="lazy">
+<br>
+<figcaption>插图：第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）</figcaption></p>
+</figure>
 <blockquote>
 <p>本章主线：网络体系结构 → 网络/分布式 OS → 云计算/虚拟化 → 移动终端 OS → 网络安全 → 区块链。</p>
 <p>对应学校 ch6（如学校把网络与分布式合并到 ch6）或单独讲座章节。</p>
 </blockquote>
 <h3 id="71-p247-p256"><a class="toclink" href="#71-p247-p256">7.1 计算机网络与网络操作系统（书 p247-p256）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k009">
+  <img src="content/images/knowledge/tutorial-3-k009.webp" alt="知识点插图：7.1 计算机网络与网络操作系统（书 p247-p256）" loading="lazy">
+  <figcaption>插图：7.1 计算机网络与网络操作系统（书 p247-p256）</figcaption>
+</figure>
+
 <h4 id="711"><a class="toclink" href="#711">7.1.1 网络体系结构</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k010">
+  <img src="content/images/knowledge/tutorial-3-k010.webp" alt="知识点插图：7.1.1 网络体系结构" loading="lazy">
+  <figcaption>插图：7.1.1 网络体系结构</figcaption>
+</figure>
+
 <p><strong>ARPANET</strong>（advanced research projects agency network）— 计算机网络发展里程碑，由通信子网和资源子网两层结构组成，含纠错、路由选择、分组交换、流量控制等。</p>
 <p><strong>OSI-RM</strong>（开放系统互联参考模型，ISO 1980 年代）— 7 层标准化通信体系：物理层 / 数据链路层 / 网络层 / 传输层 / 会话层 / 表示层 / 应用层。每层附加层头，最终从物理层发到目标系统再逐层剥离。</p>
 <p><strong>TCP/IP</strong>（实际工业标准）— 1983 年起在 UNIX BSD 上使用，并非国际标准但简洁实用：</p>
@@ -236,6 +286,11 @@
 <li>三层结构：① 应用层（对应 OSI 应用层 + 表示层 + 会话层），② 传输层 TCP，③ 网际层 IP</li>
 </ul>
 <h4 id="712-nos"><a class="toclink" href="#712-nos">7.1.2 网络操作系统（NOS）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k011">
+  <img src="content/images/knowledge/tutorial-3-k011.webp" alt="知识点插图：7.1.2 网络操作系统（NOS）" loading="lazy">
+  <figcaption>插图：7.1.2 网络操作系统（NOS）</figcaption>
+</figure>
+
 <p><strong>典型特征</strong>：① 硬件独立性 ② 多用户支持 ③ 支持网络实用程序 ④ 多种客户端支持 ⑤ 单一逻辑目录服务 ⑥ 多种增值服务（文件/打印/通信/数据库/WWW）⑦ 可操作性。</p>
 <p><strong>三种模式</strong>：</p>
 <table>
@@ -266,6 +321,11 @@
 </table>
 <p>C/S 优点：数据分布存储、处理分布、应用编程方便。</p>
 <h4 id="713-nfs"><a class="toclink" href="#713-nfs">7.1.3 网络文件系统（NFS）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k012">
+  <img src="content/images/knowledge/tutorial-3-k012.webp" alt="知识点插图：7.1.3 网络文件系统（NFS）" loading="lazy">
+  <figcaption>插图：7.1.3 网络文件系统（NFS）</figcaption>
+</figure>
+
 <p><strong>Sun NFS</strong> — 构建于 TCP/IP，广泛用于 UNIX 及其他 POSIX 系统。</p>
 <p><strong>结构</strong>：每个 NFS 服务器输出一个或多个目录供远程客户机访问。客户机将远程目录&rdquo;安装（mount）&rdquo;到本地目录层次中——对客户机程序而言文件本地/远程访问无差别。</p>
 <p><strong>关键数据结构 — VFS（virtual file system）虚拟文件系统层</strong>：每个打开的文件对应一个 v 节点（v-node）。v 节点指针指向：</p>
@@ -280,10 +340,25 @@
 <li><code>read/write</code>：通常以较大块（<strong>8 KB</strong>）传输；客户机有&rdquo;提前读&rdquo;机制提高性能；写采用&rdquo;延迟写&rdquo;——若 write 提供数据 &lt; 8 KB，先在本地累积，整块满后才传到服务器；文件关闭时统一发送</li>
 </ul>
 <h3 id="72-p256-p266"><a class="toclink" href="#72-p256-p266">7.2 分布式操作系统（书 p256-p266）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k013">
+  <img src="content/images/knowledge/tutorial-3-k013.webp" alt="知识点插图：7.2 分布式操作系统（书 p256-p266）" loading="lazy">
+  <figcaption>插图：7.2 分布式操作系统（书 p256-p266）</figcaption>
+</figure>
+
 <h4 id="721"><a class="toclink" href="#721">7.2.1 概念与特点</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k014">
+  <img src="content/images/knowledge/tutorial-3-k014.webp" alt="知识点插图：7.2.1 概念与特点" loading="lazy">
+  <figcaption>插图：7.2.1 概念与特点</figcaption>
+</figure>
+
 <p>分布式操作系统建立在&rdquo;松散耦合的多台计算机&rdquo;上，但本身是<strong>紧密耦合软件</strong>——它把整个系统作为一个整体管理，进程可以在任意节点执行而对用户透明。</p>
 <p><strong>与网络 OS 的区别</strong>：网络 OS 强调每台机器独立操作系统，仅协议互联；分布式 OS 强调统一系统映像。</p>
 <h4 id="722"><a class="toclink" href="#722">7.2.2 分布式进程通信</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k015">
+  <img src="content/images/knowledge/tutorial-3-k015.webp" alt="知识点插图：7.2.2 分布式进程通信" loading="lazy">
+  <figcaption>插图：7.2.2 分布式进程通信</figcaption>
+</figure>
+
 <p>需解决：① 目标进程寻址 ② 通信原语设计。</p>
 <p><strong>寻址法</strong>：① 机器号+进程号 ② 广播寻址 ③ 名字服务器寻址。</p>
 <p><strong>同步/异步通信原语</strong>：基本形式 <code>Send(P, Message)</code>、<code>Receive(Q, Buffer)</code>。</p>
@@ -313,6 +388,11 @@
 - 客户：socket() → connect() → send()/recv() → closesocket()</p>
 <p>服务器收到客户请求后通常<strong>创建子进程</strong>响应，自己继续 listen，形成主从服务器并发。</p>
 <h4 id="723-dsm"><a class="toclink" href="#723-dsm">7.2.3 分布式共享内存（DSM）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k016">
+  <img src="content/images/knowledge/tutorial-3-k016.webp" alt="知识点插图：7.2.3 分布式共享内存（DSM）" loading="lazy">
+  <figcaption>插图：7.2.3 分布式共享内存（DSM）</figcaption>
+</figure>
+
 <p>李凯（1986 年）提出 <strong>distributed shared memory</strong> 概念：在物理分散的内存上，给程序员一个逻辑统一的地址空间，任何处理器都能直接读写。优点：内存可扩充、共享内存结构通用、可移植、易编程。</p>
 <p><strong>一致性模型</strong>（性能从严到松）：</p>
 <table>
@@ -352,6 +432,11 @@
 <p><strong>释放一致性条件</strong>：执行共享变量读写前，进程之前的 acquire 必须成功完成；允许 release 前，之前的所有读写必须完成；acquire 和 release 满足处理器一致性（不需顺序一致）。</p>
 <p><strong>基于页的 DSM 设计</strong>：用主存管理单元 + OS 软件模拟多处理器缓存——为每个机器提供线性分页内存，页可在机器间移动。地址空间分为页块（chunks），分布在所有处理器上。访问非本地地址 → 陷入指令 → DSM 软件取来包含该地址的数据块 → 重启故障指令。</p>
 <h4 id="724"><a class="toclink" href="#724">7.2.4 分布式事务处理</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k017">
+  <img src="content/images/knowledge/tutorial-3-k017.webp" alt="知识点插图：7.2.4 分布式事务处理" loading="lazy">
+  <figcaption>插图：7.2.4 分布式事务处理</figcaption>
+</figure>
+
 <p><strong>两阶段提交（2PC）</strong>：</p>
 <ul>
 <li>阶段 1（投票）：协调者发 Vote-Request → 参与者响应 Vote-Commit / Vote-Abort</li>
@@ -366,7 +451,17 @@
 </ul>
 <p>崩溃的参与者重启后若发现自己已在 Precommit，可以独立做出 Commit 决定（与其他 Ready 状态者也能达成一致），<strong>避免阻塞</strong>。但实际中 2PC 阻塞情况很少，3PC 应用不多。</p>
 <h3 id="73-p266-p273"><a class="toclink" href="#73-p266-p273">7.3 云计算与虚拟化（书 p266-p273）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k018">
+  <img src="content/images/knowledge/tutorial-3-k018.webp" alt="知识点插图：7.3 云计算与虚拟化（书 p266-p273）" loading="lazy">
+  <figcaption>插图：7.3 云计算与虚拟化（书 p266-p273）</figcaption>
+</figure>
+
 <h4 id="731"><a class="toclink" href="#731">7.3.1 云计算</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k019">
+  <img src="content/images/knowledge/tutorial-3-k019.webp" alt="知识点插图：7.3.1 云计算" loading="lazy">
+  <figcaption>插图：7.3.1 云计算</figcaption>
+</figure>
+
 <p><strong>起源</strong>：60 年代麦卡锡（McCarthy）将计算能力作为像水电一样的公用资源。<strong>云计算</strong>是分布式计算、并行计算、效用计算、网络存储、虚拟化、负载均衡等技术与计算机网络融合的产物。</p>
 <p><strong>服务模式</strong>：</p>
 <ul>
@@ -376,6 +471,11 @@
 </ul>
 <p><strong>部署模式</strong>：公有云 / 私有云 / 混合云 / 社区云。</p>
 <h4 id="732"><a class="toclink" href="#732">7.3.2 虚拟化</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k020">
+  <img src="content/images/knowledge/tutorial-3-k020.webp" alt="知识点插图：7.3.2 虚拟化" loading="lazy">
+  <figcaption>插图：7.3.2 虚拟化</figcaption>
+</figure>
+
 <p><strong>关键概念 — Hypervisor / VMM（virtual machine monitor）</strong>：位于硬件与虚拟机操作系统之间，承担硬件资源的管理与分配。</p>
 <p><strong>全虚拟化 vs 半虚拟化</strong>：</p>
 <ul>
@@ -397,13 +497,38 @@
 </li>
 </ol>
 <h3 id="74-p273-p286"><a class="toclink" href="#74-p273-p286">7.4 移动终端操作系统（书 p273-p286）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k021">
+  <img src="content/images/knowledge/tutorial-3-k021.webp" alt="知识点插图：7.4 移动终端操作系统（书 p273-p286）" loading="lazy">
+  <figcaption>插图：7.4 移动终端操作系统（书 p273-p286）</figcaption>
+</figure>
+
 <h4 id="741"><a class="toclink" href="#741">7.4.1 移动终端处理器结构</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k022">
+  <img src="content/images/knowledge/tutorial-3-k022.webp" alt="知识点插图：7.4.1 移动终端处理器结构" loading="lazy">
+  <figcaption>插图：7.4.1 移动终端处理器结构</figcaption>
+</figure>
+
 <p><strong>GPU vs CPU</strong>：CPU 擅长逻辑控制和串行计算，GPU 擅长大规模并行浮点运算。</p>
 <p><strong>混合架构</strong>：移动 SoC 同时集成 CPU 核心 + GPU 核心 + 专用加速器（NPU、ISP 等）。</p>
 <p><strong>GPU 编程库</strong>：OpenGL ES（移动端）、Metal（iOS）、Vulkan、CUDA（NVIDIA）等。</p>
 <h4 id="742"><a class="toclink" href="#742">7.4.2 触摸屏与人机交互</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k023">
+  <img src="content/images/knowledge/tutorial-3-k023.webp" alt="知识点插图：7.4.2 触摸屏与人机交互" loading="lazy">
+  <figcaption>插图：7.4.2 触摸屏与人机交互</figcaption>
+</figure>
+
 <h4 id="743"><a class="toclink" href="#743">7.4.3 移动终端的无线通信</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k024">
+  <img src="content/images/knowledge/tutorial-3-k024.webp" alt="知识点插图：7.4.3 移动终端的无线通信" loading="lazy">
+  <figcaption>插图：7.4.3 移动终端的无线通信</figcaption>
+</figure>
+
 <h4 id="744"><a class="toclink" href="#744">7.4.4 移动终端的操作系统实例</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k025">
+  <img src="content/images/knowledge/tutorial-3-k025.webp" alt="知识点插图：7.4.4 移动终端的操作系统实例" loading="lazy">
+  <figcaption>插图：7.4.4 移动终端的操作系统实例</figcaption>
+</figure>
+
 <p><strong>1. Android</strong>（Google 2007 年发布 SDK，2008 年 9 月 1.0）</p>
 <p><strong>分层结构</strong>（图 7-16，自顶向下）：</p>
 <table>
@@ -482,11 +607,26 @@
 </table>
 <p>底层结构提供文件系统、内存管理、I/O 等基础服务；高层结构建立在低层之上，提供 UI 控件、文件访问等具体服务。可触摸层主要核心是 <strong>UIKit.Framework</strong>——应用界面所有组件都由它呈现。核心服务层在核心 OS 层基础上提供更丰富的功能。</p>
 <h3 id="75-p284-p294"><a class="toclink" href="#75-p284-p294">7.5 网络环境下的操作系统安全（书 p284-p294）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k026">
+  <img src="content/images/knowledge/tutorial-3-k026.webp" alt="知识点插图：7.5 网络环境下的操作系统安全（书 p284-p294）" loading="lazy">
+  <figcaption>插图：7.5 网络环境下的操作系统安全（书 p284-p294）</figcaption>
+</figure>
+
 <h4 id="751"><a class="toclink" href="#751">7.5.1 安全概述</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k027">
+  <img src="content/images/knowledge/tutorial-3-k027.webp" alt="知识点插图：7.5.1 安全概述" loading="lazy">
+  <figcaption>插图：7.5.1 安全概述</figcaption>
+</figure>
+
 <p>计算机安全广义上包括<strong>物理方面</strong>（环境/设施/设备/载体/人员）和<strong>逻辑方面</strong>（软件保护、信息防窃取/破坏）。</p>
 <p>影响计算机安全的主要因素：① 操作系统资源共享 ② 计算机网络数据传送 ③ 数据库 ④ 计算机病毒。</p>
 <p><strong>可靠性</strong>（reliability）= 硬件系统正常持续运行能力；<strong>安全性</strong>（security）= 防止信息被窃取/破坏。两者是不同概念。</p>
 <h4 id="752"><a class="toclink" href="#752">7.5.2 计算机病毒</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k028">
+  <img src="content/images/knowledge/tutorial-3-k028.webp" alt="知识点插图：7.5.2 计算机病毒" loading="lazy">
+  <figcaption>插图：7.5.2 计算机病毒</figcaption>
+</figure>
+
 <p><strong>病毒分类</strong>：</p>
 <table>
 <thead>
@@ -524,6 +664,11 @@
 </table>
 <p><strong>应对</strong>：① 预防（最理想）② 检测（确定感染并定位）③ 识别（病毒类型）④ 清除（根除并恢复程序原状；不能清除则删除并重装无毒版本）。</p>
 <h4 id="753-auditing"><a class="toclink" href="#753-auditing">7.5.3 安全审计（auditing）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k029">
+  <img src="content/images/knowledge/tutorial-3-k029.webp" alt="知识点插图：7.5.3 安全审计（auditing）" loading="lazy">
+  <figcaption>插图：7.5.3 安全审计（auditing）</figcaption>
+</figure>
+
 <p><strong>安全审计</strong> = 对系统中与安全相关的活动进行完整记录、检查、审核——事后追踪保证安全性。</p>
 <p><strong>4. 审计缓冲区设计</strong>（图 7-18 审计缓冲机制）：</p>
 <ul>
@@ -532,6 +677,11 @@
 </ul>
 <p>由于 I/O 耗时，引入缓冲区。可用多个相同大小的缓冲区构成缓冲池提高并发。审计员可调节缓冲区大小和数量。缓冲区控制结构包括：基址、大小、个数、读/写指针、临界界线等。</p>
 <h4 id="754"><a class="toclink" href="#754">7.5.4 安全模型</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k030">
+  <img src="content/images/knowledge/tutorial-3-k030.webp" alt="知识点插图：7.5.4 安全模型" loading="lazy">
+  <figcaption>插图：7.5.4 安全模型</figcaption>
+</figure>
+
 <p>OS 安全性内容：</p>
 <ul>
 <li><strong>安全策略</strong>：授权使用计算机和信息资源的规则</li>
@@ -540,6 +690,11 @@
 </ul>
 <p><strong>安全模型分两种</strong>：形式化（数学模型，精确）+ 非形式化（自然语言描述）。常见模型：BLP（Bell-LaPadula 多级安全模型）、Biba 完整性模型、Clark-Wilson、RBAC（基于角色的访问控制）。</p>
 <h4 id="755"><a class="toclink" href="#755">7.5.5 安全加密算法</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k031">
+  <img src="content/images/knowledge/tutorial-3-k031.webp" alt="知识点插图：7.5.5 安全加密算法" loading="lazy">
+  <figcaption>插图：7.5.5 安全加密算法</figcaption>
+</figure>
+
 <p><strong>对称加密</strong>（如 DES、AES）：发收方共享密钥，加密解密同一把密钥。</p>
 <p><strong>公开密钥加密 — RSA</strong>（Rivest, Shamir, Adleman）— 事实国际标准，可加密 + 数字签名：</p>
 <ol>
@@ -557,7 +712,17 @@
 <p><strong>双重保护（既签名又保密）</strong>：A 先用自己的私钥加密签名得密文 1 → 再用 B 的公钥加密密文 1 得密文 2 → 发给 B；B 收到密文 2 后先用自己的私钥解出密文 1 → 再用 A 的公钥解出签名明文。</p>
 <p><strong>网络加密</strong>两种：<strong>链加密</strong>（相邻节点间链路加密）和<strong>端加密</strong>（端到端加密）。</p>
 <h3 id="76-p293-p302-img-304313"><a class="toclink" href="#76-p293-p302-img-304313">7.6 区块链（书 p293-p302 / img-304~313）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k032">
+  <img src="content/images/knowledge/tutorial-3-k032.webp" alt="知识点插图：7.6 区块链（书 p293-p302 / img-304~313）" loading="lazy">
+  <figcaption>插图：7.6 区块链（书 p293-p302 / img-304~313）</figcaption>
+</figure>
+
 <h4 id="761"><a class="toclink" href="#761">7.6.1 区块链概述</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k033">
+  <img src="content/images/knowledge/tutorial-3-k033.webp" alt="知识点插图：7.6.1 区块链概述" loading="lazy">
+  <figcaption>插图：7.6.1 区块链概述</figcaption>
+</figure>
+
 <p><strong>起源</strong>：2008 年中本聪发布《Bitcoin: a Peer-to-Peer Electronic Cash System》。</p>
 <ul>
 <li><strong>狭义</strong>：按时间顺序将数据区块以链条方式组合的特定数据结构，由密码学保证不可篡改、不可伪造，去中心化共享总账（decentralized shared ledger）</li>
@@ -599,6 +764,11 @@
 <li>安全可信：非对称加密 + 共识算法 → 强大算力抵御外部攻击</li>
 </ol>
 <h4 id="762-5-6"><a class="toclink" href="#762-5-6">7.6.2 区块链的架构（5-6 层模型）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k034">
+  <img src="content/images/knowledge/tutorial-3-k034.webp" alt="知识点插图：7.6.2 区块链的架构（5-6 层模型）" loading="lazy">
+  <figcaption>插图：7.6.2 区块链的架构（5-6 层模型）</figcaption>
+</figure>
+
 <p>数据层 → 网络层 → 共识层 → 激励层 → 智能合约层 → 应用层。</p>
 <p><strong>智能合约（smart contract）</strong>：用算法和程序编制合同条款，部署在区块链上、按规则自动执行的数字化协议。</p>
 <ul>
@@ -609,6 +779,11 @@
 <li>类比：智能合约 ↔ 存储过程；区块链 ↔ 数据库</li>
 </ul>
 <h4 id="763"><a class="toclink" href="#763">7.6.3 区块链的应用</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k035">
+  <img src="content/images/knowledge/tutorial-3-k035.webp" alt="知识点插图：7.6.3 区块链的应用" loading="lazy">
+  <figcaption>插图：7.6.3 区块链的应用</figcaption>
+</figure>
+
 <p><strong>三类区块链系统对比</strong>（表 7-1）：</p>
 <table>
 <thead>
@@ -713,6 +888,11 @@
 </tbody>
 </table>
 <h3 id="7-p301"><a class="toclink" href="#7-p301">7 章本章小结（书 p301）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k036">
+  <img src="content/images/knowledge/tutorial-3-k036.webp" alt="知识点插图：7 章本章小结（书 p301）" loading="lazy">
+  <figcaption>插图：7 章本章小结（书 p301）</figcaption>
+</figure>
+
 <ul>
 <li><strong>网络操作系统</strong> = 松散耦合多机上的松散耦合软件。OSI-RM 7 层；TCP/IP 实际标准；Sun NFS 是网络文件系统典型例子。</li>
 <li><strong>分布式操作系统</strong> = 松散耦合多机上的紧密耦合软件。分布式进程通信分三类：消息传递机制、远程过程调用（RPC）、套接字。<strong>分布式共享内存</strong>给程序员逻辑统一地址空间；<strong>分布式事务处理</strong>用 2PC / 3PC 协议保数据一致性。</li>
@@ -726,7 +906,17 @@
 </blockquote>
 <hr>
 <h2 id="p303-p346-img-314357"><a class="toclink" href="#p303-p346-img-314357">附录 《操作系统教程》导学（书 p303-p346 / img-314~357）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k037">
+  <img src="content/images/knowledge/tutorial-3-k037.webp" alt="知识点插图：附录 《操作系统教程》导学（书 p303-p346 / img-314~357）" loading="lazy">
+  <figcaption>插图：附录 《操作系统教程》导学（书 p303-p346 / img-314~357）</figcaption>
+</figure>
+
 <h3 id="_1"><a class="toclink" href="#_1">设计思想</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k038">
+  <img src="content/images/knowledge/tutorial-3-k038.webp" alt="知识点插图：设计思想" loading="lazy">
+  <figcaption>插图：设计思想</figcaption>
+</figure>
+
 <ul>
 <li>依据<strong>建构主义教学理论</strong>支持自建构主义学习</li>
 <li>配合大规模在线开放课程（MOOC）和翻转课堂</li>
@@ -878,6 +1068,11 @@
 <li><strong>课后阅读</strong>（如 UNIX/Linux/Java 通信机制 = 自选材料 6-1 / 6-2 / 6-3）</li>
 </ul>
 <h3 id="_2"><a class="toclink" href="#_2">附录章节范围</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k039">
+  <img src="content/images/knowledge/tutorial-3-k039.webp" alt="知识点插图：附录章节范围" loading="lazy">
+  <figcaption>插图：附录章节范围</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -929,6 +1124,11 @@
 </blockquote>
 <hr>
 <h2 id="p347-p350-img-358361"><a class="toclink" href="#p347-p350-img-358361">课后阅读材料（书 p347-p350 / img-358~361）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k040">
+  <img src="content/images/knowledge/tutorial-3-k040.webp" alt="知识点插图：课后阅读材料（书 p347-p350 / img-358~361）" loading="lazy">
+  <figcaption>插图：课后阅读材料（书 p347-p350 / img-358~361）</figcaption>
+</figure>
+
 <p>提供 26 项扩展阅读，分章对应：</p>
 <ul>
 <li>自选 1（第一章自学手册收集）</li>
@@ -950,6 +1150,11 @@
 </ul>
 <hr>
 <h2 id="img-362"><a class="toclink" href="#img-362">封底元数据（img-362）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k041">
+  <img src="content/images/knowledge/tutorial-3-k041.webp" alt="知识点插图：封底元数据（img-362）" loading="lazy">
+  <figcaption>插图：封底元数据（img-362）</figcaption>
+</figure>
+
 <ul>
 <li>标题：<strong>操作系统教程（第 6 版）</strong></li>
 <li>系列：普通高等教育精品教材；国家精品在线开放课程主讲教材</li>
@@ -959,6 +1164,11 @@
 </ul>
 <hr>
 <h2 id="part-3"><a class="toclink" href="#part-3">Part 3 整理疑点</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k042">
+  <img src="content/images/knowledge/tutorial-3-k042.webp" alt="知识点插图：Part 3 整理疑点" loading="lazy">
+  <figcaption>插图：Part 3 整理疑点</figcaption>
+</figure>
+
 <ol>
 <li><strong>页 p230 之前已有 RPC 介绍</strong>（6.5.2，本批次起始页正在收尾 RPC + XDR 内容）；6.6 死锁是 ch6 终结小节。<strong>Part 2 / Part 3 边界落在 6.5.2 RPC，Part 3 里把它作为 7.2 的预备背景重述，避免读者跳跃。</strong></li>
 <li><strong>本书没有独立的 ch8/ch9</strong>——网络/分布式/云/移动/安全/区块链全归 ch7，&rdquo;OS 接口&rdquo;散在 ch1（操作控制角度，对应 1.3.3 命令解释程序、1.3.4 人机交互）。任务期望的 ch7-ch9 实为本书 ch7 一章 + 附录。</li>
@@ -968,6 +1178,11 @@
 </ol>
 <hr>
 <h2 id="241-362"><a class="toclink" href="#241-362">图片清理报告（241-362 段）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="tutorial-3-k043">
+  <img src="content/images/knowledge/tutorial-3-k043.webp" alt="知识点插图：图片清理报告（241-362 段）" loading="lazy">
+  <figcaption>插图：图片清理报告（241-362 段）</figcaption>
+</figure>
+
 <p><strong>执行</strong>：2026-05-15 子代理批量清理。删 70 张 / 保留 51 张 / 体积 68MB → 44MB（-35%）。</p>
 <p><strong>保留集（51 张，按图索引 second_num）</strong>：
 - 6.6 死锁段（241-249）：章首 + 银行家算法例题（p236）+ 死锁检测两表法（p237）+ Warshall 矩阵

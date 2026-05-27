@@ -66,6 +66,11 @@
 </blockquote>
 <hr>
 <h2 id="0"><a class="toclink" href="#0">0. 一句话定位整章</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k001">
+  <img src="content/images/knowledge/ch5-k001.webp" alt="知识点插图：0. 一句话定位整章" loading="lazy">
+  <figcaption>插图：0. 一句话定位整章</figcaption>
+</figure>
+
 <p><strong>设备管理 = OS 的&rdquo;外设管家&rdquo;</strong>——它要解决三件事：
 1. <strong>设备又多又杂又慢</strong>（打印机几十字节/秒，磁盘几百 MB/秒，CPU 几 GHz）→ 怎么让 CPU 别被拖慢？
 2. <strong>用户不想关心物理细节</strong>（不想区分是 USB 还是磁带）→ 怎么提供统一接口？
@@ -73,13 +78,28 @@
 <p>回答分别是：<strong>I/O 控制方式（硬件并行）</strong>、<strong>I/O 软件分层 + 设备独立性（抽象）</strong>、<strong>设备分配 + SPOOLing（复用与虚拟）</strong>。</p>
 <hr>
 <h2 id="51-io"><a class="toclink" href="#51-io">5.1 I/O 系统概述</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k002">
+  <img src="content/images/knowledge/ch5-k002.webp" alt="知识点插图：5.1 I/O 系统概述" loading="lazy">
+  <figcaption>插图：5.1 I/O 系统概述</figcaption>
+</figure>
+
 <h3 id="511-io"><a class="toclink" href="#511-io">5.1.1 I/O 系统组成</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k003">
+  <img src="content/images/knowledge/ch5-k003.webp" alt="知识点插图：5.1.1 I/O 系统组成" loading="lazy">
+  <figcaption>插图：5.1.1 I/O 系统组成</figcaption>
+</figure>
+
 <p><strong>I/O 系统</strong> = I/O 设备 + 接口线路 + 控制部件 + 通道 + 管理软件 的总称。
 <strong>I/O 操作</strong> = 内存与外设介质之间的信息传送。</p>
 <blockquote>
 <p>类比：CPU 是大脑，内存是工作台，I/O 系统是&rdquo;通往外界的所有门窗 + 门卫 + 配送队伍&rdquo;。</p>
 </blockquote>
 <h3 id="512"><a class="toclink" href="#512">5.1.2 设备分类（必背）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k004">
+  <img src="content/images/knowledge/ch5-k004.webp" alt="知识点插图：5.1.2 设备分类（必背）" loading="lazy">
+  <figcaption>插图：5.1.2 设备分类（必背）</figcaption>
+</figure>
+
 <p>按 <strong>I/O 操作特性</strong> 分：
 - <strong>输入型</strong>：键盘、鼠标、扫描仪
 - <strong>输出型</strong>：显示器、打印机
@@ -91,8 +111,18 @@
 - <strong>顺序存取</strong>：磁带——必须从头逐块过，访问时间依赖位置
 - <strong>直接（随机）存取</strong>：磁盘——任意块访问时间近似相同</p>
 <h3 id="513-os"><a class="toclink" href="#513-os">5.1.3 设备物理特性的差异（为什么需要 OS 来管）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k005">
+  <img src="content/images/knowledge/ch5-k005.webp" alt="知识点插图：5.1.3 设备物理特性的差异（为什么需要 OS 来管）" loading="lazy">
+  <figcaption>插图：5.1.3 设备物理特性的差异（为什么需要 OS 来管）</figcaption>
+</figure>
+
 <p>数据传输率、数据表示方式、传输单位、出错条件——四样都不一样，所以<strong>必须有一层抽象屏蔽差异</strong>。</p>
 <h3 id="514"><a class="toclink" href="#514">5.1.4 设备控制器（适配器）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k006">
+  <img src="content/images/knowledge/ch5-k006.webp" alt="知识点插图：5.1.4 设备控制器（适配器）" loading="lazy">
+  <figcaption>插图：5.1.4 设备控制器（适配器）</figcaption>
+</figure>
+
 <p><strong>作用</strong>：CPU 和具体设备之间的&rdquo;翻译官&rdquo;，让 CPU 用&rdquo;传几个参数&rdquo;的方式启动复杂 I/O 操作。</p>
 <p><strong>位置</strong>：可插主板扩充槽的印刷电路板（参考 <a href="images/slide-035-img-1.png">slide-035 主板照片</a>）。</p>
 <p><strong>典型主板的扩展槽和 I/O 接口</strong>（slide-036 原图已转表）：</p>
@@ -158,10 +188,20 @@
 - 与设备的接口（数据信号 / 控制信号 / 状态信号）</p>
 <hr>
 <h2 id="52-io-cpu"><a class="toclink" href="#52-io-cpu">5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k007">
+  <img src="content/images/knowledge/ch5-k007.webp" alt="知识点插图：5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）" loading="lazy">
+  <figcaption>插图：5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>核心矛盾</strong>：CPU 快、外设慢。每一代控制方式都在让 CPU 越来越少地&rdquo;看着&rdquo;外设。</p>
 </blockquote>
 <h3 id="_1"><a class="toclink" href="#_1">演进总览（必考填空）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k008">
+  <img src="content/images/knowledge/ch5-k008.webp" alt="知识点插图：演进总览（必考填空）" loading="lazy">
+  <figcaption>插图：演进总览（必考填空）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -199,6 +239,11 @@
 </tbody>
 </table>
 <h3 id="1-io-programmed-io"><a class="toclink" href="#1-io-programmed-io">1) 程序 I/O 方式（轮询 / Programmed I/O）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k009">
+  <img src="content/images/knowledge/ch5-k009.webp" alt="知识点插图：1) 程序 I/O 方式（轮询 / Programmed I/O）" loading="lazy">
+  <figcaption>插图：1) 程序 I/O 方式（轮询 / Programmed I/O）</figcaption>
+</figure>
+
 <p>CPU 用查询指令不停问设备控制器&rdquo;准备好了吗？&rdquo;——准备好就交换一个字，没好就继续问。</p>
 <p><strong>流程</strong>（slide-013 原流程图已转 mermaid）：</p>
 <pre class="mermaid">flowchart TD
@@ -219,6 +264,11 @@
 - 优点：管理简单
 - 缺点：浪费 CPU，只用于要求极低的场合</p>
 <h3 id="2"><a class="toclink" href="#2">2) 中断方式</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k010">
+  <img src="content/images/knowledge/ch5-k010.webp" alt="知识点插图：2) 中断方式" loading="lazy">
+  <figcaption>插图：2) 中断方式</figcaption>
+</figure>
+
 <p>CPU 启动 I/O 后<strong>立即返回</strong>做别的事，设备完成后用中断信号&rdquo;叫&rdquo;CPU 回来收数据。</p>
 <p><strong>流程</strong>：</p>
 <pre><code>进程发启动 I/O → CPU 加载控制信息 → 进程继续 / 让出 CPU
@@ -230,6 +280,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 缺点：每个字节都要中断一次，对高速设备开销过大
 - 适合：低速字符设备（键盘、串口、低速打印机）</p>
 <h3 id="3-dma-direct-memory-access"><a class="toclink" href="#3-dma-direct-memory-access">3) DMA 方式（Direct Memory Access）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k011">
+  <img src="content/images/knowledge/ch5-k011.webp" alt="知识点插图：3) DMA 方式（Direct Memory Access）" loading="lazy">
+  <figcaption>插图：3) DMA 方式（Direct Memory Access）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>类比</strong>：以前你（CPU）要从仓库（设备）搬一箱货到工作台（内存），每次搬一件就汇报一次，太累。现在你雇了一个&rdquo;快递员&rdquo;（DMA 控制器），告诉他&rdquo;从 A 仓搬 1000 件到 B 桌&rdquo;——你只在他出发和完成时管一下，中间他和仓库自己搞定。</p>
 </blockquote>
@@ -253,6 +308,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - CPU 只在&rdquo;开始 + 结束&rdquo;时干预
 - 适合：高速块设备（磁盘、SSD）</p>
 <h3 id="4"><a class="toclink" href="#4">4) 通道方式</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k012">
+  <img src="content/images/knowledge/ch5-k012.webp" alt="知识点插图：4) 通道方式" loading="lazy">
+  <figcaption>插图：4) 通道方式</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>类比</strong>：DMA 是单个快递员；通道方式是&rdquo;快递公司&rdquo;——有自己的小处理机（通道 = I/O 处理机），可以执行一系列复杂的 I/O 命令（通道程序），管多个仓库（设备），CPU 只下个总单子。</p>
 </blockquote>
@@ -292,7 +352,17 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p><strong>瓶颈问题</strong>：单通路 I/O 系统中，通道 / 控制器 / 设备形成一条链，任一环节占用都会阻塞其他设备 → 解决：<strong>多通路 I/O 系统</strong>（多条路径冗余）。</p>
 <hr>
 <h2 id="53-io"><a class="toclink" href="#53-io">5.3 I/O 软件层次</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k013">
+  <img src="content/images/knowledge/ch5-k013.webp" alt="知识点插图：5.3 I/O 软件层次" loading="lazy">
+  <figcaption>插图：5.3 I/O 软件层次</figcaption>
+</figure>
+
 <h3 id="531"><a class="toclink" href="#531">5.3.1 设计目标（必考）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k014">
+  <img src="content/images/knowledge/ch5-k014.webp" alt="知识点插图：5.3.1 设计目标（必考）" loading="lazy">
+  <figcaption>插图：5.3.1 设计目标（必考）</figcaption>
+</figure>
+
 <ul>
 <li><strong>高效率</strong>：克服 CPU 与设备速度差</li>
 <li><strong>通用性</strong>：用统一方式管理各种设备</li>
@@ -303,6 +373,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <li><strong>独占 / 共享分配</strong></li>
 </ul>
 <h3 id="532"><a class="toclink" href="#532">5.3.2 四层架构（自下而上）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k015">
+  <img src="content/images/knowledge/ch5-k015.webp" alt="知识点插图：5.3.2 四层架构（自下而上）" loading="lazy">
+  <figcaption>插图：5.3.2 四层架构（自下而上）</figcaption>
+</figure>
+
 <pre><code>┌────────────────────────────┐
 │  用户层 I/O 软件             │  ← 库函数（write/read）+ SPOOLing
 ├────────────────────────────┤
@@ -316,9 +391,19 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
        I/O 设备 + 控制器
 </code></pre>
 <h4 id="1-io"><a class="toclink" href="#1-io">第 1 层：I/O 中断处理程序（最底层）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k016">
+  <img src="content/images/knowledge/ch5-k016.webp" alt="知识点插图：第 1 层：I/O 中断处理程序（最底层）" loading="lazy">
+  <figcaption>插图：第 1 层：I/O 中断处理程序（最底层）</figcaption>
+</figure>
+
 <p>类型：通知 I/O 推进进度 / 正常结束 / 异常 / 异步信号。
 处理原则：正常完成→唤醒等待进程置就绪；故障→特殊处理；异步信号→对应处理。</p>
 <h4 id="2_1"><a class="toclink" href="#2_1">第 2 层：设备驱动程序</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k017">
+  <img src="content/images/knowledge/ch5-k017.webp" alt="知识点插图：第 2 层：设备驱动程序" loading="lazy">
+  <figcaption>插图：第 2 层：设备驱动程序</figcaption>
+</figure>
+
 <p><strong>定位</strong>：I/O 系统高层与设备控制器之间的通信程序。
 <strong>主要任务</strong>：
 - 接收上层逻辑 I/O 请求 → 转化为物理 I/O（设备名→端口地址、逻辑记录→物理记录）
@@ -331,6 +416,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 一部分必须用<strong>汇编</strong>写
 - 必须<strong>可重入</strong>（运行中可被再次调用）</p>
 <h4 id="3-slide-050"><a class="toclink" href="#3-slide-050">第 3 层：设备无关（独立）软件 — slide-050 整页主线</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k018">
+  <img src="content/images/knowledge/ch5-k018.webp" alt="知识点插图：第 3 层：设备无关（独立）软件 — slide-050 整页主线" loading="lazy">
+  <figcaption>插图：第 3 层：设备无关（独立）软件 — slide-050 整页主线</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>核心思想</strong>：抽象。让上层看到的是&rdquo;读字节流&rdquo;，不管下面是磁盘 / USB / 网络。</p>
 </blockquote>
@@ -344,11 +434,21 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 7. <strong>错误报告</strong>：发现 → 就近逐层处理 → 提示</p>
 <p><strong>逻辑设备表 LUT</strong>：实现&rdquo;逻辑设备名 → 物理设备名&rdquo;映射的关键数据结构，同时保存驱动程序入口。</p>
 <h4 id="4-io"><a class="toclink" href="#4-io">第 4 层：用户空间 I/O 软件</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k019">
+  <img src="content/images/knowledge/ch5-k019.webp" alt="知识点插图：第 4 层：用户空间 I/O 软件" loading="lazy">
+  <figcaption>插图：第 4 层：用户空间 I/O 软件</figcaption>
+</figure>
+
 <ul>
 <li><strong>库函数</strong>：与应用程序链接的 I/O 调用（如 <code>count = write(fd, buffer, nbytes)</code>）</li>
 <li><strong>SPOOLing 系统</strong>：守护进程，提供虚拟设备</li>
 </ul>
 <h3 id="533-io"><a class="toclink" href="#533-io">5.3.3 一次完整 I/O 操作的步骤（面试题）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k020">
+  <img src="content/images/knowledge/ch5-k020.webp" alt="知识点插图：5.3.3 一次完整 I/O 操作的步骤（面试题）" loading="lazy">
+  <figcaption>插图：5.3.3 一次完整 I/O 操作的步骤（面试题）</figcaption>
+</figure>
+
 <ol>
 <li>进程对已打开 fd 调用 <code>read</code> 库函数</li>
 <li>设备无关层检查参数；若高速缓存有数据 → 直接拷到用户区，结束</li>
@@ -361,10 +461,20 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ol>
 <hr>
 <h2 id="54"><a class="toclink" href="#54">5.4 缓冲技术（速率匹配 / 解耦）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k021">
+  <img src="content/images/knowledge/ch5-k021.webp" alt="知识点插图：5.4 缓冲技术（速率匹配 / 解耦）" loading="lazy">
+  <figcaption>插图：5.4 缓冲技术（速率匹配 / 解耦）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>类比</strong>：CPU 是快递员，磁盘是仓库，缓冲区是中转货架。没有货架时，每次快递员只能等仓库现取一件；有货架后，仓库可以提前码好十件，快递员一次拉走，吞吐立刻翻倍。</p>
 </blockquote>
 <h3 id="541"><a class="toclink" href="#541">5.4.1 为什么需要缓冲</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k022">
+  <img src="content/images/knowledge/ch5-k022.webp" alt="知识点插图：5.4.1 为什么需要缓冲" loading="lazy">
+  <figcaption>插图：5.4.1 为什么需要缓冲</figcaption>
+</figure>
+
 <ol>
 <li>缓和 CPU 与 I/O 设备速度不匹配</li>
 <li>减少 CPU 中断次数（数据攒到一定量才触发一次）</li>
@@ -372,10 +482,20 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <li>提高 CPU 与 I/O 并行度</li>
 </ol>
 <h3 id="542"><a class="toclink" href="#542">5.4.2 四种缓冲方案</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k023">
+  <img src="content/images/knowledge/ch5-k023.webp" alt="知识点插图：5.4.2 四种缓冲方案" loading="lazy">
+  <figcaption>插图：5.4.2 四种缓冲方案</figcaption>
+</figure>
+
 <blockquote>
 <p>注：原 PPT 在本章未直接给计算公式，以下公式为操作系统教材通用必考结论（汤子瀛《计算机操作系统》缓冲技术节，与考研 408 一致），用于应试模板。</p>
 </blockquote>
 <h4 id="1"><a class="toclink" href="#1">1) 单缓冲</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k024">
+  <img src="content/images/knowledge/ch5-k024.webp" alt="知识点插图：1) 单缓冲" loading="lazy">
+  <figcaption>插图：1) 单缓冲</figcaption>
+</figure>
+
 <p>只有一个缓冲区。设备 → 缓冲区 → CPU 串行使用同一块缓冲。</p>
 <p><strong>符号约定</strong>：
 - T = 设备把一块数据<strong>输入到缓冲区</strong>的时间
@@ -386,6 +506,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </code></pre>
 <p><strong>理解</strong>：T 和 C 可以并行（设备在写下一块时 CPU 在算上一块），但 M（缓冲→用户区）必须串行——因为同一个缓冲区，搬空才能再装。</p>
 <h4 id="2_2"><a class="toclink" href="#2_2">2) 双缓冲</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k025">
+  <img src="content/images/knowledge/ch5-k025.webp" alt="知识点插图：2) 双缓冲" loading="lazy">
+  <figcaption>插图：2) 双缓冲</figcaption>
+</figure>
+
 <p>两个缓冲区交替使用：当 CPU 处理 buf1 时，设备同时往 buf2 写。</p>
 <p><strong>双缓冲处理一块的时间</strong>：</p>
 <pre><code>T_double = max(C + M, T)
@@ -396,11 +521,21 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - C 大（CPU 慢）：单缓冲≈C+M，双缓冲≈C+M，几乎相同
 - 双缓冲对<strong>高速 I/O 设备 + 较快 CPU</strong> 提升最大</p>
 <h4 id="3"><a class="toclink" href="#3">3) 循环缓冲</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k026">
+  <img src="content/images/knowledge/ch5-k026.webp" alt="知识点插图：3) 循环缓冲" loading="lazy">
+  <figcaption>插图：3) 循环缓冲</figcaption>
+</figure>
+
 <p>多个缓冲区组成环，配两个指针：
 - <strong>In 指针</strong>：指向下一个<strong>可装</strong>的空缓冲区（生产者用）
 - <strong>Out 指针</strong>：指向下一个<strong>可取</strong>的满缓冲区（消费者用）</p>
 <p>适合稳定的连续数据流（如音视频）。</p>
 <h4 id="4_1"><a class="toclink" href="#4_1">4) 缓冲池</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k027">
+  <img src="content/images/knowledge/ch5-k027.webp" alt="知识点插图：4) 缓冲池" loading="lazy">
+  <figcaption>插图：4) 缓冲池</figcaption>
+</figure>
+
 <p>公用缓冲区池，三个队列：
 - <strong>空缓冲队列 emq</strong>
 - <strong>输入队列 inq</strong>（已装数据待用）
@@ -413,7 +548,17 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p><strong>优势</strong>：缓冲区可被<strong>多个进程共享</strong>，利用率最高。</p>
 <hr>
 <h2 id="55"><a class="toclink" href="#55">5.5 设备分配</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k028">
+  <img src="content/images/knowledge/ch5-k028.webp" alt="知识点插图：5.5 设备分配" loading="lazy">
+  <figcaption>插图：5.5 设备分配</figcaption>
+</figure>
+
 <h3 id="551"><a class="toclink" href="#551">5.5.1 设备分类（按可分配性）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k029">
+  <img src="content/images/knowledge/ch5-k029.webp" alt="知识点插图：5.5.1 设备分类（按可分配性）" loading="lazy">
+  <figcaption>插图：5.5.1 设备分类（按可分配性）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -445,6 +590,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </tbody>
 </table>
 <h3 id="552-slide-086"><a class="toclink" href="#552-slide-086">5.5.2 独享方式（slide-086 整页主线）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k030">
+  <img src="content/images/knowledge/ch5-k030.webp" alt="知识点插图：5.5.2 独享方式（slide-086 整页主线）" loading="lazy">
+  <figcaption>插图：5.5.2 独享方式（slide-086 整页主线）</figcaption>
+</figure>
+
 <p><strong>定义</strong>：把一个设备分配给某进程后，进程一直独占它直到完成或主动释放，期间其他进程必须等。</p>
 <p><strong>适用对象</strong>：独占设备。</p>
 <p><strong>代价</strong>：
@@ -455,6 +605,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </blockquote>
 <p><strong>为什么还要用</strong>：独占设备本质上不能并行（一份打印件不能拆给两个进程同时打）——只能从更上层（SPOOLing）解决。</p>
 <h3 id="553-4"><a class="toclink" href="#553-4">5.5.3 设备分配数据结构（4 张表）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k031">
+  <img src="content/images/knowledge/ch5-k031.webp" alt="知识点插图：5.5.3 设备分配数据结构（4 张表）" loading="lazy">
+  <figcaption>插图：5.5.3 设备分配数据结构（4 张表）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -488,6 +643,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </table>
 <p><strong>分配链路</strong>：进程要 I/O → 查 SDT 找设备 → 经 DCT 查到 COCT → 再查 CHCT → 一路通则可分配，否则进等待队列。</p>
 <h3 id="554"><a class="toclink" href="#554">5.5.4 分配策略</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k032">
+  <img src="content/images/knowledge/ch5-k032.webp" alt="知识点插图：5.5.4 分配策略" loading="lazy">
+  <figcaption>插图：5.5.4 分配策略</figcaption>
+</figure>
+
 <p>按设备固有属性：<strong>独享 / 共享 / 虚拟</strong>（已述）。</p>
 <p>按分配算法（与进程调度相似）：
 - <strong>先来先服务 FCFS</strong>
@@ -496,20 +656,40 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - <strong>安全分配方式</strong>：进程发 I/O → 立刻阻塞 → I/O 完才唤醒。<strong>不会死锁</strong>（每进程最多持一个 I/O 资源）。
 - <strong>不安全分配方式</strong>：发 I/O 后继续运行，可继续发新 I/O。<strong>可能死锁</strong>，需做安全性检查。</p>
 <h3 id="555-spooling"><a class="toclink" href="#555-spooling">5.5.5 SPOOLing 技术（虚拟设备）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k033">
+  <img src="content/images/knowledge/ch5-k033.webp" alt="知识点插图：5.5.5 SPOOLing 技术（虚拟设备）" loading="lazy">
+  <figcaption>插图：5.5.5 SPOOLing 技术（虚拟设备）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>类比</strong>：办公室共用一台打印机，10 个人要打。如果各自占着，1 号没打完 9 个人在排队干等。改进：每个人把打印任务<strong>写到一份共享文件夹</strong>（输入井 / 输出井）的队列中，一个<strong>值班守护进程</strong>专门盯着队列，依次喂给打印机——每个人感觉自己有&rdquo;专属打印机&rdquo;，但实际上只有一台被复用。这就是 <strong>SPOOLing（Simultaneous Peripheral Operation On Line，假脱机）</strong>。</p>
 </blockquote>
 <h4 id="_2"><a class="toclink" href="#_2">历史脉络</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k034">
+  <img src="content/images/knowledge/ch5-k034.webp" alt="知识点插图：历史脉络" loading="lazy">
+  <figcaption>插图：历史脉络</figcaption>
+</figure>
+
 <ul>
 <li>早期批处理：<strong>脱机 I/O</strong>——专门用一台外围机把慢设备数据预先搬到磁带 / 磁盘</li>
 <li>多道程序 + 分时系统：用<strong>程序</strong>（守护进程）替代外围机 → &ldquo;假脱机&rdquo;</li>
 </ul>
 <h4 id="_3"><a class="toclink" href="#_3">必备条件</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k035">
+  <img src="content/images/knowledge/ch5-k035.webp" alt="知识点插图：必备条件" loading="lazy">
+  <figcaption>插图：必备条件</figcaption>
+</figure>
+
 <ul>
 <li><strong>硬件</strong>：大容量磁盘、中断、通道（保证 CPU 与外设并行）</li>
 <li><strong>软件</strong>：多道程序设计</li>
 </ul>
 <h4 id="4_2"><a class="toclink" href="#4_2">系统组成（4 部分）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k036">
+  <img src="content/images/knowledge/ch5-k036.webp" alt="知识点插图：系统组成（4 部分）" loading="lazy">
+  <figcaption>插图：系统组成（4 部分）</figcaption>
+</figure>
+
 <ol>
 <li><strong>输入井 / 输出井</strong>：磁盘上的缓冲区域（&rdquo;井&rdquo; = 大缓冲池）</li>
 <li><strong>输入缓冲 / 输出缓冲</strong>：内存中暂存数据</li>
@@ -517,20 +697,40 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <li><strong>井管理程序 + 预输入 / 缓输出程序</strong></li>
 </ol>
 <h4 id="_4"><a class="toclink" href="#_4">数据结构</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k037">
+  <img src="content/images/knowledge/ch5-k037.webp" alt="知识点插图：数据结构" loading="lazy">
+  <figcaption>插图：数据结构</figcaption>
+</figure>
+
 <ul>
 <li><strong>作业表</strong>：登记进入系统的所有作业</li>
 <li><strong>预输入表</strong>：每作业一张，登记其输入文件信息</li>
 <li><strong>缓输出表</strong>：每作业一张，登记其输出文件信息</li>
 </ul>
 <h4 id="4_3"><a class="toclink" href="#4_3">输入井作业 4 种状态</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k038">
+  <img src="content/images/knowledge/ch5-k038.webp" alt="知识点插图：输入井作业 4 种状态" loading="lazy">
+  <figcaption>插图：输入井作业 4 种状态</figcaption>
+</figure>
+
 <p>输入状态 → 收容状态 → 执行状态 → 完成状态。</p>
 <h4 id="_5"><a class="toclink" href="#_5">共享打印机典型应用</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k039">
+  <img src="content/images/knowledge/ch5-k039.webp" alt="知识点插图：共享打印机典型应用" loading="lazy">
+  <figcaption>插图：共享打印机典型应用</figcaption>
+</figure>
+
 <p>用户进程&rdquo;打印&rdquo;时，SPOOLing <strong>不真的把打印机给他</strong>——而是：
 1. 输出进程在输出井申请存储空间
 2. 把要打印的数据<strong>作为文件</strong>存进去
 3. 各进程的输出文件形成输出队列
 4. 输出 SPOOLing 系统<strong>串行</strong>调度真打印机依次输出</p>
 <h4 id="spooling"><a class="toclink" href="#spooling">SPOOLing 三大特点（必考）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k040">
+  <img src="content/images/knowledge/ch5-k040.webp" alt="知识点插图：SPOOLing 三大特点（必考）" loading="lazy">
+  <figcaption>插图：SPOOLing 三大特点（必考）</figcaption>
+</figure>
+
 <ol>
 <li><strong>提高 I/O 速度</strong>（数据先进高速磁盘井）</li>
 <li><strong>把独占设备改造为共享设备</strong></li>
@@ -538,7 +738,17 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ol>
 <hr>
 <h2 id="56"><a class="toclink" href="#56">5.6 磁盘存储管理（重头戏 / 必考计算）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k041">
+  <img src="content/images/knowledge/ch5-k041.webp" alt="知识点插图：5.6 磁盘存储管理（重头戏 / 必考计算）" loading="lazy">
+  <figcaption>插图：5.6 磁盘存储管理（重头戏 / 必考计算）</figcaption>
+</figure>
+
 <h3 id="561"><a class="toclink" href="#561">5.6.1 磁盘物理结构</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k042">
+  <img src="content/images/knowledge/ch5-k042.webp" alt="知识点插图：5.6.1 磁盘物理结构" loading="lazy">
+  <figcaption>插图：5.6.1 磁盘物理结构</figcaption>
+</figure>
+
 <p><strong>移动头磁盘结构</strong>（slide-058-img-1 原图已转 mermaid，表达 8 盘面叠加 + 磁盘臂带读写头同步移动）：</p>
 <pre class="mermaid">graph LR
     arm[磁盘臂<br/>← 左右运动 →]
@@ -574,6 +784,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </code></pre>
 <p><strong>例</strong>：3.5 寸软盘 1.44MB = 2 (磁头) × 80 (磁道) × 18 (扇区) × 512 (字节)。</p>
 <h3 id="562"><a class="toclink" href="#562">5.6.2 磁盘类型</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k043">
+  <img src="content/images/knowledge/ch5-k043.webp" alt="知识点插图：5.6.2 磁盘类型" loading="lazy">
+  <figcaption>插图：5.6.2 磁盘类型</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -599,11 +814,21 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </tbody>
 </table>
 <h3 id="563"><a class="toclink" href="#563">5.6.3 磁盘访问时间（必考公式）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k044">
+  <img src="content/images/knowledge/ch5-k044.webp" alt="知识点插图：5.6.3 磁盘访问时间（必考公式）" loading="lazy">
+  <figcaption>插图：5.6.3 磁盘访问时间（必考公式）</figcaption>
+</figure>
+
 <pre><code>Ta = Ts + Tr + Tt
    ↑    ↑    ↑
   寻道  旋转  传输
 </code></pre>
 <h4 id="1-ts"><a class="toclink" href="#1-ts">(1) 寻道时间 Ts（移动磁臂）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k045">
+  <img src="content/images/knowledge/ch5-k045.webp" alt="知识点插图：(1) 寻道时间 Ts（移动磁臂）" loading="lazy">
+  <figcaption>插图：(1) 寻道时间 Ts（移动磁臂）</figcaption>
+</figure>
+
 <pre><code>Ts = m × n + s
 </code></pre>
 <ul>
@@ -613,6 +838,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ul>
 <p>平均寻道时间 ≈ 10 ms。</p>
 <h4 id="2-tr"><a class="toclink" href="#2-tr">(2) 旋转延迟时间 Tr（等扇区转到磁头下）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k046">
+  <img src="content/images/knowledge/ch5-k046.webp" alt="知识点插图：(2) 旋转延迟时间 Tr（等扇区转到磁头下）" loading="lazy">
+  <figcaption>插图：(2) 旋转延迟时间 Tr（等扇区转到磁头下）</figcaption>
+</figure>
+
 <pre><code>Tr = 1 / (2r)        ← 平均，需要旋转半圈
 </code></pre>
 <p>r = 磁盘转速（转/秒）。</p>
@@ -622,6 +852,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 300 rpm 软盘：Tr = 100 ms
 - 600 rpm 软盘：Tr = 50 ms</p>
 <h4 id="3-tt"><a class="toclink" href="#3-tt">(3) 传输时间 Tt</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k047">
+  <img src="content/images/knowledge/ch5-k047.webp" alt="知识点插图：(3) 传输时间 Tt" loading="lazy">
+  <figcaption>插图：(3) 传输时间 Tt</figcaption>
+</figure>
+
 <pre><code>Tt = b / (r × N)
 </code></pre>
 <ul>
@@ -631,17 +866,32 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ul>
 <p>通常 Tt 极小（&lt;1 ms），可忽略。</p>
 <h4 id="_6"><a class="toclink" href="#_6">综合：</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k048">
+  <img src="content/images/knowledge/ch5-k048.webp" alt="知识点插图：综合：" loading="lazy">
+  <figcaption>插图：综合：</figcaption>
+</figure>
+
 <pre><code>Ta = (m·n + s) + 1/(2r) + b/(rN)
 </code></pre>
 <blockquote>
 <p><strong>应试要点</strong>：寻道时间 &gt;&gt; 旋转延迟 &gt;&gt; 传输时间。优化磁盘性能的重点是<strong>减少寻道</strong>——这就是磁盘调度算法的目标。</p>
 </blockquote>
 <h3 id="564"><a class="toclink" href="#564">5.6.4 磁盘调度算法（必考计算题）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k049">
+  <img src="content/images/knowledge/ch5-k049.webp" alt="知识点插图：5.6.4 磁盘调度算法（必考计算题）" loading="lazy">
+  <figcaption>插图：5.6.4 磁盘调度算法（必考计算题）</figcaption>
+</figure>
+
 <p><strong>统一题面</strong>：磁盘共 200 个柱面（0–199），请求序列 <code>150, 30, 190, 20, 100, 55, 90</code>，磁头在 50，正向大柱面方向移动。</p>
 <blockquote>
 <p><strong>注意</strong>：本章 PPT 用的是&rdquo;先来先服务 / 最短查找时间优先 / 扫描 / 分步扫描 / 电梯调度（LOOK）/ 循环扫描&rdquo;——和考研 408 常用术语 FCFS / SSTF / SCAN / LOOK / C-SCAN / C-LOOK 一一对应。</p>
 </blockquote>
 <h4 id="1fcfs"><a class="toclink" href="#1fcfs">算法 1：FCFS（先来先服务）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k050">
+  <img src="content/images/knowledge/ch5-k050.webp" alt="知识点插图：算法 1：FCFS（先来先服务）" loading="lazy">
+  <figcaption>插图：算法 1：FCFS（先来先服务）</figcaption>
+</figure>
+
 <p>按请求顺序服务，<strong>不管位置</strong>。</p>
 <pre><code>50 → 150 → 30 → 190 → 20 → 100 → 55 → 90
 </code></pre>
@@ -650,12 +900,22 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
          = <strong>710 柱面</strong></p>
 <p>特点：公平、简单；性能差。</p>
 <h4 id="2sstf"><a class="toclink" href="#2sstf">算法 2：SSTF（最短查找时间优先）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k051">
+  <img src="content/images/knowledge/ch5-k051.webp" alt="知识点插图：算法 2：SSTF（最短查找时间优先）" loading="lazy">
+  <figcaption>插图：算法 2：SSTF（最短查找时间优先）</figcaption>
+</figure>
+
 <p>每次去<strong>离当前磁头最近</strong>的请求。</p>
 <pre><code>50 → 55 → 30 → 20 → 90 → 100 → 150 → 190
 </code></pre>
 <p>距离 = 5 + 25 + 10 + 70 + 10 + 50 + 40 = <strong>210 柱面</strong></p>
 <p>特点：性能好；可能&rdquo;饥饿&rdquo;——远端请求长期不被服务。</p>
 <h4 id="3scan"><a class="toclink" href="#3scan">算法 3：SCAN（扫描算法）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k052">
+  <img src="content/images/knowledge/ch5-k052.webp" alt="知识点插图：算法 3：SCAN（扫描算法）" loading="lazy">
+  <figcaption>插图：算法 3：SCAN（扫描算法）</figcaption>
+</figure>
+
 <p>磁臂沿一个方向移动，<strong>扫到尽头</strong>再反向。</p>
 <p>向大方向扫：50 → 90 → 100 → 150 → 190 → 199（到头）→ 55 → 30 → 20</p>
 <pre><code>50 → 90 → 100 → 150 → 190 → 199 → 55 → 30 → 20
@@ -663,11 +923,21 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>距离 = 40 + 10 + 50 + 40 + 9 + 144 + 25 + 10 = <strong>328 柱面</strong></p>
 <p>特点：避免饥饿；中间请求平均等待短，端点请求等待长。</p>
 <h4 id="4n-step-scan"><a class="toclink" href="#4n-step-scan">算法 4：N-Step-SCAN（分步扫描）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k053">
+  <img src="content/images/knowledge/ch5-k053.webp" alt="知识点插图：算法 4：N-Step-SCAN（分步扫描）" loading="lazy">
+  <figcaption>插图：算法 4：N-Step-SCAN（分步扫描）</figcaption>
+</figure>
+
 <p>把请求分成长度 N 的子队列，<strong>子队列内部用 SCAN</strong>，子队列之间用 FCFS。
 作用：避免&rdquo;磁臂粘性&rdquo;（一个进程反复请求同一柱面会霸占磁臂）。
 - N 大 → 接近 SCAN
 - N=1 → 接近 FCFS</p>
 <h4 id="5look"><a class="toclink" href="#5look">算法 5：电梯调度（LOOK）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k054">
+  <img src="content/images/knowledge/ch5-k054.webp" alt="知识点插图：算法 5：电梯调度（LOOK）" loading="lazy">
+  <figcaption>插图：算法 5：电梯调度（LOOK）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>类比</strong>：电梯——要去的最高 / 最低楼层就到那里，不是非得到顶楼或地下室。</p>
 </blockquote>
@@ -677,6 +947,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>距离 = 40 + 10 + 50 + 40 + 135 + 25 + 10 = <strong>310 柱面</strong></p>
 <p>PPT 标的&rdquo;电梯调度算法 = 310&rdquo;对应这个版本。</p>
 <h4 id="6c-scan"><a class="toclink" href="#6c-scan">算法 6：C-SCAN（循环扫描）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k055">
+  <img src="content/images/knowledge/ch5-k055.webp" alt="知识点插图：算法 6：C-SCAN（循环扫描）" loading="lazy">
+  <figcaption>插图：算法 6：C-SCAN（循环扫描）</figcaption>
+</figure>
+
 <p>只在一个方向服务，<strong>到尽头后直接跳回 0</strong>（途中不服务），重新开始。</p>
 <pre><code>50 → 90 → 100 → 150 → 190 → 199 → 0 → 20 → 30 → 55
 </code></pre>
@@ -684,34 +959,74 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 （PPT 给的 378 用的是不计回程方式，按原文记 378）</p>
 <p>特点：访问请求<strong>等待时间均匀</strong>，对实时系统更友好。</p>
 <h4 id="c-look-look"><a class="toclink" href="#c-look-look">C-LOOK（循环扫描的 LOOK 版）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k056">
+  <img src="content/images/knowledge/ch5-k056.webp" alt="知识点插图：C-LOOK（循环扫描的 LOOK 版）" loading="lazy">
+  <figcaption>插图：C-LOOK（循环扫描的 LOOK 版）</figcaption>
+</figure>
+
 <p>C-SCAN 类似 LOOK 改进：到<strong>最远请求</strong>就跳回<strong>最近请求</strong>，不到尽头。</p>
 <pre><code>50 → 90 → 100 → 150 → 190 → 20 → 30 → 55
 距离 = 40 + 10 + 50 + 40 + 170 + 10 + 25 = 345
 </code></pre>
 <h3 id="565-ppt-532-533"><a class="toclink" href="#565-ppt-532-533">5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k057">
+  <img src="content/images/knowledge/ch5-k057.webp" alt="知识点插图：5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）" loading="lazy">
+  <figcaption>插图：5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）</figcaption>
+</figure>
+
 <h4 id="_7"><a class="toclink" href="#_7">循环排序（旋转优化）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k058">
+  <img src="content/images/knowledge/ch5-k058.webp" alt="知识点插图：循环排序（旋转优化）" loading="lazy">
+  <figcaption>插图：循环排序（旋转优化）</figcaption>
+</figure>
+
 <p>同一磁道内，根据<strong>当前磁头位置</strong>重排请求次序，最小化旋转等待。</p>
 <p>例：磁道存 4 个记录，请求&rdquo;读 4, 3, 2, 1&rdquo;——
 - 按请求次序：3 圈 = 60 ms
 - 按 1,2,3,4 顺序：1.5 圈 = 30 ms
 - 已知磁头在记录 3，按 4,1,2,3：1 圈 = 20 ms</p>
 <h4 id="_8"><a class="toclink" href="#_8">优化分布</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k059">
+  <img src="content/images/knowledge/ch5-k059.webp" alt="知识点插图：优化分布" loading="lazy">
+  <figcaption>插图：优化分布</figcaption>
+</figure>
+
 <p>把同一磁道的 10 个记录 A-J <strong>不要顺序存</strong>（A,B,C,&hellip;）——按 A,H,E,B,I,F,C,J,G,D <strong>跨记录间隔存放</strong>，让&rdquo;读+处理&rdquo;时间正好对齐下一记录的旋转位置。</p>
 <p>10 个记录处理：顺序存 = 214 ms，优化分布 = <strong>70 ms</strong>。</p>
 <blockquote>
 <p>现代磁盘控制器和文件系统已自动做这类优化，但<strong>应试可能考概念题</strong>。</p>
 </blockquote>
 <h3 id="566"><a class="toclink" href="#566">5.6.6 交替地址（多重副本）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k060">
+  <img src="content/images/knowledge/ch5-k060.webp" alt="知识点插图：5.6.6 交替地址（多重副本）" loading="lazy">
+  <figcaption>插图：5.6.6 交替地址（多重副本）</figcaption>
+</figure>
+
 <p>把同一记录在磁盘多个区域重复存（折叠），读时取最近的副本。
 <strong>适用条件</strong>：只读不写、记录不大、访问极频繁。</p>
 <hr>
 <h2 id="57-ppt"><a class="toclink" href="#57-ppt">5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k061">
+  <img src="content/images/knowledge/ch5-k061.webp" alt="知识点插图：5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）" loading="lazy">
+  <figcaption>插图：5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）</figcaption>
+</figure>
+
 <blockquote>
 <p>本章 PPT 没单独讲文件系统的连续 / 链接 / 索引分配。这里只点提衔接：磁盘空间分配方式 = 连续分配 / 链接分配 / 索引分配；目录结构 = 单级 / 两级 / 树形 / 无环图。详见 ch6 文件管理。</p>
 </blockquote>
 <hr>
 <h2 id="58"><a class="toclink" href="#58">5.8 章末速查表</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k062">
+  <img src="content/images/knowledge/ch5-k062.webp" alt="知识点插图：5.8 章末速查表" loading="lazy">
+  <figcaption>插图：5.8 章末速查表</figcaption>
+</figure>
+
 <h3 id="_9"><a class="toclink" href="#_9">必背概念对照</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k063">
+  <img src="content/images/knowledge/ch5-k063.webp" alt="知识点插图：必背概念对照" loading="lazy">
+  <figcaption>插图：必背概念对照</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -749,6 +1064,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </tbody>
 </table>
 <h3 id="_10"><a class="toclink" href="#_10">公式速查</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k064">
+  <img src="content/images/knowledge/ch5-k064.webp" alt="知识点插图：公式速查" loading="lazy">
+  <figcaption>插图：公式速查</figcaption>
+</figure>
+
 <pre><code>单缓冲一块时间 = max(C, T) + M
 双缓冲一块时间 = max(C+M, T)
 
@@ -762,6 +1082,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 5400 rpm → Tr ≈ 5.56 ms
 </code></pre>
 <h3 id="_11"><a class="toclink" href="#_11">磁盘调度题答题模板（考试 / 面试通用）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k065">
+  <img src="content/images/knowledge/ch5-k065.webp" alt="知识点插图：磁盘调度题答题模板（考试 / 面试通用）" loading="lazy">
+  <figcaption>插图：磁盘调度题答题模板（考试 / 面试通用）</figcaption>
+</figure>
+
 <blockquote>
 <p>任何&rdquo;给一个柱面访问序列，求 X 算法的总移动距离 / 平均寻道长度&rdquo;题：</p>
 </blockquote>
@@ -773,6 +1098,11 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <li><strong>给评注</strong>：是否公平、是否饥饿、是否磁臂粘性</li>
 </ol>
 <h3 id="_12"><a class="toclink" href="#_12">易混对比</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k066">
+  <img src="content/images/knowledge/ch5-k066.webp" alt="知识点插图：易混对比" loading="lazy">
+  <figcaption>插图：易混对比</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -825,12 +1155,22 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </tbody>
 </table>
 <h3 id="io"><a class="toclink" href="#io">一图记住四种 I/O 控制方式的并行度</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k067">
+  <img src="content/images/knowledge/ch5-k067.webp" alt="知识点插图：一图记住四种 I/O 控制方式的并行度" loading="lazy">
+  <figcaption>插图：一图记住四种 I/O 控制方式的并行度</figcaption>
+</figure>
+
 <pre><code>程序 I/O：    [CPU 忙等等等等等等等等] [CPU 收]
 中断方式：    [CPU 启动][CPU 干别的....] [中断收]   循环每字节
 DMA：         [CPU 启动][CPU 干别的................] [一块中断]
 通道：        [CPU 启动通道][CPU 干别的........很久] [通道程序结束中断]
 </code></pre>
 <h3 id="_13"><a class="toclink" href="#_13">面试常见追问</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k068">
+  <img src="content/images/knowledge/ch5-k068.webp" alt="知识点插图：面试常见追问" loading="lazy">
+  <figcaption>插图：面试常见追问</figcaption>
+</figure>
+
 <ol>
 <li>
 <p><strong>DMA 和中断的本质区别？</strong>
@@ -851,6 +1191,11 @@ DMA：         [CPU 启动][CPU 干别的................] [一块中断]
 </ol>
 <hr>
 <h2 id="_14"><a class="toclink" href="#_14">疑点 / 待澄清</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch5-k069">
+  <img src="content/images/knowledge/ch5-k069.webp" alt="知识点插图：疑点 / 待澄清" loading="lazy">
+  <figcaption>插图：疑点 / 待澄清</figcaption>
+</figure>
+
 <ol>
 <li><strong>缓冲技术公式</strong>：原 PPT 在本章未列 <code>max(C,T)+M</code> 与 <code>max(C+M,T)</code> 公式（来源教材通用结论），但是 OS 教材必考——若考研 408 题目以另一种符号定义出现（如把 M 当输入到缓冲、T 当缓冲到用户区），需根据题面调整。</li>
 <li><strong>C-SCAN 在 PPT 给的 378 柱面</strong>：标准计算 ≈ 403（含回程）；PPT 用的是&rdquo;不计回程&rdquo;算法，记忆时按 PPT 走以匹配出题人。</li>

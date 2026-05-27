@@ -66,6 +66,11 @@
 </blockquote>
 <hr>
 <h2 id="0"><a class="toclink" href="#0">0. 章节导览</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k001">
+  <img src="content/images/knowledge/ch2-k001.webp" alt="知识点插图：0. 章节导览" loading="lazy">
+  <figcaption>插图：0. 章节导览</figcaption>
+</figure>
+
 <p>操作系统四大件管理对象之首是 <strong>CPU</strong>——所有程序最后都要在 CPU 上跑，谁先跑、谁后跑、跑多久、被打断了怎么办，都是这章的事。</p>
 <p>学完这章你应该能回答：</p>
 <ol>
@@ -79,7 +84,17 @@
 </ol>
 <hr>
 <h2 id="21"><a class="toclink" href="#21">2.1 处理器的硬件结构</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k002">
+  <img src="content/images/knowledge/ch2-k002.webp" alt="知识点插图：2.1 处理器的硬件结构" loading="lazy">
+  <figcaption>插图：2.1 处理器的硬件结构</figcaption>
+</figure>
+
 <h3 id="cpu"><a class="toclink" href="#cpu">寄存器（CPU 内部的小型仓库）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k003">
+  <img src="content/images/knowledge/ch2-k003.webp" alt="知识点插图：寄存器（CPU 内部的小型仓库）" loading="lazy">
+  <figcaption>插图：寄存器（CPU 内部的小型仓库）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：CPU 是厨师，主存是冰箱。寄存器就是厨师手边的&rdquo;小调料盘&rdquo;——容量小（几十个），但拿放飞快（远快于跑去冰箱）。</p>
 <p>Intel x86 寄存器分类（slide 5-6）：</p>
 <table>
@@ -120,6 +135,11 @@
 </table>
 <p>寄存器组成了&rdquo;<strong>处理器现场</strong>&ldquo;——切换进程时要把这些值整组保存起来。</p>
 <h3 id="slide-7-9"><a class="toclink" href="#slide-7-9">指令系统（slide 7-9）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k004">
+  <img src="content/images/knowledge/ch2-k004.webp" alt="知识点插图：指令系统（slide 7-9）" loading="lazy">
+  <figcaption>插图：指令系统（slide 7-9）</figcaption>
+</figure>
+
 <p>每台机器的&rdquo;机器指令集合&rdquo;叫<strong>指令系统</strong>，分 5 类：</p>
 <ol>
 <li>数据处理类（算术/逻辑）</li>
@@ -139,7 +159,17 @@
 </blockquote>
 <hr>
 <h2 id="22"><a class="toclink" href="#22">2.2 处理器状态（管态 / 目态）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k005">
+  <img src="content/images/knowledge/ch2-k005.webp" alt="知识点插图：2.2 处理器状态（管态 / 目态）" loading="lazy">
+  <figcaption>插图：2.2 处理器状态（管态 / 目态）</figcaption>
+</figure>
+
 <h3 id="slide-10-12"><a class="toclink" href="#slide-10-12">双态机制（slide 10-12）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k006">
+  <img src="content/images/knowledge/ch2-k006.webp" alt="知识点插图：双态机制（slide 10-12）" loading="lazy">
+  <figcaption>插图：双态机制（slide 10-12）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -163,6 +193,11 @@
 </table>
 <p>CPU 怎么知道自己当前是哪种？→ 看 <strong>PSW（程序状态字）</strong> 里的状态位。</p>
 <h3 id="slide-11"><a class="toclink" href="#slide-11">状态切换（slide 11，必考）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k007">
+  <img src="content/images/knowledge/ch2-k007.webp" alt="知识点插图：状态切换（slide 11，必考）" loading="lazy">
+  <figcaption>插图：状态切换（slide 11，必考）</figcaption>
+</figure>
+
 <p><strong>目态 → 管态</strong>（只有这两条路！）：</p>
 <ol>
 <li><strong>系统调用</strong>：用户程序主动请求 OS 服务（如 <code>read()</code>）</li>
@@ -173,6 +208,11 @@
 </blockquote>
 <p><strong>管态 → 目态</strong>：执行特权指令 <code>iret</code>（Intel x86）加载 PSW，把控制权交回应用进程。</p>
 <h3 id="intel-x86-4-slide-18"><a class="toclink" href="#intel-x86-4-slide-18">Intel x86 的 4 个保护级（slide 18）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k008">
+  <img src="content/images/knowledge/ch2-k008.webp" alt="知识点插图：Intel x86 的 4 个保护级（slide 18）" loading="lazy">
+  <figcaption>插图：Intel x86 的 4 个保护级（slide 18）</figcaption>
+</figure>
+
 <p>Pentium 实际有 0/1/2/3 四级，0 级权限最高：</p>
 <ul>
 <li>0 级：OS 内核（I/O、内存管理）</li>
@@ -184,12 +224,22 @@
 <p>实际上 Windows 只用 0 级和 3 级（精简方案）。</p>
 </blockquote>
 <h3 id="vs-slide-13"><a class="toclink" href="#vs-slide-13">用户栈 vs 核心栈（slide 13）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k009">
+  <img src="content/images/knowledge/ch2-k009.webp" alt="知识点插图：用户栈 vs 核心栈（slide 13）" loading="lazy">
+  <figcaption>插图：用户栈 vs 核心栈（slide 13）</figcaption>
+</figure>
+
 <ul>
 <li><strong>用户栈</strong>：在用户进程空间里，存函数调用的参数/返回值/局部变量。</li>
 <li><strong>核心栈</strong>：在 OS 空间里，存中断现场 + OS 内部函数调用。</li>
 <li><strong>栈指针</strong>：硬件只有一个 SP，<strong>两个栈共用一个栈指针</strong>，靠状态切换时换值。</li>
 </ul>
 <h3 id="pswslide-14-19"><a class="toclink" href="#pswslide-14-19">PSW（程序状态字，slide 14-19）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k010">
+  <img src="content/images/knowledge/ch2-k010.webp" alt="知识点插图：PSW（程序状态字，slide 14-19）" loading="lazy">
+  <figcaption>插图：PSW（程序状态字，slide 14-19）</figcaption>
+</figure>
+
 <p>PSW 是 CPU 里的一个寄存器，记录&rdquo;当前程序的状态&rdquo;。包括：</p>
 <ol>
 <li><strong>程序基本状态</strong>：PC（程序计数器）、条件码、处理器状态位（管/目）</li>
@@ -202,7 +252,17 @@
 </blockquote>
 <hr>
 <h2 id="23"><a class="toclink" href="#23">2.3 中断机制</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k011">
+  <img src="content/images/knowledge/ch2-k011.webp" alt="知识点插图：2.3 中断机制" loading="lazy">
+  <figcaption>插图：2.3 中断机制</figcaption>
+</figure>
+
 <h3 id="slide-21-24"><a class="toclink" href="#slide-21-24">为什么要有中断（slide 21-24）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k012">
+  <img src="content/images/knowledge/ch2-k012.webp" alt="知识点插图：为什么要有中断（slide 21-24）" loading="lazy">
+  <figcaption>插图：为什么要有中断（slide 21-24）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：你在做菜（执行用户程序），快递员按门铃（外设事件）。你不能让锅一直转着不管门铃，也不能盯着门一动不动不做菜——所以需要一个&rdquo;按了铃我立刻应一下，处理完回来继续做菜&rdquo;的机制。这就是<strong>中断</strong>。</p>
 <p>四种典型场景：</p>
 <ol>
@@ -225,11 +285,21 @@
     源程序->>源程序: 继续执行
 </pre>
 <h3 id="slide-25"><a class="toclink" href="#slide-25">中断系统组成（slide 25）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k013">
+  <img src="content/images/knowledge/ch2-k013.webp" alt="知识点插图：中断系统组成（slide 25）" loading="lazy">
+  <figcaption>插图：中断系统组成（slide 25）</figcaption>
+</figure>
+
 <ul>
 <li><strong>中断装置</strong>（硬件）：发现中断源 → 提请求 → 保护现场 → 启动处理程序</li>
 <li><strong>中断处理程序</strong>（软件）：处理事件 → 恢复现场</li>
 </ul>
 <h3 id="slide-33-35"><a class="toclink" href="#slide-33-35">中断分类（slide 33-35，重点区分）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k014">
+  <img src="content/images/knowledge/ch2-k014.webp" alt="知识点插图：中断分类（slide 33-35，重点区分）" loading="lazy">
+  <figcaption>插图：中断分类（slide 33-35，重点区分）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -285,6 +355,11 @@
 <p>异常处理可被中断打断，但中断处理<strong>绝不</strong>被异常打断（slide 35）。</p>
 </blockquote>
 <h3 id="4-slide-36"><a class="toclink" href="#4-slide-36">中断响应 4 步（slide 36，必背）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k015">
+  <img src="content/images/knowledge/ch2-k015.webp" alt="知识点插图：中断响应 4 步（slide 36，必背）" loading="lazy">
+  <figcaption>插图：中断响应 4 步（slide 36，必背）</figcaption>
+</figure>
+
 <ol>
 <li><strong>发现中断源</strong></li>
 <li><strong>保护现场</strong>（PSW、PC、寄存器入栈）</li>
@@ -299,6 +374,11 @@
 <li>当前指令执行完</li>
 </ol>
 <h3 id="slide-60-62"><a class="toclink" href="#slide-60-62">中断处理过程（slide 60-62，硬件 + 软件协作）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k016">
+  <img src="content/images/knowledge/ch2-k016.webp" alt="知识点插图：中断处理过程（slide 60-62，硬件 + 软件协作）" loading="lazy">
+  <figcaption>插图：中断处理过程（slide 60-62，硬件 + 软件协作）</figcaption>
+</figure>
+
 <p><strong>硬件部分</strong>：
 1. 设备发中断信号
 2. CPU 当前指令做完才响应
@@ -329,6 +409,11 @@
     H5 --> S1
 </pre>
 <h3 id="slide-30-32-52-54"><a class="toclink" href="#slide-30-32-52-54">中断向量表（slide 30-32, 52-54）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k017">
+  <img src="content/images/knowledge/ch2-k017.webp" alt="知识点插图：中断向量表（slide 30-32, 52-54）" loading="lazy">
+  <figcaption>插图：中断向量表（slide 30-32, 52-54）</figcaption>
+</figure>
+
 <p><strong>类比</strong>：像电话本——256 个中断号 = 256 个电话号码 = 256 个处理程序入口。</p>
 <p>8086 中断向量表：</p>
 <ul>
@@ -515,6 +600,11 @@
 <li>48~255：软中断</li>
 </ul>
 <h3 id="slide-27-29-46-51"><a class="toclink" href="#slide-27-29-46-51">多重中断与优先级（slide 27-29, 46-51）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k018">
+  <img src="content/images/knowledge/ch2-k018.webp" alt="知识点插图：多重中断与优先级（slide 27-29, 46-51）" loading="lazy">
+  <figcaption>插图：多重中断与优先级（slide 27-29, 46-51）</figcaption>
+</figure>
+
 <ul>
 <li><strong>优先级</strong>：紧迫程度，高优先级先响应</li>
 <li><strong>中断屏蔽</strong>：临时禁止响应某些中断</li>
@@ -522,6 +612,11 @@
 <li>三种处理方式：串行 / 嵌套 / 即时</li>
 </ul>
 <h3 id="slide-44-45"><a class="toclink" href="#slide-44-45">时钟中断（slide 44-45）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k019">
+  <img src="content/images/knowledge/ch2-k019.webp" alt="知识点插图：时钟中断（slide 44-45）" loading="lazy">
+  <figcaption>插图：时钟中断（slide 44-45）</figcaption>
+</figure>
+
 <p>OS 调度的&rdquo;心跳&rdquo;。Linux 三种间隔定时器：</p>
 <table>
 <thead>
@@ -551,6 +646,11 @@
 </table>
 <p>时钟中断让分时进程时间片轮转、定时唤醒/阻塞进程、记账。</p>
 <h3 id="3-slide-63"><a class="toclink" href="#3-slide-63">中断处理程序的 3 大特点（slide 63）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k020">
+  <img src="content/images/knowledge/ch2-k020.webp" alt="知识点插图：中断处理程序的 3 大特点（slide 63）" loading="lazy">
+  <figcaption>插图：中断处理程序的 3 大特点（slide 63）</figcaption>
+</figure>
+
 <ol>
 <li><strong>异步</strong>：可能打断关键代码甚至其他中断</li>
 <li><strong>屏蔽态运行</strong>：可能禁止所有中断</li>
@@ -558,7 +658,17 @@
 </ol>
 <hr>
 <h2 id="24"><a class="toclink" href="#24">2.4 进程的引入</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k021">
+  <img src="content/images/knowledge/ch2-k021.webp" alt="知识点插图：2.4 进程的引入" loading="lazy">
+  <figcaption>插图：2.4 进程的引入</figcaption>
+</figure>
+
 <h3 id="slide-71-75"><a class="toclink" href="#slide-71-75">为什么需要&rdquo;进程&rdquo;这个新概念（slide 71-75）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k022">
+  <img src="content/images/knowledge/ch2-k022.webp" alt="知识点插图：为什么需要&quot;进程&quot;这个新概念（slide 71-75）" loading="lazy">
+  <figcaption>插图：为什么需要&quot;进程&quot;这个新概念（slide 71-75）</figcaption>
+</figure>
+
 <p><strong>程序</strong>只是静态指令文件（如 <code>.exe</code>），它不能描述&rdquo;正在运行的某次活动&rdquo;。多道程序系统里需要一个新概念来刻画：</p>
 <p><strong>原因 1：刻画并发性</strong>
 - 多个程序走走停停穿插执行，&rdquo;程序&rdquo;概念太静态。
@@ -567,6 +677,11 @@
 - &ldquo;可再入程序&rdquo;（纯代码）能被多人同时调用——同一段程序可对应多个执行实例。
 - 程序与执行不再一一对应，所以需要&rdquo;进程&rdquo;来区分<strong>每次具体执行</strong>。</p>
 <h3 id="slide-71"><a class="toclink" href="#slide-71">进程定义（slide 71）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k023">
+  <img src="content/images/knowledge/ch2-k023.webp" alt="知识点插图：进程定义（slide 71）" loading="lazy">
+  <figcaption>插图：进程定义（slide 71）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>进程 = 可并发执行的程序在某数据集合上的一次计算活动，是 OS 进行资源分配和保护的基本单位。</strong></p>
 </blockquote>
@@ -575,6 +690,11 @@
 - <strong>进程</strong> = 你正在按菜谱做的这盘菜（动态过程，有起锅时间、有当前进度、占用某口锅）
 - 同一份菜谱可同时被两个人按着做 → 两个独立进程</p>
 <h3 id="5-slide-75"><a class="toclink" href="#5-slide-75">进程的 5 个属性（slide 75，必背）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k024">
+  <img src="content/images/knowledge/ch2-k024.webp" alt="知识点插图：进程的 5 个属性（slide 75，必背）" loading="lazy">
+  <figcaption>插图：进程的 5 个属性（slide 75，必背）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -607,7 +727,17 @@
 </table>
 <hr>
 <h2 id="25-pcb"><a class="toclink" href="#25-pcb">2.5 进程的描述（PCB 与组成）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k025">
+  <img src="content/images/knowledge/ch2-k025.webp" alt="知识点插图：2.5 进程的描述（PCB 与组成）" loading="lazy">
+  <figcaption>插图：2.5 进程的描述（PCB 与组成）</figcaption>
+</figure>
+
 <h3 id="slide-85"><a class="toclink" href="#slide-85">进程映像（slide 85，进程的&rdquo;完整画像&rdquo;）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k026">
+  <img src="content/images/knowledge/ch2-k026.webp" alt="知识点插图：进程映像（slide 85，进程的&quot;完整画像&quot;）" loading="lazy">
+  <figcaption>插图：进程映像（slide 85，进程的&quot;完整画像&quot;）</figcaption>
+</figure>
+
 <p>某时刻进程的全部内容 + 状态，包括 4 块：</p>
 <ol>
 <li><strong>进程控制块 PCB</strong>：标识 + 现场 + 控制信息（OS 唯一抓手）</li>
@@ -616,6 +746,11 @@
 <li><strong>进程数据块</strong>：私有数据 + 用户栈</li>
 </ol>
 <h3 id="slide-86-88"><a class="toclink" href="#slide-86-88">进程上下文（slide 86-88）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k027">
+  <img src="content/images/knowledge/ch2-k027.webp" alt="知识点插图：进程上下文（slide 86-88）" loading="lazy">
+  <figcaption>插图：进程上下文（slide 86-88）</figcaption>
+</figure>
+
 <p><strong>进程上下文 = 物理实体 + 运行环境</strong>。OS 调度新进程 = <strong>上下文切换</strong>。</p>
 <p>三层上下文：</p>
 <ul>
@@ -647,6 +782,11 @@
 </tbody>
 </table>
 <h3 id="pcbslide-89"><a class="toclink" href="#pcbslide-89">PCB（进程控制块，slide 89，重中之重）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k028">
+  <img src="content/images/knowledge/ch2-k028.webp" alt="知识点插图：PCB（进程控制块，slide 89，重中之重）" loading="lazy">
+  <figcaption>插图：PCB（进程控制块，slide 89，重中之重）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>PCB 是 OS 用于记录和刻划进程状态的数据结构，是 OS 掌握进程的唯一资料结构。</strong></p>
 </blockquote>
@@ -658,6 +798,11 @@
 <li><strong>控制信息</strong>：状态、优先级、调度参数、资源占用</li>
 </ol>
 <h3 id="slide-90-91"><a class="toclink" href="#slide-90-91">进程队列（slide 90-91）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k029">
+  <img src="content/images/knowledge/ch2-k029.webp" alt="知识点插图：进程队列（slide 90-91）" loading="lazy">
+  <figcaption>插图：进程队列（slide 90-91）</figcaption>
+</figure>
+
 <p><strong>同状态进程的 PCB 串成队列</strong>。组织方式：</p>
 <ul>
 <li>线性</li>
@@ -667,7 +812,17 @@
 <p>进程入队/出队即对 PCB 队列做插入/删除。</p>
 <hr>
 <h2 id="26"><a class="toclink" href="#26">2.6 进程状态及转换（必考）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k030">
+  <img src="content/images/knowledge/ch2-k030.webp" alt="知识点插图：2.6 进程状态及转换（必考）" loading="lazy">
+  <figcaption>插图：2.6 进程状态及转换（必考）</figcaption>
+</figure>
+
 <h3 id="slide-76"><a class="toclink" href="#slide-76">三态模型（slide 76）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k031">
+  <img src="content/images/knowledge/ch2-k031.webp" alt="知识点插图：三态模型（slide 76）" loading="lazy">
+  <figcaption>插图：三态模型（slide 76）</figcaption>
+</figure>
+
 <pre><code>        ┌──────────────┐
         │  运行 Running │  占有 CPU
         └──────┬───────┘
@@ -709,6 +864,11 @@
 </tbody>
 </table>
 <h3 id="4-slide-78-79"><a class="toclink" href="#4-slide-78-79">4 种状态转换（slide 78-79）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k032">
+  <img src="content/images/knowledge/ch2-k032.webp" alt="知识点插图：4 种状态转换（slide 78-79）" loading="lazy">
+  <figcaption>插图：4 种状态转换（slide 78-79）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -739,6 +899,11 @@
 <p><strong>注意</strong>：没有&rdquo;等待 → 运行&rdquo;！必须经过就绪。</p>
 </blockquote>
 <h3 id="slide-80"><a class="toclink" href="#slide-80">因果变迁思考（slide 80）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k033">
+  <img src="content/images/knowledge/ch2-k033.webp" alt="知识点插图：因果变迁思考（slide 80）" loading="lazy">
+  <figcaption>插图：因果变迁思考（slide 80）</figcaption>
+</figure>
+
 <p>判断对错：</p>
 <ol>
 <li><strong>运行→就绪 一定引起 就绪→运行</strong>？❌ 不一定，可能没就绪进程。</li>
@@ -746,6 +911,11 @@
 <li><strong>阻塞→就绪 一定引起 就绪→运行</strong>？❌ 当前运行进程未必让出 CPU。</li>
 </ol>
 <h3 id="slide-81"><a class="toclink" href="#slide-81">五态模型（slide 81，加入新建 + 终止）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k034">
+  <img src="content/images/knowledge/ch2-k034.webp" alt="知识点插图：五态模型（slide 81，加入新建 + 终止）" loading="lazy">
+  <figcaption>插图：五态模型（slide 81，加入新建 + 终止）</figcaption>
+</figure>
+
 <pre><code>新建 → 就绪 → 运行 → 终止
         ↑↓
         等待
@@ -755,6 +925,11 @@
 <li><strong>终止 Terminated</strong>：执行完或异常退出，PCB 待回收</li>
 </ul>
 <h3 id="slide-82-84"><a class="toclink" href="#slide-82-84">七态模型（带挂起，slide 82-84）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k035">
+  <img src="content/images/knowledge/ch2-k035.webp" alt="知识点插图：七态模型（带挂起，slide 82-84）" loading="lazy">
+  <figcaption>插图：七态模型（带挂起，slide 82-84）</figcaption>
+</figure>
+
 <p><strong>挂起</strong>：把进程从内存换出到外存（swap），暂时不参与调度。</p>
 <p>为啥要挂起？
 - 平滑系统负荷（内存吃紧时把不活跃进程换出）
@@ -772,6 +947,11 @@
 <li>只能由 OS / 父进程解除挂起</li>
 </ol>
 <h3 id="cpu-slide-103"><a class="toclink" href="#cpu-slide-103">CPU 状态 × 进程状态时序图（slide 103，全章最重要的一张图）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k036">
+  <img src="content/images/knowledge/ch2-k036.webp" alt="知识点插图：CPU 状态 × 进程状态时序图（slide 103，全章最重要的一张图）" loading="lazy">
+  <figcaption>插图：CPU 状态 × 进程状态时序图（slide 103，全章最重要的一张图）</figcaption>
+</figure>
+
 <p>两个进程 P1、P2 在调度下运行的完整时序：</p>
 <pre><code>时间轴 ──▶
 ┌─────┬────┬─────┬────┬─────┬─────┬─────┬──────┬─────┬────┬─────┬────┐
@@ -801,13 +981,33 @@
 </blockquote>
 <hr>
 <h2 id="27"><a class="toclink" href="#27">2.7 进程控制（原语）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k037">
+  <img src="content/images/knowledge/ch2-k037.webp" alt="知识点插图：2.7 进程控制（原语）" loading="lazy">
+  <figcaption>插图：2.7 进程控制（原语）</figcaption>
+</figure>
+
 <h3 id="slide-105"><a class="toclink" href="#slide-105">原语（slide 105）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k038">
+  <img src="content/images/knowledge/ch2-k038.webp" alt="知识点插图：原语（slide 105）" loading="lazy">
+  <figcaption>插图：原语（slide 105）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>原语 = 在管态下执行、完成系统特定功能的过程，执行不可中断、不可分割。</strong></p>
 </blockquote>
 <p><strong>Java 类比</strong>：相当于 Java 的 <code>synchronized</code> 块——里面的操作要么全做要么不做，不能被打断。</p>
 <h3 id="6-slide-106-110"><a class="toclink" href="#6-slide-106-110">6 种主要原语（slide 106-110）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k039">
+  <img src="content/images/knowledge/ch2-k039.webp" alt="知识点插图：6 种主要原语（slide 106-110）" loading="lazy">
+  <figcaption>插图：6 种主要原语（slide 106-110）</figcaption>
+</figure>
+
 <h4 id="1-slide-107"><a class="toclink" href="#1-slide-107">1. 进程创建（slide 107）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k040">
+  <img src="content/images/knowledge/ch2-k040.webp" alt="知识点插图：1. 进程创建（slide 107）" loading="lazy">
+  <figcaption>插图：1. 进程创建（slide 107）</figcaption>
+</figure>
+
 <ol>
 <li>PCB 池申请空 PCB，分配 PID</li>
 <li>分配地址空间</li>
@@ -823,6 +1023,11 @@
 <li><code>vfork()</code>：子进程&rdquo;租用&rdquo;父进程地址空间</li>
 </ul>
 <h4 id="2-slide-109"><a class="toclink" href="#2-slide-109">2. 进程撤销（slide 109）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k041">
+  <img src="content/images/knowledge/ch2-k041.webp" alt="知识点插图：2. 进程撤销（slide 109）" loading="lazy">
+  <figcaption>插图：2. 进程撤销（slide 109）</figcaption>
+</figure>
+
 <ol>
 <li>找到 PCB 并出队</li>
 <li>回收资源给父进程或 OS</li>
@@ -830,19 +1035,39 @@
 <li>回收 PCB</li>
 </ol>
 <h4 id="3-slide-110"><a class="toclink" href="#3-slide-110">3. 进程阻塞（slide 110）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k042">
+  <img src="content/images/knowledge/ch2-k042.webp" alt="知识点插图：3. 进程阻塞（slide 110）" loading="lazy">
+  <figcaption>插图：3. 进程阻塞（slide 110）</figcaption>
+</figure>
+
 <ol>
 <li>停执行，保现场到 PCB</li>
 <li>改 PCB 状态为等待态，入等待队列</li>
 <li>转调度程序</li>
 </ol>
 <h4 id="4-slide-110"><a class="toclink" href="#4-slide-110">4. 进程唤醒（slide 110）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k043">
+  <img src="content/images/knowledge/ch2-k043.webp" alt="知识点插图：4. 进程唤醒（slide 110）" loading="lazy">
+  <figcaption>插图：4. 进程唤醒（slide 110）</figcaption>
+</figure>
+
 <ol>
 <li>等待队列移出</li>
 <li>改 PCB 为就绪态，入就绪队列</li>
 <li>若优先级高于当前运行进程，置重调度标志</li>
 </ol>
 <h4 id="56"><a class="toclink" href="#56">5/6. 挂起 / 激活：略（对应五/七态模型转换）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k044">
+  <img src="content/images/knowledge/ch2-k044.webp" alt="知识点插图：5/6. 挂起 / 激活：略（对应五/七态模型转换）" loading="lazy">
+  <figcaption>插图：5/6. 挂起 / 激活：略（对应五/七态模型转换）</figcaption>
+</figure>
+
 <h3 id="7-slide-92-94"><a class="toclink" href="#7-slide-92-94">进程上下文切换 7 步（slide 92-94）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k045">
+  <img src="content/images/knowledge/ch2-k045.webp" alt="知识点插图：进程上下文切换 7 步（slide 92-94）" loading="lazy">
+  <figcaption>插图：进程上下文切换 7 步（slide 92-94）</figcaption>
+</figure>
+
 <ol>
 <li>保存被中断进程的现场</li>
 <li>修改 PCB（状态等）</li>
@@ -856,6 +1081,11 @@
 <p>Linux 用 <code>TIF_NEED_RESCHED</code> 标志位表示&rdquo;需要重调度&rdquo;，置位后延迟到合适时机才真正切换。</p>
 </blockquote>
 <h3 id="linux-slide-95-97"><a class="toclink" href="#linux-slide-95-97">Linux 调度时机（slide 95-97）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k046">
+  <img src="content/images/knowledge/ch2-k046.webp" alt="知识点插图：Linux 调度时机（slide 95-97）" loading="lazy">
+  <figcaption>插图：Linux 调度时机（slide 95-97）</figcaption>
+</figure>
+
 <p><strong>主动调度</strong>：进程调用 <code>schedule()</code> 让出 CPU（如 <code>read/write/exit</code> 系统调用导致阻塞或退出）。</p>
 <p><strong>被动调度</strong>（4 种情况置 <code>TIF_NEED_RESCHED</code>）：</p>
 <ol>
@@ -866,7 +1096,17 @@
 </ol>
 <hr>
 <h2 id="28"><a class="toclink" href="#28">2.8 线程</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k047">
+  <img src="content/images/knowledge/ch2-k047.webp" alt="知识点插图：2.8 线程" loading="lazy">
+  <figcaption>插图：2.8 线程</figcaption>
+</figure>
+
 <h3 id="slide-112-115"><a class="toclink" href="#slide-112-115">为什么要线程（slide 112-115）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k048">
+  <img src="content/images/knowledge/ch2-k048.webp" alt="知识点插图：为什么要线程（slide 112-115）" loading="lazy">
+  <figcaption>插图：为什么要线程（slide 112-115）</figcaption>
+</figure>
+
 <p>进程的局限：</p>
 <ol>
 <li>创建/撤销/切换开销大 → 限制并发度</li>
@@ -879,6 +1119,11 @@
 <li>线程 = 调度执行单位（轻装上阵，频繁切换）</li>
 </ul>
 <h3 id="slide-119"><a class="toclink" href="#slide-119">线程概念（slide 119）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k049">
+  <img src="content/images/knowledge/ch2-k049.webp" alt="知识点插图：线程概念（slide 119）" loading="lazy">
+  <figcaption>插图：线程概念（slide 119）</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>线程是进程中能独立执行的实体（控制流），是 CPU 调度和分派的基本单位。</strong></p>
 </blockquote>
@@ -887,6 +1132,11 @@
 - <strong>线程</strong> = 同时在炒菜、切菜、煮汤的多个厨师手脚——共享同一个厨房（地址空间），各自有自己的进度</p>
 <p>每个进程<strong>至少一个线程</strong>。Linux 例外（线程实现方式不同，见 KLT/ULT）。</p>
 <h3 id="slide-121"><a class="toclink" href="#slide-121">线程组成（slide 121）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k050">
+  <img src="content/images/knowledge/ch2-k050.webp" alt="知识点插图：线程组成（slide 121）" loading="lazy">
+  <figcaption>插图：线程组成（slide 121）</figcaption>
+</figure>
+
 <ol>
 <li>唯一 ID + 状态（运行/就绪/等待/终止）</li>
 <li>独立的 PC + 上下文</li>
@@ -894,11 +1144,21 @@
 <li>共享所属进程的内存与资源</li>
 </ol>
 <h3 id="slide-122"><a class="toclink" href="#slide-122">线程状态（slide 122）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k051">
+  <img src="content/images/knowledge/ch2-k051.webp" alt="知识点插图：线程状态（slide 122）" loading="lazy">
+  <figcaption>插图：线程状态（slide 122）</figcaption>
+</figure>
+
 <p>类似进程：运行 / 就绪 / 等待 / 终止。</p>
 <blockquote>
 <p>线程<strong>没有挂起态</strong>——挂起的话整个进程一起挂（线程共享地址空间，不能单独换出）。</p>
 </blockquote>
 <h3 id="slide-123"><a class="toclink" href="#slide-123">多线程组织模式（slide 123）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k052">
+  <img src="content/images/knowledge/ch2-k052.webp" alt="知识点插图：多线程组织模式（slide 123）" loading="lazy">
+  <figcaption>插图：多线程组织模式（slide 123）</figcaption>
+</figure>
+
 <ol>
 <li><strong>调度员/工作者</strong>：一个 dispatch 线程 + N 个 worker（如 web 服务器）</li>
 <li><strong>组模式</strong>：一组对等线程协作</li>
@@ -906,6 +1166,11 @@
 </ol>
 <p>应用：前后台、C/S、异步处理、加速计算、UI。</p>
 <h3 id="3-slide-124-131"><a class="toclink" href="#3-slide-124-131">线程实现的 3 种方式（slide 124-131）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k053">
+  <img src="content/images/knowledge/ch2-k053.webp" alt="知识点插图：线程实现的 3 种方式（slide 124-131）" loading="lazy">
+  <figcaption>插图：线程实现的 3 种方式（slide 124-131）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -955,15 +1220,35 @@
 </tbody>
 </table>
 <h4 id="ult"><a class="toclink" href="#ult">ULT 优缺点</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k054">
+  <img src="content/images/knowledge/ch2-k054.webp" alt="知识点插图：ULT 优缺点" loading="lazy">
+  <figcaption>插图：ULT 优缺点</figcaption>
+</figure>
+
 <p>✅ 切换不调内核、调度算法灵活、可移植到任何 OS（只要装线程库）
 ❌ 系统调用阻塞 → 全进程挂；不能利用多核</p>
 <h4 id="klt"><a class="toclink" href="#klt">KLT 优缺点</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k055">
+  <img src="content/images/knowledge/ch2-k055.webp" alt="知识点插图：KLT 优缺点" loading="lazy">
+  <figcaption>插图：KLT 优缺点</figcaption>
+</figure>
+
 <p>✅ 多核可同时跑同进程多线程；阻塞在线程一级；内核例程多线程
 ❌ 同进程内切换也要进内核 → 比 ULT 慢</p>
 <h4 id="slide-130"><a class="toclink" href="#slide-130">关键对比（slide 130）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k056">
+  <img src="content/images/knowledge/ch2-k056.webp" alt="知识点插图：关键对比（slide 130）" loading="lazy">
+  <figcaption>插图：关键对比（slide 130）</figcaption>
+</figure>
+
 <p>ULT 下：进程 A（1 线程）vs 进程 B（100 线程） → A 的线程比 B 快（A 的线程独占整个时间片，B 的 100 个线程要平分 1 个时间片）</p>
 <p>KLT 下：B 的总速度比 A 快（100 个线程各拿独立时间片）</p>
 <h3 id="windows-nt-apislide-132"><a class="toclink" href="#windows-nt-apislide-132">Windows NT 线程 API（slide 132）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k057">
+  <img src="content/images/knowledge/ch2-k057.webp" alt="知识点插图：Windows NT 线程 API（slide 132）" loading="lazy">
+  <figcaption>插图：Windows NT 线程 API（slide 132）</figcaption>
+</figure>
+
 <ul>
 <li><code>CreateThread()</code> 创建</li>
 <li><code>ExitThread()</code> 结束</li>
@@ -972,7 +1257,17 @@
 </ul>
 <hr>
 <h2 id="29"><a class="toclink" href="#29">2.9 处理器调度</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k058">
+  <img src="content/images/knowledge/ch2-k058.webp" alt="知识点插图：2.9 处理器调度" loading="lazy">
+  <figcaption>插图：2.9 处理器调度</figcaption>
+</figure>
+
 <h3 id="slide-133-136"><a class="toclink" href="#slide-133-136">三级调度模型（slide 133-136）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k059">
+  <img src="content/images/knowledge/ch2-k059.webp" alt="知识点插图：三级调度模型（slide 133-136）" loading="lazy">
+  <figcaption>插图：三级调度模型（slide 133-136）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -1009,6 +1304,11 @@
 - 低级 = 医生叫号（轮到谁看病）</p>
 <p>实时系统/分时系统多采用两级调度（无作业调度）。</p>
 <h3 id="5-slide-137-142"><a class="toclink" href="#5-slide-137-142">调度算法的 5 个评价指标（slide 137-142）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k060">
+  <img src="content/images/knowledge/ch2-k060.webp" alt="知识点插图：调度算法的 5 个评价指标（slide 137-142）" loading="lazy">
+  <figcaption>插图：调度算法的 5 个评价指标（slide 137-142）</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -1046,6 +1346,11 @@
 </tbody>
 </table>
 <h4 id="_1"><a class="toclink" href="#_1">周转时间相关公式（必背）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k061">
+  <img src="content/images/knowledge/ch2-k061.webp" alt="知识点插图：周转时间相关公式（必背）" loading="lazy">
+  <figcaption>插图：周转时间相关公式（必背）</figcaption>
+</figure>
+
 <pre><code>周转时间        ti = tf - ts        （完成-提交）
                   = 等待时间 + 运行时间
 带权周转时间    wi = ti / tk         （tk 是运行时间，wi 总 ≥ 1）
@@ -1057,7 +1362,17 @@
 </blockquote>
 <hr>
 <h2 id="210"><a class="toclink" href="#210">2.10 调度算法（必考计算题）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k062">
+  <img src="content/images/knowledge/ch2-k062.webp" alt="知识点插图：2.10 调度算法（必考计算题）" loading="lazy">
+  <figcaption>插图：2.10 调度算法（必考计算题）</figcaption>
+</figure>
+
 <h3 id="_2"><a class="toclink" href="#_2">计算题通用模板</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k063">
+  <img src="content/images/knowledge/ch2-k063.webp" alt="知识点插图：计算题通用模板" loading="lazy">
+  <figcaption>插图：计算题通用模板</figcaption>
+</figure>
+
 <blockquote>
 <p><strong>拿到题先做这 4 件事</strong>：
 1. 列表：作业/进程名、提交时刻、所需 CPU 时间
@@ -1067,6 +1382,11 @@
 </blockquote>
 <hr>
 <h3 id="1-fcfs-slide-154-155"><a class="toclink" href="#1-fcfs-slide-154-155">1. FCFS 先来先服务（slide 154-155）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k064">
+  <img src="content/images/knowledge/ch2-k064.webp" alt="知识点插图：1. FCFS 先来先服务（slide 154-155）" loading="lazy">
+  <figcaption>插图：1. FCFS 先来先服务（slide 154-155）</figcaption>
+</figure>
+
 <p><strong>规则</strong>：按进入后备队列的先后次序选作业。</p>
 <p><strong>特点</strong>：
 - 简单，对长作业有利
@@ -1096,6 +1416,11 @@
 </table>
 <hr>
 <h3 id="2-sjf-slide-156-158"><a class="toclink" href="#2-sjf-slide-156-158">2. SJF 最短作业优先（slide 156-158）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k065">
+  <img src="content/images/knowledge/ch2-k065.webp" alt="知识点插图：2. SJF 最短作业优先（slide 156-158）" loading="lazy">
+  <figcaption>插图：2. SJF 最短作业优先（slide 156-158）</figcaption>
+</figure>
+
 <p><strong>规则</strong>：选估计 CPU 时间最短的。</p>
 <p><strong>特点</strong>：
 - 平均周转时间最优（理论最优）
@@ -1107,6 +1432,11 @@
 <li>FCFS：T=19, W=2.61</li>
 </ul>
 <h4 id="cpu-slide-159-160"><a class="toclink" href="#cpu-slide-159-160">估算 CPU 时间（指数平滑，slide 159-160）</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k066">
+  <img src="content/images/knowledge/ch2-k066.webp" alt="知识点插图：估算 CPU 时间（指数平滑，slide 159-160）" loading="lazy">
+  <figcaption>插图：估算 CPU 时间（指数平滑，slide 159-160）</figcaption>
+</figure>
+
 <pre><code>τ(n+1) = α · t(n) + (1 - α) · τ(n)
 </code></pre>
 <ul>
@@ -1116,6 +1446,11 @@
 </ul>
 <hr>
 <h3 id="3-srtf-slide-161-162"><a class="toclink" href="#3-srtf-slide-161-162">3. SRTF 最短剩余时间优先（slide 161-162）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k067">
+  <img src="content/images/knowledge/ch2-k067.webp" alt="知识点插图：3. SRTF 最短剩余时间优先（slide 161-162）" loading="lazy">
+  <figcaption>插图：3. SRTF 最短剩余时间优先（slide 161-162）</figcaption>
+</figure>
+
 <p><strong>规则</strong>：SJF 的<strong>抢占式</strong>版本。新作业到达，若其 CPU 时间 &lt; 当前剩余 → 抢占。</p>
 <p><strong>例题</strong>（slide 162）：4 个作业到达/CPU 时间：J1-0/8、J2-1/4、J3-2/9、J4-3/5</p>
 <ul>
@@ -1124,6 +1459,11 @@
 </ul>
 <hr>
 <h3 id="4-hrrf-slide-163-166"><a class="toclink" href="#4-hrrf-slide-163-166">4. HRRF 最高响应比优先（slide 163-166）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k068">
+  <img src="content/images/knowledge/ch2-k068.webp" alt="知识点插图：4. HRRF 最高响应比优先（slide 163-166）" loading="lazy">
+  <figcaption>插图：4. HRRF 最高响应比优先（slide 163-166）</figcaption>
+</figure>
+
 <p><strong>规则</strong>：每次选<strong>响应比最高</strong>的作业。</p>
 <pre><code>响应比 = 1 + 已等待时间 / 估计运行时间
        = (等待时间 + 运行时间) / 运行时间
@@ -1168,7 +1508,16 @@
 </blockquote>
 <hr>
 <h3 id="5-slide-167-168"><a class="toclink" href="#5-slide-167-168">5. 优先级调度（slide 167-168）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k069">
+  <img src="content/images/knowledge/ch2-k069.webp" alt="知识点插图：5. 优先级调度（slide 167-168）" loading="lazy">
+  <figcaption>插图：5. 优先级调度（slide 167-168）</figcaption>
+</figure>
+
 <h4 id="_3"><a class="toclink" href="#_3">静态优先级</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k070">
+  <img src="content/images/knowledge/ch2-k070.webp" alt="知识点插图：静态优先级" loading="lazy">
+  <figcaption>插图：静态优先级</figcaption>
+</figure>
 <ul>
 <li>频繁用外设的高（提效率）</li>
 <li>重要计算高（利用户）</li>
@@ -1176,14 +1525,28 @@
 <li>交互式高（响应快）</li>
 </ul>
 <h4 id="_4"><a class="toclink" href="#_4">动态优先级</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k071">
+  <img src="content/images/knowledge/ch2-k071.webp" alt="知识点插图：动态优先级" loading="lazy">
+  <figcaption>插图：动态优先级</figcaption>
+</figure>
 <ul>
 <li>占 CPU 时间越长 → 优先级越<strong>低</strong>（防止霸占）</li>
 <li>等 CPU 时间越长 → 优先级越<strong>高</strong>（防止饿死）</li>
 </ul>
 <hr>
 <h3 id="6-rrslide-169-171"><a class="toclink" href="#6-rrslide-169-171">6. 时间片轮转 RR（slide 169-171）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k072">
+  <img src="content/images/knowledge/ch2-k072.webp" alt="知识点插图：6. 时间片轮转 RR（slide 169-171）" loading="lazy">
+  <figcaption>插图：6. 时间片轮转 RR（slide 169-171）</figcaption>
+</figure>
+
 <p><strong>规则</strong>：每个就绪进程轮流跑一个时间片 q（如 100ms），用完到队尾。</p>
 <h4 id="_5"><a class="toclink" href="#_5">时间片长度的影响</a></h4>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k073">
+  <img src="content/images/knowledge/ch2-k073.webp" alt="知识点插图：时间片长度的影响" loading="lazy">
+  <figcaption>插图：时间片长度的影响</figcaption>
+</figure>
+
 <pre><code>T(响应) = N(进程数) × q(时间片)
 </code></pre>
 <table>
@@ -1237,6 +1600,11 @@
 <p>平均周转时间比 SJF 大，但<strong>响应较快</strong>。</p>
 <hr>
 <h3 id="7-slide-172-173"><a class="toclink" href="#7-slide-172-173">7. 多级反馈队列（slide 172-173）</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k074">
+  <img src="content/images/knowledge/ch2-k074.webp" alt="知识点插图：7. 多级反馈队列（slide 172-173）" loading="lazy">
+  <figcaption>插图：7. 多级反馈队列（slide 172-173）</figcaption>
+</figure>
+
 <p><strong>规则</strong>：</p>
 <ol>
 <li>多个就绪队列，优先级递减</li>
@@ -1255,6 +1623,11 @@
 </blockquote>
 <hr>
 <h3 id="_6"><a class="toclink" href="#_6">调度算法对比速查</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k075">
+  <img src="content/images/knowledge/ch2-k075.webp" alt="知识点插图：调度算法对比速查" loading="lazy">
+  <figcaption>插图：调度算法对比速查</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -1319,6 +1692,11 @@
 </table>
 <hr>
 <h2 id="211-linux-slide-104"><a class="toclink" href="#211-linux-slide-104">2.11 Linux 进程与任务（slide 104）</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k076">
+  <img src="content/images/knowledge/ch2-k076.webp" alt="知识点插图：2.11 Linux 进程与任务（slide 104）" loading="lazy">
+  <figcaption>插图：2.11 Linux 进程与任务（slide 104）</figcaption>
+</figure>
+
 <blockquote>
 <p>Linux 的特殊设计：
 - <strong>任务（task）</strong> = 内核空间运行的程序
@@ -1330,7 +1708,17 @@
 <p>调度算法层面，Linux 早期用 O(1)，现在用 <strong>CFS（完全公平调度器）</strong>——本质是带权时间片轮转的多级反馈思想。</p>
 <hr>
 <h2 id="212"><a class="toclink" href="#212">2.12 章末考试要点速查</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k077">
+  <img src="content/images/knowledge/ch2-k077.webp" alt="知识点插图：2.12 章末考试要点速查" loading="lazy">
+  <figcaption>插图：2.12 章末考试要点速查</figcaption>
+</figure>
+
 <h3 id="_7"><a class="toclink" href="#_7">必背概念</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k078">
+  <img src="content/images/knowledge/ch2-k078.webp" alt="知识点插图：必背概念" loading="lazy">
+  <figcaption>插图：必背概念</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>
@@ -1390,6 +1778,11 @@
 </tbody>
 </table>
 <h3 id="_8"><a class="toclink" href="#_8">必会公式</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k079">
+  <img src="content/images/knowledge/ch2-k079.webp" alt="知识点插图：必会公式" loading="lazy">
+  <figcaption>插图：必会公式</figcaption>
+</figure>
+
 <pre><code>周转时间       ti = tf - ts
 带权周转       wi = ti / tk
 平均周转       T  = Σti / n
@@ -1400,6 +1793,11 @@ SJF 估算       τ(n+1) = α·t(n) + (1-α)·τ(n)
 中断向量地址   = N × 4    (8086)
 </code></pre>
 <h3 id="_9"><a class="toclink" href="#_9">必画图</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k080">
+  <img src="content/images/knowledge/ch2-k080.webp" alt="知识点插图：必画图" loading="lazy">
+  <figcaption>插图：必画图</figcaption>
+</figure>
+
 <ol>
 <li><strong>进程三态/五态/七态转换图</strong></li>
 <li><strong>slide-103 CPU 状态 × 进程状态时序图</strong>（理解上下文切换最关键）</li>
@@ -1407,6 +1805,11 @@ SJF 估算       τ(n+1) = α·t(n) + (1-α)·τ(n)
 <li><strong>调度算法的 Gantt 图</strong></li>
 </ol>
 <h3 id="_10"><a class="toclink" href="#_10">计算题答题模板</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k081">
+  <img src="content/images/knowledge/ch2-k081.webp" alt="知识点插图：计算题答题模板" loading="lazy">
+  <figcaption>插图：计算题答题模板</figcaption>
+</figure>
+
 <pre><code>1. 列原始信息表（提交时刻 ts、CPU 时间 tk）
 2. 按算法规则推执行顺序
 3. 画 Gantt 图（横轴时间，标完成时刻 tf）
@@ -1416,6 +1819,11 @@ SJF 估算       τ(n+1) = α·t(n) + (1-α)·τ(n)
 7. 比较多种算法（如题目要求）
 </code></pre>
 <h3 id="_11"><a class="toclink" href="#_11">易错点</a></h3>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k082">
+  <img src="content/images/knowledge/ch2-k082.webp" alt="知识点插图：易错点" loading="lazy">
+  <figcaption>插图：易错点</figcaption>
+</figure>
+
 <ul>
 <li><strong>没有&rdquo;等待→运行&rdquo;的状态转换</strong>（必经过就绪）</li>
 <li><strong>挂起态对线程没意义</strong>（线程挂起=整个进程挂起）</li>
@@ -1427,6 +1835,11 @@ SJF 估算       τ(n+1) = α·t(n) + (1-α)·τ(n)
 </ul>
 <hr>
 <h2 id="_12"><a class="toclink" href="#_12">笔记中的疑点 / 待澄清</a></h2>
+<figure class="knowledge-figure" data-knowledge-id="ch2-k083">
+  <img src="content/images/knowledge/ch2-k083.webp" alt="知识点插图：笔记中的疑点 / 待澄清" loading="lazy">
+  <figcaption>插图：笔记中的疑点 / 待澄清</figcaption>
+</figure>
+
 <ol>
 <li><strong>slide-80 的 3 个判断题</strong>：第 (2) 题说法本身可能有问题（&rdquo;运行→阻塞 引起 运行→就绪&rdquo;逻辑不自洽，疑为教材笔误，应理解为&rdquo;是否引起其他进程从就绪→运行&rdquo;）。</li>
 <li><strong>slide-160 估算 CPU 时间例子</strong>：实际值和估算值的对应关系不太清晰（数据列错位），需对照原图。</li>
