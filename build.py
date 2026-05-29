@@ -285,6 +285,9 @@ def topbar_html(active_slug: str) -> str:
       <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#palette"/></svg>
       </button>
+      <a class="theme-toggle" href="https://github.com/estelledc/hust-eic-os-review" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码" title="在 GitHub 查看源码">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#github"/></svg>
+      </a>
     </div>
   </div>
 </header>
@@ -328,7 +331,7 @@ def sidebar_html(active_slug: str) -> str:
 
 FOOTER_HTML = """<footer class="page-footer">
   <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
-  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本 · <a href="https://github.com/estelledc/hust-eic-os-review" target="_blank" rel="noopener">在 GitHub 查看源码</a></p>
 </footer>
 """
 
