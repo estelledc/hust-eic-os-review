@@ -15,3 +15,12 @@
   <h2>学习边界</h2>
   <p>这里提供的是站内交互式学习版，不提供可直接提交的成品内容，也不搬运完整源码实现。需要真实 Linux 0.11/Bochs 环境时，请把本站练习中形成的理解迁移到本机实验环境。</p>
 </section>
+
+<section class="practice-sources">
+  <h2>笔试速练</h2>
+  <p>实验是动手层面的训练，<strong>笔试速练</strong>是考场层面的训练。两者互补：</p>
+  <ul>
+    <li><a href="quiz.html">笔试速练 quiz</a>：30+ 题分类练习（Ch1-Ch5），含答案+易错点</li>
+    <li><a href="cheatsheet.html">考前 P0 必默写清单</a>：10 道大题完整推演 + D-3/D-2/D-1 默写计划</li>
+  </ul>
+</section>
