@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="30+ 题分类练习，含答案+易错点。">
+<meta name="color-scheme" content="light dark">
+<title>笔试速练 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="themes/themes.css">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+<header class="topbar site-topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html" aria-label="返回首页">
+      <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
+      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+    </a>
+    <button class="site-nav-toggle" type="button" aria-expanded="false" data-site-nav-toggle>导航</button>
+    <nav class="site-nav" aria-label="站点主导航">
+      <a class="site-nav-link" href="index.html">课程地图</a>
+      <a class="site-nav-link" href="ch1.html">阅读</a>
+      <a class="site-nav-link" href="practice.html">实践</a>
+      <a class="site-nav-link" href="review.html">总复习</a>
+      <a class="site-nav-link" href="homework.html">作业</a>
+      <a class="site-nav-link" href="tutorial-1.html">教程</a>
+      <a class="site-nav-link" href="themes-gallery.html">主题</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
+      </button>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="站点导航">
+  <a class="home-link" href="index.html">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>
+    <span>课程地图</span>
+  </a>
+  <section class="nav-group" aria-labelledby="grp-chapter"><p id="grp-chapter" class="nav-group-title">课程章节</p><ul class="nav-list"><li><a class="nav-link" href="ch1.html"><span class="nav-link-title">第 1 章 操作系统概论</span><span class="nav-link-desc">并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。</span></a></li><li><a class="nav-link" href="ch2.html"><span class="nav-link-title">第 2 章 处理器管理</span><span class="nav-link-desc">进程与线程、状态转换、七种调度算法与计算模板。</span></a></li><li><a class="nav-link" href="ch3.html"><span class="nav-link-title">第 3 章 同步互斥与死锁</span><span class="nav-link-desc">PV 三铁律、生产者-消费者、读者写者、哲学家与银行家算法。</span></a></li><li><a class="nav-link" href="ch4.html"><span class="nav-link-title">第 4 章 存储管理</span><span class="nav-link-desc">地址转换、四种页面置换、工作集与虚拟内存。</span></a></li><li><a class="nav-link" href="ch5.html"><span class="nav-link-title">第 5 章 设备管理</span><span class="nav-link-desc">六种磁盘调度算法、SPOOLing、I/O 软件分层。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-exam"><p id="grp-exam" class="nav-group-title">考前材料</p><ul class="nav-list"><li><a class="nav-link" href="review.html"><span class="nav-link-title">总复习提纲</span><span class="nav-link-desc">20 页考前总图，按章节列考点。</span></a></li><li><a class="nav-link" href="homework.html"><span class="nav-link-title">作业明细</span><span class="nav-link-desc">5 章作业题号 + 教材原题完整文字。</span></a></li><li><a class="nav-link" href="cheatsheet.html"><span class="nav-link-title">考前 P0 必默写清单</span><span class="nav-link-desc">10 道大题完整推演 + D-3/D-2/D-1 默写计划。</span></a></li><li><a class="nav-link nav-link-active" href="quiz.html"><span class="nav-link-title">笔试速练</span><span class="nav-link-desc">30+ 题分类练习，含答案+易错点。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-practice"><p id="grp-practice" class="nav-group-title">实践模式</p><ul class="nav-list"><li><a class="nav-link" href="practice.html"><span class="nav-link-title">实践模式</span><span class="nav-link-desc">HIT-OSlab Lab1-Lab9 的站内交互式学习版。</span></a></li></ul></section><section class="nav-group" aria-labelledby="grp-tutorial"><p id="grp-tutorial" class="nav-group-title">教程笔记</p><ul class="nav-list"><li><a class="nav-link" href="tutorial-1.html"><span class="nav-link-title">教程笔记 · Part 1</span><span class="nav-link-desc">OS 概述 · 处理器管理 · 存储管理（前段）。</span></a></li><li><a class="nav-link" href="tutorial-2.html"><span class="nav-link-title">教程笔记 · Part 2</span><span class="nav-link-desc">存储 · 设备 · 文件系统 · 并发（前段）。</span></a></li><li><a class="nav-link" href="tutorial-3.html"><span class="nav-link-title">教程笔记 · Part 3</span><span class="nav-link-desc">死锁 · 网络 / 分布式 / 云。</span></a></li></ul></section>
+  <div class="sidebar-footer">
+    <a class="ghost" href="themes-gallery.html">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
+      <span>主题画廊（71 套）</span>
+    </a>
+    <p class="ghost sidebar-note">本站源代码以 markdown 编写、build.py 重新生成。</p>
+  </div>
+</aside>
+<main class="main" id="main">
+  <article class="prose">
+    <header class="page-head">
+      <h1>笔试速练</h1>
+      <p class="page-lede">30+ 题分类练习，含答案+易错点。</p>
+    </header>
+    <blockquote>
+<p><strong>用法</strong>：盖住答案做题，做完对照。每题答案后含<strong>易错点提示</strong>。
+配套 <a href="cheatsheet.html">考前 P0 必默写清单</a> 一起用——quiz 是覆盖广度，cheatsheet 是 P0 大题深度。</p>
+</blockquote>
+<hr>
+<h2 id="ch1-8"><a class="toclink" href="#ch1-8">Ch1 概念辨析（8 题）</a></h2>
+<h3 id="q11-os"><a class="toclink" href="#q11-os">Q1.1 OS 干啥识别题</a></h3>
+<p>下面 4 个场景，哪些是 OS 在做的事？</p>
+<p>A. 决定哪个程序此刻用 CPU
+B. 微信把消息编码成 UTF-8 发给服务器
+C. 把 read() 系统调用排进磁盘 I/O 队列
+D. Word 计算文档分页</p>
+<details><summary>答案</summary>
+
+**A、C 是 OS**（资源管理）；**B、D 是应用**（业务逻辑）。
+**判断口诀**：凡涉及"分配/协调/管理硬件资源"的都是 OS；凡是业务逻辑的都是应用。
+
+</details>
+
+<h3 id="q12-vs"><a class="toclink" href="#q12-vs">Q1.2 并发 vs 并行</a></h3>
+<p>单核 CPU 上&rdquo;同时&rdquo;开 5 个微信窗口，是并发还是并行？</p>
+<details><summary>答案</summary>
+
+**并发**（同一时间段内交替推进，不是同时刻）。**并行**需要多核 CPU 真正同时执行。
+
+</details>
+
+<h3 id="q13-___"><a class="toclink" href="#q13-___">Q1.3 系统调用必经 ___ ？</a></h3>
+<p>系统调用的本质是从 ___ 切换到 ___ ，触发指令是 ___ 。</p>
+<details><summary>答案</summary>
+
+**用户态 → 核心态**，触发指令 **陷入指令（trap）**。系统调用是用户程序获得 OS 服务的**唯一**途径。
+
+</details>
+
+<h3 id="q14-cpu"><a class="toclink" href="#q14-cpu">Q1.4 CPU 利用率正向求</a></h3>
+<p>p = 0.5（50% 时间等 I/O），n = 4 道程序，CPU 利用率 = ?</p>
+<details><summary>答案</summary>
+
+1 - 0.5⁴ = 1 - 0.0625 = **93.75%**
+
+</details>
+
+<h3 id="q15-cpu"><a class="toclink" href="#q15-cpu">Q1.5 CPU 利用率反向求</a></h3>
+<p>p = 0.8，要求 CPU 利用率不低于 80%，至少需要多少道？</p>
+<details><summary>答案</summary>
+
+1 - 0.8ⁿ ≥ 0.8 → 0.8ⁿ ≤ 0.2
+
+试值：0.8⁵ ≈ 0.328 > 0.2（不够）；0.8⁸ ≈ 0.168 < 0.2（够）→ **n ≥ 8**
+
+</details>
+
+<h3 id="q16-vs"><a class="toclink" href="#q16-vs">Q1.6 单内核 vs 微内核</a></h3>
+<p>为什么微内核稳定性比单内核好？</p>
+<details><summary>答案</summary>
+
+微内核把 OS 服务拆成多个用户态进程，**一个服务崩溃不影响其他服务和内核**；单内核所有服务在同一内核态，**一个 bug 整个 OS 崩**（比如 Linux 早期某个驱动 BUG 让整机重启）。代价：微内核服务间走 IPC 比单内核函数调用慢。
+
+</details>
+
+<h3 id="q17"><a class="toclink" href="#q17">Q1.7 多道程序设计的本质</a></h3>
+<p>多道程序设计为什么能提高 CPU 利用率？（一句话答）</p>
+<details><summary>答案</summary>
+
+**用 I/O 等待时间换 CPU 工作时间**——一个程序等 I/O 时，OS 立即把 CPU 调度给另一个就绪程序。
+
+</details>
+
+<h3 id="q18"><a class="toclink" href="#q18">Q1.8 并发四特性关系</a></h3>
+<p>OS 四大特性（并发/共享/虚拟/异步）的关系是？</p>
+<details><summary>答案</summary>
+
+**并发是前提**，派生出共享、虚拟、异步——没有并发就不需要共享、不需要虚拟、不会有异步。
+
+</details>
+
+<hr>
+<h2 id="ch2-10"><a class="toclink" href="#ch2-10">Ch2 进程/线程/调度（10 题）</a></h2>
+<h3 id="q21-vs"><a class="toclink" href="#q21-vs">Q2.1 进程 vs 程序</a></h3>
+<p>Chrome 任务管理器显示 8 个进程但你只装了一个 Chrome 程序，怎么解释？</p>
+<details><summary>答案</summary>
+
+硬盘上 Chrome **程序文件只有一份**（静态代码），OS 把它装载到内存中产生 **8 个独立的运行实例**（每个有自己的内存空间、PCB、寄存器现场）——这正是"程序 vs 进程"的本质：程序静态、进程动态；一个程序可以对应多个进程。
+
+</details>
+
+<h3 id="q22"><a class="toclink" href="#q22">Q2.2 状态转换反例</a></h3>
+<p>为什么&rdquo;阻塞 → 运行&rdquo;这种状态转换不存在？</p>
+<details><summary>答案</summary>
+
+阻塞结束后必须**先回到就绪态重新排队**，因为 OS 的统一规则是"所有想用 CPU 的进程必须先在就绪队列排队"。直接阻塞→运行会**绕过调度公平性**。
+
+</details>
+
+<h3 id="q23-pcb"><a class="toclink" href="#q23-pcb">Q2.3 PCB 的关键作用</a></h3>
+<p>如果一个进程的 PCB 被销毁，但程序段和数据段还在内存里，OS 还认它是进程吗？</p>
+<details><summary>答案</summary>
+
+**不认**。PCB 是 OS 识别和管理进程的唯一标志——没有 PCB，OS 完全不知道有这个进程存在。"创建进程"=建立 PCB，"销毁进程"=删除 PCB。
+
+</details>
+
+<h3 id="q24-5"><a class="toclink" href="#q24-5">Q2.4 进程切换 5 步</a></h3>
+<p>写出&rdquo;进程从 A 切换到 B&rdquo;的 5 步操作（必须点到 PCB）。</p>
+<details><summary>答案</summary>
+
+
+<pre><code>1. 保存现场：CPU 寄存器、PC、PSW 保存到 A 的 PCB
+2. 入队更新：A 的 PCB 状态改为&quot;就绪&quot;或&quot;阻塞&quot;，挂到对应队列
+3. 选择新进程：调度器从就绪队列选中 B
+4. 恢复现场：从 B 的 PCB 读出寄存器/PC，写回 CPU
+5. 上 CPU：B 的 PCB 状态改&quot;运行&quot;，从 B 的 PC 继续执行
+</code></pre>
+
+
+</details>
+
+<h3 id="q25"><a class="toclink" href="#q25">Q2.5 线程切换为什么快</a></h3>
+<p>&ldquo;线程切换比进程切换快是因为不需要保存寄存器值&rdquo;——这句话错在哪？</p>
+<details><summary>答案</summary>
+
+线程切换**也要**保存寄存器值。**真正快**在于：同一进程内的线程**共享地址空间**，切换时**不需要切换页表，TLB 不会失效**——省掉了进程切换里最贵的一笔开销。
+
+口诀：**进程切寄存器 + 切地址空间，线程只切寄存器**
+
+</details>
+
+<h3 id="q26-ult"><a class="toclink" href="#q26-ult">Q2.6 ULT 整进程阻塞</a></h3>
+<p>为什么 ULT（用户级线程）&rdquo;一个线程阻塞会导致整个进程都被阻塞&rdquo;？</p>
+<details><summary>答案</summary>
+
+4 步因果链：
+1. 内核**只看到进程**，不知道有线程
+2. 某线程调用阻塞 I/O，**内核以为是"进程"在等 I/O**
+3. 内核把整个进程挂起到阻塞态
+4. 同进程所有线程一起被冻结
+
+</details>
+
+<h3 id="q27"><a class="toclink" href="#q27">Q2.7 抢占式调度的物理基础</a></h3>
+<p>什么是&rdquo;抢占式调度&rdquo;？它的物理基础是什么？</p>
+<details><summary>答案</summary>
+
+抢占式 = OS 可以**主动**把进程从 CPU 上踢下来。物理基础是**时钟中断**——没有时钟中断，OS 一旦把 CPU 交给用户程序就拿不回来（除非进程主动等 I/O 或结束）。
+
+</details>
+
+<h3 id="q28-sjf"><a class="toclink" href="#q28-sjf">Q2.8 SJF 致命缺点</a></h3>
+<p>SJF（短作业优先）有什么致命缺点？</p>
+<details><summary>答案</summary>
+
+**长作业可能饥饿**——如果短作业源源不断到达，长作业永远排在最后，**可能永远轮不到执行**。
+
+解法：HRRF（最高响应比优先）——把"等待时间"也加入考量，等久的会因为响应比变高而被优先。
+
+</details>
+
+<h3 id="q29-rr"><a class="toclink" href="#q29-rr">Q2.9 RR 反直觉</a></h3>
+<p>为什么 RR 时间片轮转的平均周转时间反而比 FCFS、SJF 都差？</p>
+<details><summary>答案</summary>
+
+RR 频繁切换让每个进程都被反复打断，**丧失了"快速结束短作业"的机会**。RR 的真正价值不在平均周转，而在**响应时间**——每个进程在很短时间内就能拿到一次 CPU。**适合分时系统不适合批处理**。
+
+</details>
+
+<h3 id="q210"><a class="toclink" href="#q210">Q2.10 时间片大小选择</a></h3>
+<p>时间片 q 选得太大或太小会怎样？</p>
+<details><summary>答案</summary>
+
+- **q 过大**：退化为 FCFS（每个进程一上 CPU 就跑到底）
+- **q 过小**：切换开销过大（保存/恢复 PCB 的时间占比上升，CPU 实际工作时间下降）
+- **经验值**：q 略大于一次典型交互响应所需的 CPU 时间
+
+</details>
+
+<hr>
+<h2 id="ch3-10"><a class="toclink" href="#ch3-10">Ch3 同步/互斥/死锁（10 题）</a></h2>
+<h3 id="q31-pv"><a class="toclink" href="#q31-pv">Q3.1 PV 操作必须原子</a></h3>
+<p>为什么 P 和 V 操作必须是&rdquo;原子的&rdquo;？</p>
+<details><summary>答案</summary>
+
+信号量 S 自己是**共享变量**，PV 操作就是**访问临界资源**。如果 PV 不原子，**信号量自己就先竞态了**——根本保护不了别的临界区。这是个套娃问题——**信号量原子性靠硬件原子原语**（LOCK/CAS/关中断）保证。
+
+</details>
+
+<h3 id="q32-v"><a class="toclink" href="#q32-v">Q3.2 漏写 V 后果</a></h3>
+<pre><code>P(mutex)
+counter++
+// 漏写 V(mutex)
+</code></pre>
+<p>会有什么后果？</p>
+<details><summary>答案</summary>
+
+5 步链式死锁：
+1. mutex 永远停在 0
+2. A 自己下次 P(mutex) 也阻塞——把自己锁外面了
+3. 其他进程 P(mutex) 全部进入等待队列
+4. 没人执行 V(mutex)
+5. 等待队列**永远没人叫醒** → 死锁
+
+</details>
+
+<h3 id="q33-v"><a class="toclink" href="#q33-v">Q3.3 同步信号量 V 谁来做</a></h3>
+<p>下面这段代码错在哪？</p>
+<pre><code>消费者：
+  V(full)
+  P(full)
+  取数据
+  ...
+</code></pre>
+<details><summary>答案</summary>
+
+**消费者自己 V 自己等的信号量**——绕过同步通知，**在缓冲区还是空的时候就去取数据**，读到垃圾值。
+
+铁律：**V(s) 必须由"触发那个事件的进程"来做**——full 的语义是"缓冲区有数据" → 只有生产者放完数据才能 V(full)。
+
+口诀：**P 自己等的，V 别人等的**
+
+</details>
+
+<h3 id="q34"><a class="toclink" href="#q34">Q3.4 抱锁睡觉</a></h3>
+<p>下面这段代码会什么时候死锁？</p>
+<pre><code>empty = 3, full = 0, mutex = 1
+
+生产者：
+  P(mutex)
+  P(empty)
+  放入缓冲
+  V(mutex)
+  V(full)
+</code></pre>
+<details><summary>答案</summary>
+
+**当缓冲区满（empty = 0）时**死锁：
+1. 生产者 A 先 P(mutex)（拿到锁）
+2. 接着 P(empty) → 0 → -1，A 阻塞睡眠
+3. A **抱着锁睡觉**——没人能再 P(mutex)
+4. 所有其他生产者全部阻塞，消费者也可能因为后续操作卡住
+5. 死锁
+
+铁律：**同步 P 必须在互斥 P 之前**——避免抱锁睡觉。
+
+</details>
+
+<h3 id="q35"><a class="toclink" href="#q35">Q3.5 读者写者饥饿</a></h3>
+<p>经典读者写者算法，5 个读者+2 个写者同时到达，最坏情况下写者要等多久？</p>
+<details><summary>答案</summary>
+
+**情况 1（读者数固定）**：W 等当前所有读者完成。
+**情况 2（读者源源不断到来）**：**W 可能永远等不到**——readcount 永远 ≥ 1，rw 永远不释放。这就是"读者优先"算法的**写者饥饿**问题。
+
+</details>
+
+<h3 id="q36"><a class="toclink" href="#q36">Q3.6 死锁四条件</a></h3>
+<p>死锁的 4 个必要条件是什么？</p>
+<details><summary>答案</summary>
+
+1. **互斥**：资源一次只能被一个进程使用
+2. **不可抢占**：资源只能由占用进程主动释放
+3. **占有并等待**：进程已占有部分资源，请求新资源时不放弃已占
+4. **循环等待**：存在进程链，每个等待下一个占用的资源
+
+口诀：**互斥/不抢/占等/循环**——4 个全有才死锁，破坏任一个就避免死锁。
+
+</details>
+
+<h3 id="q37"><a class="toclink" href="#q37">Q3.7 哲学家进餐避免死锁</a></h3>
+<p>写出 4 种避免哲学家进餐死锁的方法，分别破坏哪个条件？</p>
+<details><summary>答案</summary>
+
+| 方法 | 破坏条件 |
+|------|---------|
+| 资源序号法（先小后大） | ④ 循环等待 |
+| 限制最多 4 人同时拿叉 | ④ 循环等待（变相） |
+| 同时拿两叉或一根都不要 | ③ 占有并等待 |
+| 每人一双自己的叉子（私有化） | ① 互斥 |
+
+</details>
+
+<h3 id="q38"><a class="toclink" href="#q38">Q3.8 银行家算法判断步骤</a></h3>
+<p>写出银行家算法的 3 步抽象描述（不能含具体数字）。</p>
+<details><summary>答案</summary>
+
+
+<pre><code>1. 初始化：Work ← Available, Finish[i] ← false (所有 i)
+2. 找 Finish=false 且 Need[i] ≤ Work 的进程：
+   - 找到 → Work ← Work + Allocation[i], Finish[i] ← true，回 2
+   - 找不到 → 跳 3
+3. 检查 Finish 数组：
+   - 全为 true → 安全
+   - 有 false → 不安全
+</code></pre>
+
+
+口诀：**找得到就走、找不到就停、停下后看完没完**
+
+</details>
+
+<h3 id="q39-vs"><a class="toclink" href="#q39-vs">Q3.9 死锁 vs 不安全</a></h3>
+<p>死锁、不安全状态、安全状态之间是什么关系？</p>
+<details><summary>答案</summary>
+
+**死锁 ⊂ 不安全 ⊂ 全状态**
+
+- **安全**：存在安全序列让所有进程完成
+- **不安全**：找不到安全序列，**有死锁风险**但不一定死锁
+- **死锁**：实际发生进程互相等待
+
+银行家算法的策略：**只允许进入安全状态**——不安全就拒绝分配。
+
+</details>
+
+<h3 id="q310-pv"><a class="toclink" href="#q310-pv">Q3.10 PV 三步法</a></h3>
+<p>PV 题的通用解题三步法是什么？</p>
+<details><summary>答案</summary>
+
+
+<pre><code>Step 1: 画关系
+  - 哪些进程互斥关系？
+  - 哪些进程同步先后关系？
+
+Step 2: 设信号量
+  - 互斥资源：mutex（初值 1）
+  - m 个同类资源：S（初值 m）
+  - 同步事件：S（初值 0）
+
+Step 3: 写 PV
+  - 互斥 P/V 在同一进程内成对
+  - 同步 P/V 跨进程交叉
+  - 铁律：同步 P 在前，互斥 P 在后
+</code></pre>
+
+
+</details>
+
+<hr>
+<h2 id="ch4-10"><a class="toclink" href="#ch4-10">Ch4 存储管理（10 题）</a></h2>
+<h3 id="q41"><a class="toclink" href="#q41">Q4.1 内/外部碎片</a></h3>
+<p>下面 2 个场景分别属于哪种碎片？</p>
+<p>① 固定分区把内存切成 100KB 一块，60KB 程序占了 100KB 分区，剩 40KB 没法用
+② 动态分区剩 3 块空闲：50/30/20 KB（不连续），来了 80KB 程序装不下</p>
+<details><summary>答案</summary>
+
+① **内部碎片**（分配单元内部浪费）
+② **外部碎片**（空闲单元间小到没法分）
+
+口诀：**被分了用不完=内部，分不出去=外部**
+
+</details>
+
+<h3 id="q42"><a class="toclink" href="#q42">Q4.2 分页地址转换</a></h3>
+<p>页大小 = 1KB，逻辑地址 A = 2500，页表显示页 2 → 页框 5。求物理地址。</p>
+<details><summary>答案</summary>
+
+
+<pre><code>页号 p = ⌊2500 / 1024⌋ = 2
+页内偏移 d = 2500 - 2 × 1024 = 452
+物理地址 = 5 × 1024 + 452 = 5120 + 452 = 5572
+</code></pre>
+
+
+⚠️ 必须算到具体数值（5572），不能停在 5×1024+452。
+
+</details>
+
+<h3 id="q43-eat"><a class="toclink" href="#q43-eat">Q4.3 EAT 公式辨析</a></h3>
+<p>什么时候用 <code>EAT = T_t + (2 - p) × T_m</code>，什么时候用 <code>EAT = (1 - f) × T_m + f × T_缺页</code>？</p>
+<details><summary>答案</summary>
+
+- 第一个：**TLB 命中率分析**（p 是 TLB 命中率）
+- 第二个：**缺页率分析**（f 是缺页率，T_缺页 是磁盘 I/O 级毫秒）
+
+两个**容易混淆**——看清题面给的是哪种场景。
+
+</details>
+
+<h3 id="q44"><a class="toclink" href="#q44">Q4.4 缺页率震撼数字</a></h3>
+<p>T_m = 100ns，T_缺页 = 10ms。缺页率 0.1% 时 EAT 多少？变慢几倍？</p>
+<details><summary>答案</summary>
+
+
+<pre><code>EAT = 0.999 × 100 + 0.001 × 10⁷
+    = 99.9 + 10000
+    ≈ 10100 ns
+
+变慢 = 10100 / 100 = 100 倍
+</code></pre>
+
+
+**反直觉**：千分之一缺页率就慢 100 倍——所以 OS 拼命压低缺页率到 0.001% 以下。
+
+</details>
+
+<h3 id="q45-belady"><a class="toclink" href="#q45-belady">Q4.5 Belady 异常</a></h3>
+<p>什么是 Belady 异常？哪个算法有？</p>
+<details><summary>答案</summary>
+
+**Belady 异常**：FIFO 算法**增加页框数，缺页率反而上升**——反直觉。
+
+**只有 FIFO 有**——OPT、LRU、CLOCK 都没有。原因：FIFO 只看进入时间不看活跃度，多一个页框可能让常用页晚被淘汰反而让"该淘汰的"提前出局。
+
+OPT/LRU 因为驻留集随页框单调扩张，多一个页框只会"多保留有用的页"。
+
+</details>
+
+<h3 id="q46-lru-vs-fifo"><a class="toclink" href="#q46-lru-vs-fifo">Q4.6 LRU vs FIFO 命中差异</a></h3>
+<p>LRU 和 FIFO 在&rdquo;页面命中时&rdquo;的处理有什么本质区别？</p>
+<details><summary>答案</summary>
+
+- **FIFO**：命中时**不更新顺序**（队列结构不变，淘汰仍按进入时间）
+- **LRU**：命中时**把该页移到"最新"那端**（淘汰最久没用的）
+
+口诀：**"FIFO 看进来，LRU 看用过"**
+
+</details>
+
+<h3 id="q47"><a class="toclink" href="#q47">Q4.7 段页式访存次数</a></h3>
+<p>段页式地址转换无 TLB 时需要几次访存？</p>
+<details><summary>答案</summary>
+
+**3 次**：
+1. 查段表（得页表起址）
+2. 查页表（得页框号）
+3. 访问数据
+
+⚠️ 不是 2 次。
+
+</details>
+
+<h3 id="q48"><a class="toclink" href="#q48">Q4.8 局部性原理</a></h3>
+<p>虚拟存储为什么可行？</p>
+<details><summary>答案</summary>
+
+基于**局部性原理**：
+- **时间局部性**：最近访问的，很可能马上又访问（循环、局部变量）
+- **空间局部性**：访问某地址，很可能马上访问相邻地址（数组、顺序代码）
+
+所以"只把当前用的页装内存，其他放磁盘"在大多数程序上都有效——磁盘 I/O 的高代价被局部性的高命中率摊销。
+
+</details>
+
+<h3 id="q49"><a class="toclink" href="#q49">Q4.9 抖动</a></h3>
+<p>什么是抖动（Thrashing）？怎么避免？</p>
+<details><summary>答案</summary>
+
+**抖动**：驻留集 < 工作集 → CPU 大量时间处理缺页中断而非用户代码 → 进程互相抢页 → CPU 利用率急剧下降。
+
+**3 种解法**：
+1. **工作集模型**：根据进程的工作集大小动态分配页框
+2. **PFF 缺页频率控制**：监测缺页率，超阈值分配更多页框
+3. **挂起部分进程**：降低多道程度，让剩下的进程都有足够页框
+
+</details>
+
+<h3 id="q410-vs"><a class="toclink" href="#q410-vs">Q4.10 分页 vs 分段</a></h3>
+<p>分页和分段的 6 维对比是什么？</p>
+<details><summary>答案</summary>
+
+| 维度 | 分页 | 分段 |
+|------|------|------|
+| 划分依据 | 物理大小 | 逻辑结构 |
+| 大小 | 固定 | 可变 |
+| 地址 | 一维 | 二维 (S, d) |
+| 用户可见 | 否 | 是 |
+| 碎片 | 内部 | 外部 |
+| 共享/保护 | 难 | 易 |
+
+口诀：**"分页死板省内存，分段灵活便共享"**
+
+</details>
+
+<hr>
+<h2 id="ch5-5"><a class="toclink" href="#ch5-5">Ch5 设备管理（5 题）</a></h2>
+<h3 id="q51-vs-dma"><a class="toclink" href="#q51-vs-dma">Q5.1 中断驱动 vs DMA 真区别</a></h3>
+<p>中断驱动 I/O 和 DMA 的核心区别？（不能答&rdquo;中断频率不同&rdquo;）</p>
+<details><summary>答案</summary>
+
+核心区别是"**搬数据的工作由谁做**"：
+- **中断驱动**：CPU 在每次中断时**亲自把数据从设备控制器寄存器搬到内存**
+- **DMA**：DMA 控制器**代替 CPU** 完成搬运，CPU 只在传输开始和结束时介入
+
+8 字金句：**"中断驱动 = CPU 搬，DMA = 控制器搬"**
+
+</details>
+
+<h3 id="q52"><a class="toclink" href="#q52">Q5.2 中断风暴</a></h3>
+<p>为什么网卡不能用中断驱动 I/O？</p>
+<details><summary>答案</summary>
+
+100 万包/秒 × 1KB/包 = 10 亿次中断/秒。CPU 时钟 3 GHz 也撑不住——每次中断处理至少几百个时钟，**CPU 100% 都在处理中断，没时间执行用户代码**——这叫**中断风暴**。
+
+现代网卡都用 DMA + 中断聚合（Linux NAPI）。
+
+</details>
+
+<h3 id="q53-m"><a class="toclink" href="#q53-m">Q5.3 单缓冲为什么 +M</a></h3>
+<p>单缓冲处理一块的时间是 max(C, T) + M，为什么 M 是独立加在外面？</p>
+<details><summary>答案</summary>
+
+M 期间缓冲区被占用，**设备不能往里写新数据**（会覆盖正在拷出的数据）——M 是被迫串行的"独木桥"，不能与任何动作并行。
+
+双缓冲让 M 进入 max 是因为多一个缓冲区给设备用——M 用缓冲 1 时，T 用缓冲 2 工作，**M 不再阻塞 T**。
+
+</details>
+
+<h3 id="q54-spooling-vs"><a class="toclink" href="#q54-spooling-vs">Q5.4 SPOOLing 输入井 vs 输出井</a></h3>
+<p>打印 PDF 文件时，SPOOLing 把数据放在输入井还是输出井？</p>
+<details><summary>答案</summary>
+
+**输出井**——打印是**输出方向**（用户进程 → 设备）。
+
+判断口诀：**"输入是数据进来（设备→进程），输出是数据出去（进程→设备）——按数据流向决定"**
+
+</details>
+
+<h3 id="q55-sstf"><a class="toclink" href="#q55-sstf">Q5.5 SSTF 饥饿</a></h3>
+<p>SSTF 磁盘调度有什么缺点？</p>
+<details><summary>答案</summary>
+
+**远端请求可能饥饿**——如果近端请求源源不断到来，远端的请求永远轮不到。
+
+SCAN/LOOK 通过"扫描方向"机制避免饥饿——每个请求都会被"扫到"。
+
+</details>
+
+<hr>
+<h2 id="5-30"><a class="toclink" href="#5-30">综合大题（5 道，需要 30+ 分钟做）</a></h2>
+<h3 id="q-big-1-4"><a class="toclink" href="#q-big-1-4">Q-Big-1 调度 4 算法对比</a></h3>
+<p>作业表（同 #1-#3）：
+| P1 | 0 | 4 |
+| P2 | 1 | 3 |
+| P3 | 2 | 5 |
+| P4 | 3 | 2 |</p>
+<p>分别用 FCFS / SJF / RR(q=2) / HRRF 算法计算平均周转时间和平均带权周转时间，<strong>对比 4 个算法的优劣</strong>。</p>
+<details><summary>答案</summary>
+
+参考 [cheatsheet #1-#4](cheatsheet.html)。结果：
+
+| | FCFS | SJF | RR(q=2) | HRRF |
+|---|---|---|---|---|
+| T | 7.75 | **6.75** | 9.25 | 7.0 |
+| W | 2.625 | **1.89** | 2.81 | 2.1 |
+
+**结论**：
+- SJF 平均最优（但长作业饥饿）
+- RR 平均最差但响应时间最好
+- HRRF 接近 SJF 且无饥饿
+- FCFS 最简单但短作业不公
+
+</details>
+
+<h3 id="q-big-2"><a class="toclink" href="#q-big-2">Q-Big-2 银行家算法多资源</a></h3>
+<p>系统 3 类资源（A=10, B=5, C=7），4 个进程：</p>
+<table>
+<thead>
+<tr>
+<th>进程</th>
+<th>Max (A,B,C)</th>
+<th>Allocation (A,B,C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>(7,5,3)</td>
+<td>(0,1,0)</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>(3,2,2)</td>
+<td>(2,0,0)</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>(9,0,2)</td>
+<td>(3,0,2)</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>(2,2,2)</td>
+<td>(2,1,1)</td>
+</tr>
+</tbody>
+</table>
+<p>判断当前状态是否安全。</p>
+<details><summary>答案</summary>
+
+
+<pre><code>Available = (10,5,7) - 各进程 Allocation 总和
+         = (10,5,7) - (7,2,3) = (3,3,4)
+
+Need：
+  P0: (7,4,3)
+  P1: (1,2,2)
+  P2: (6,0,0)
+  P3: (0,1,1)
+
+推演：
+  Work=(3,3,4), 找 Need ≤ Work：P3.Need=(0,1,1) ✓ → P3 完成
+  Work=(3,3,4)+(2,1,1)=(5,4,5), 找：P1.Need=(1,2,2) ✓ → P1 完成
+  Work=(5,4,5)+(2,0,0)=(7,4,5), 找：P0.Need=(7,4,3) ✓ → P0 完成
+  Work=(7,4,5)+(0,1,0)=(7,5,5), 找：P2.Need=(6,0,0) ✓ → P2 完成
+
+安全！安全序列 = P3 → P1 → P0 → P2
+</code></pre>
+
+
+</details>
+
+<h3 id="q-big-3-lru"><a class="toclink" href="#q-big-3-lru">Q-Big-3 LRU 大题</a></h3>
+<p>序列：<code>7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1</code></p>
+<p>页框 m=3，求 LRU 算法的缺页次数和缺页率。</p>
+<details><summary>答案</summary>
+
+完整推演：
+
+
+<pre><code>t=1: 7 → F, [7]
+t=2: 0 → F, [7,0]
+t=3: 1 → F, [7,0,1]
+t=4: 2 → F, 淘汰 7, [0,1,2]
+t=5: 0 → H, [1,2,0]
+t=6: 3 → F, 淘汰 1, [2,0,3]
+t=7: 0 → H, [2,3,0]
+t=8: 4 → F, 淘汰 2, [3,0,4]
+t=9: 2 → F, 淘汰 3, [0,4,2]
+t=10: 3 → F, 淘汰 0, [4,2,3]
+t=11: 0 → F, 淘汰 4, [2,3,0]
+t=12: 3 → H, [2,0,3]
+t=13: 2 → H, [0,3,2]
+t=14: 1 → F, 淘汰 0, [3,2,1]
+t=15: 2 → H, [3,1,2]
+t=16: 0 → F, 淘汰 3, [1,2,0]
+t=17: 1 → H, [2,0,1]
+t=18: 7 → F, 淘汰 2, [0,1,7]
+t=19: 0 → H, [1,7,0]
+t=20: 1 → H, [7,0,1]
+
+缺页 = 12
+缺页率 = 12/20 = 60%
+</code></pre>
+
+
+</details>
+
+<h3 id="q-big-4"><a class="toclink" href="#q-big-4">Q-Big-4 磁盘调度多算法对比</a></h3>
+<p>磁头位置 50，方向向外。请求队列 [86, 147, 91, 177, 94, 150, 102, 175, 130]。</p>
+<p>分别用 FCFS / SSTF / SCAN / LOOK 计算总移动柱面数。</p>
+<details><summary>答案</summary>
+
+**FCFS**: 50→86→147→91→177→94→150→102→175→130
+距离 = 36+61+56+86+83+56+48+73+45 = **544**
+
+**SSTF**: 每次选最近的
+50→86→91→94→102→130→147→150→175→177
+距离 = 36+5+3+8+28+17+3+25+2 = **127**
+
+**SCAN**（向外扫到 199 再反向）：
+50→86→91→94→102→130→147→150→175→177→199（边界）→ 没有更内的请求，停
+距离 = (199-50) = **149**（不计回程）
+
+**LOOK**（不到边界，扫到最远请求 177）：
+50→86→91→94→102→130→147→150→175→177
+距离 = 177-50 = **127**
+
+</details>
+
+<h3 id="q-big-5"><a class="toclink" href="#q-big-5">Q-Big-5 综合：进程切换的总开销</a></h3>
+<p>进程 A 正在运行，时钟中断到来，OS 决定切换到进程 B。请详细说明这次切换会触发哪些动作（按时序），并解释为什么这个开销不可忽略。</p>
+<details><summary>答案</summary>
+
+**时序**：
+
+1. 时钟中断信号触发，CPU 完成当前指令后跳转到中断处理程序入口
+2. **保护现场**：CPU 自动把 PC、PSW 入栈；中断处理程序保存通用寄存器到 A 的 PCB
+3. CPU 切换到核心态
+4. 调度器查就绪队列选中 B（这一步本身可能涉及优先级计算、HRRF 响应比等）
+5. **状态切换**：A 的 PCB 状态改"就绪"，B 的 PCB 状态改"运行"
+6. **切换地址空间**：把 B 的页表基址（CR3 寄存器）加载到 MMU
+7. **TLB 失效**：因为页表换了，所有 TLB 条目作废，下次访存先 TLB miss
+8. **恢复现场**：从 B 的 PCB 读出寄存器/PC，写回 CPU
+9. 返回用户态，CPU 从 B 的 PC 继续执行
+
+**为什么开销大**：
+- 步骤 6-7：切换页表 + TLB 失效——之后一段时间访存全部 miss，性能掉一截
+- 步骤 2、8：寄存器组保存恢复（x86-64 大约 16+ 通用寄存器 + 浮点 SIMD）
+- 总开销：现代 CPU 上**1-10 微秒**——所以频繁切换会浪费大量 CPU
+
+**对比线程切换**：
+- 步骤 6-7 不需要（同进程内地址空间相同）
+- 这就是"线程切换比进程切换快"的根本原因
+
+</details>
+
+<hr>
+<h2 id="_1"><a class="toclink" href="#_1">错题统计建议</a></h2>
+<p>每做一题：
+- ✅ 一次做对：略过
+- ⚠️ 看答案后才懂：标记，第二天重做
+- ❌ 看答案仍困惑：回笔记对应章节复习</p>
+<p><strong>目标</strong>：考前最后一天每题都能秒答 + 默写关键步骤。</p>
+  </article>
+</main>
+<aside class="page-toc" aria-label="本页目录"><h3 class="page-toc-title">本页目录</h3><div class="toc">
+<ul>
+<li><a href="#ch1-8">Ch1 概念辨析（8 题）</a><ul>
+<li><a href="#q11-os">Q1.1 OS 干啥识别题</a></li>
+<li><a href="#q12-vs">Q1.2 并发 vs 并行</a></li>
+<li><a href="#q13-___">Q1.3 系统调用必经 ___ ？</a></li>
+<li><a href="#q14-cpu">Q1.4 CPU 利用率正向求</a></li>
+<li><a href="#q15-cpu">Q1.5 CPU 利用率反向求</a></li>
+<li><a href="#q16-vs">Q1.6 单内核 vs 微内核</a></li>
+<li><a href="#q17">Q1.7 多道程序设计的本质</a></li>
+<li><a href="#q18">Q1.8 并发四特性关系</a></li>
+</ul>
+</li>
+<li><a href="#ch2-10">Ch2 进程/线程/调度（10 题）</a><ul>
+<li><a href="#q21-vs">Q2.1 进程 vs 程序</a></li>
+<li><a href="#q22">Q2.2 状态转换反例</a></li>
+<li><a href="#q23-pcb">Q2.3 PCB 的关键作用</a></li>
+<li><a href="#q24-5">Q2.4 进程切换 5 步</a></li>
+<li><a href="#q25">Q2.5 线程切换为什么快</a></li>
+<li><a href="#q26-ult">Q2.6 ULT 整进程阻塞</a></li>
+<li><a href="#q27">Q2.7 抢占式调度的物理基础</a></li>
+<li><a href="#q28-sjf">Q2.8 SJF 致命缺点</a></li>
+<li><a href="#q29-rr">Q2.9 RR 反直觉</a></li>
+<li><a href="#q210">Q2.10 时间片大小选择</a></li>
+</ul>
+</li>
+<li><a href="#ch3-10">Ch3 同步/互斥/死锁（10 题）</a><ul>
+<li><a href="#q31-pv">Q3.1 PV 操作必须原子</a></li>
+<li><a href="#q32-v">Q3.2 漏写 V 后果</a></li>
+<li><a href="#q33-v">Q3.3 同步信号量 V 谁来做</a></li>
+<li><a href="#q34">Q3.4 抱锁睡觉</a></li>
+<li><a href="#q35">Q3.5 读者写者饥饿</a></li>
+<li><a href="#q36">Q3.6 死锁四条件</a></li>
+<li><a href="#q37">Q3.7 哲学家进餐避免死锁</a></li>
+<li><a href="#q38">Q3.8 银行家算法判断步骤</a></li>
+<li><a href="#q39-vs">Q3.9 死锁 vs 不安全</a></li>
+<li><a href="#q310-pv">Q3.10 PV 三步法</a></li>
+</ul>
+</li>
+<li><a href="#ch4-10">Ch4 存储管理（10 题）</a><ul>
+<li><a href="#q41">Q4.1 内/外部碎片</a></li>
+<li><a href="#q42">Q4.2 分页地址转换</a></li>
+<li><a href="#q43-eat">Q4.3 EAT 公式辨析</a></li>
+<li><a href="#q44">Q4.4 缺页率震撼数字</a></li>
+<li><a href="#q45-belady">Q4.5 Belady 异常</a></li>
+<li><a href="#q46-lru-vs-fifo">Q4.6 LRU vs FIFO 命中差异</a></li>
+<li><a href="#q47">Q4.7 段页式访存次数</a></li>
+<li><a href="#q48">Q4.8 局部性原理</a></li>
+<li><a href="#q49">Q4.9 抖动</a></li>
+<li><a href="#q410-vs">Q4.10 分页 vs 分段</a></li>
+</ul>
+</li>
+<li><a href="#ch5-5">Ch5 设备管理（5 题）</a><ul>
+<li><a href="#q51-vs-dma">Q5.1 中断驱动 vs DMA 真区别</a></li>
+<li><a href="#q52">Q5.2 中断风暴</a></li>
+<li><a href="#q53-m">Q5.3 单缓冲为什么 +M</a></li>
+<li><a href="#q54-spooling-vs">Q5.4 SPOOLing 输入井 vs 输出井</a></li>
+<li><a href="#q55-sstf">Q5.5 SSTF 饥饿</a></li>
+</ul>
+</li>
+<li><a href="#5-30">综合大题（5 道，需要 30+ 分钟做）</a><ul>
+<li><a href="#q-big-1-4">Q-Big-1 调度 4 算法对比</a></li>
+<li><a href="#q-big-2">Q-Big-2 银行家算法多资源</a></li>
+<li><a href="#q-big-3-lru">Q-Big-3 LRU 大题</a></li>
+<li><a href="#q-big-4">Q-Big-4 磁盘调度多算法对比</a></li>
+<li><a href="#q-big-5">Q-Big-5 综合：进程切换的总开销</a></li>
+</ul>
+</li>
+<li><a href="#_1">错题统计建议</a></li>
+</ul>
+</div>
+</aside></div>
+<a class="back-to-top" href="#main" aria-label="返回顶部"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#up"/></svg></a>
+<footer class="page-footer">
+  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
+  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本</p>
+</footer>
+<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+  <div class="theme-picker-head">
+    <h3 class="theme-picker-title">选择主题</h3>
+    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
+  </div>
+  <div class="theme-picker-actions">
+    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
+    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  </div>
+  <div class="theme-picker-grid" data-theme-grid></div>
+</aside>
+<div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
+
+<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+<script src="assets/app.js" defer></script>
+</body></html>
