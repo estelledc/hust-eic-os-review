@@ -201,6 +201,7 @@ def render(md_text: str) -> tuple[str, str]:
 
     md_extensions = [
         "extra",        # tables, fenced_code, attr_list, footnotes, abbr, def_list
+        "md_in_html",   # 让 <details markdown="1"> 内部的 markdown 被渲染
         "sane_lists",
         "smarty",
         TocExtension(toc_depth="2-3", anchorlink=True, permalink=False),
