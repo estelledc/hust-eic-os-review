@@ -2216,3 +2216,88 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* —— Editorial Monocle 默认覆盖 (覆盖原工程蓝 token) —— */
+:root:not([data-theme]) {
+  --bg:           #faf6f0;
+  --bg-elev:      #ffffff;
+  --bg-soft:      #f1ece4;
+  --fg:           #1a1a1a;
+  --fg-soft:      #3a3a3a;
+  --fg-mute:      #6b6862;
+  --fg-faint:     #9c9892;
+  --accent:       #c4452d;
+  --accent-soft:  #f5dcd2;
+  --accent-fg:    #ffffff;
+  --border:       rgba(0, 0, 0, 0.12);
+  --border-soft:  rgba(0, 0, 0, 0.06);
+  --code-bg:      #f1ece4;
+  --code-fg:      #2b2b30;
+  --quote-bg:     #f5ede0;
+  --quote-bd:     #c4452d;
+  --table-stripe: #f5ede0;
+  --font-serif:   "Source Serif Pro", "Source Serif 4", "Noto Serif SC", Georgia, "Songti SC", serif;
+  --font-sans:    Inter, "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans GB", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* light theme 显式时也走 Monocle */
+:root[data-theme="light"] {
+  --bg:           #faf6f0;
+  --bg-elev:      #ffffff;
+  --bg-soft:      #f1ece4;
+  --fg:           #1a1a1a;
+  --fg-soft:      #3a3a3a;
+  --fg-mute:      #6b6862;
+  --fg-faint:     #9c9892;
+  --accent:       #c4452d;
+  --accent-soft:  #f5dcd2;
+  --accent-fg:    #ffffff;
+  --border:       rgba(0, 0, 0, 0.12);
+  --border-soft:  rgba(0, 0, 0, 0.06);
+  --code-bg:      #f1ece4;
+  --quote-bg:     #f5ede0;
+  --quote-bd:     #c4452d;
+  --table-stripe: #f5ede0;
+}
+
+body {
+  font-family: var(--font-serif, "Noto Serif SC", Georgia, serif);
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif, "Noto Serif SC", Georgia, serif);
+  letter-spacing: -0.01em;
+}
+code, pre, kbd, samp {
+  font-family: var(--font-mono, Menlo, monospace);
+}
+
+/* return to hub link in topbar (放在 body 顶层 github-corner 旁边) */
+.return-to-hub {
+  position: fixed;
+  top: 18px;
+  right: 80px;
+  z-index: 100;
+  font-family: var(--font-mono, Menlo, monospace);
+  font-size: 0.8125rem;
+  color: var(--fg-mute, #6b6862);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  border-bottom: 1px solid transparent;
+  transition: border-color 150ms, color 150ms;
+  background: color-mix(in srgb, var(--bg, #faf6f0) 86%, transparent);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.return-to-hub:hover {
+  color: var(--accent, #c4452d);
+  border-bottom-color: var(--accent, #c4452d);
+}
+@media (max-width: 720px) {
+  .return-to-hub {
+    right: 64px;
+    top: 14px;
+    font-size: 0.75rem;
+  }
+}
