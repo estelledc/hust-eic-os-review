@@ -2256,6 +2256,29 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
   --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
+/* Monocle dark：系统暗色时盖回深色 token，与 line 84 dark 调色板对齐 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg:           #14161a;
+    --bg-elev:      #1c1f24;
+    --bg-soft:      #23262c;
+    --fg:           #e7e7ea;
+    --fg-soft:      #c8c8cc;
+    --fg-mute:      #9c9ca1;
+    --fg-faint:     #6c6c72;
+    --accent:       #ff6b4a;
+    --accent-soft:  #3d2018;
+    --accent-fg:    #0d1117;
+    --border:       rgba(255, 255, 255, 0.12);
+    --border-soft:  rgba(255, 255, 255, 0.06);
+    --code-bg:      #1a1c20;
+    --code-fg:      #e0e0e3;
+    --quote-bg:     #20221c;
+    --quote-bd:     #ff6b4a;
+    --table-stripe: #1a1c20;
+  }
+}
+
 /* light theme 显式时也走 Monocle */
 :root[data-theme="light"] {
   --bg:           #faf6f0;
@@ -2287,32 +2310,4 @@ code, pre, kbd, samp {
   font-family: var(--font-mono, Menlo, monospace);
 }
 
-/* return to hub link in topbar (放在 body 顶层 github-corner 旁边) */
-.return-to-hub {
-  position: fixed;
-  top: 18px;
-  right: 80px;
-  z-index: 100;
-  font-family: var(--font-mono, Menlo, monospace);
-  font-size: 0.8125rem;
-  color: var(--fg-mute, #6b6862);
-  text-decoration: none;
-  letter-spacing: 0.04em;
-  text-transform: lowercase;
-  border-bottom: 1px solid transparent;
-  transition: border-color 150ms, color 150ms;
-  background: color-mix(in srgb, var(--bg, #faf6f0) 86%, transparent);
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-.return-to-hub:hover {
-  color: var(--accent, #c4452d);
-  border-bottom-color: var(--accent, #c4452d);
-}
-@media (max-width: 720px) {
-  .return-to-hub {
-    right: 64px;
-    top: 14px;
-    font-size: 0.75rem;
-  }
-}
+/* 旧 .return-to-hub 已删除：jx 标准用 .jx-return-to-hub（在 jx 层定义），唯一返回入口 */
