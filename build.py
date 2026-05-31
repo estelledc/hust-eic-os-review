@@ -229,12 +229,16 @@ def head_html(page_title: str, page_desc: str) -> str:
 <meta name="description" content="{desc}">
 <meta name="color-scheme" content="light dark">
 <title>{title} — {SITE_TITLE}</title>
+<link rel="stylesheet" href="{ASSETS_REL}/jx/tokens.css">
+<link rel="stylesheet" href="{ASSETS_REL}/jx/base.css">
+<link rel="stylesheet" href="{ASSETS_REL}/jx/components.css">
 <link rel="stylesheet" href="{ASSETS_REL}/style.css">
 <link rel="stylesheet" href="themes/themes.css">
 <link rel="icon" type="image/svg+xml" href="{ASSETS_REL}/favicon.svg">
 <script>(function(){{try{{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}}catch(e){{}}}})();</script>
 </head>
 <body>
+<a class="jx-return-to-hub" href="https://estelledc.github.io/" rel="home">回 Jason 主站</a>
 """
 
 def topbar_html(active_slug: str) -> str:
@@ -329,9 +333,19 @@ def sidebar_html(active_slug: str) -> str:
 </aside>
 """
 
-FOOTER_HTML = """<footer class="page-footer">
-  <p>本站为操作系统课程的复习整理。内容仅供学习交流使用；版权归原始教材作者及课程材料的版权所有人所有。</p>
-  <p class="meta">Built with Python · Markdown · Mermaid · 无第三方追踪脚本 · <a href="https://github.com/estelledc/hust-eic-os-review" target="_blank" rel="noopener">在 GitHub 查看源码</a></p>
+FOOTER_HTML = """<footer class="jx-footer">
+  <div class="jx-footer__colophon">
+    <strong>OS Review</strong>
+    <span lang="en">HUST EIC · MMXXVI</span>
+  </div>
+  <nav class="jx-footer__index">
+    <a href="index.html">course map</a>
+    <a href="review.html">复习提纲</a>
+    <a href="themes-gallery.html">71 主题</a>
+    <a href="https://estelledc.github.io/">回 hub</a>
+    <a href="https://github.com/estelledc/hust-eic-os-review">github</a>
+  </nav>
+  <time class="jx-footer__stamp" datetime="2026-05-31" lang="en">2026·05·31</time>
 </footer>
 """
 

@@ -4,6 +4,21 @@
    适度过渡动画（150-300ms）。
    ========================================================= */
 
+/* hust-eic-os-review · Jason DS layer 2 override：默认态走 jx，[data-theme] 71 主题保留 */
+:root:not([data-theme]) {
+  --jx-paper: #f6f6f3;
+  --jx-ink: #16181d;
+  --jx-accent: #16607a;
+  --jx-accent-hub: #2240d6;
+}
+
+/* [data-theme="..."] 状态视为用户主动选择，DS 规则降级 — 71 主题保持原 token 不被 jx 覆盖 */
+:root[data-theme] {
+  /* 不引用 --jx-* token，保留 themes.css 自有取值 */
+  /* 但仍保留 jx 的 chrome 组件能用（footer/return-to-hub 用 jx-* class，独立 css） */
+}
+
+
 /* ---------- design tokens ---------- */
 :root {
   --bg:           #f7f7f5;
