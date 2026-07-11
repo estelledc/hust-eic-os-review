@@ -4,64 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="六种磁盘调度算法、SPOOLing、I/O 软件分层。">
+<meta name="author" content="Jason Xun">
 <meta name="color-scheme" content="light dark">
-<title>第 5 章 设备管理 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<title>第 5 章 设备管理 — 操作系统复习系统</title>
+<link rel="canonical" href="https://estelledc.github.io/hust-eic-os-review/ch5.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="操作系统复习系统">
+<meta property="og:title" content="第 5 章 设备管理 — 操作系统复习系统">
+<meta property="og:description" content="六种磁盘调度算法、SPOOLing、I/O 软件分层。">
+<meta property="og:url" content="https://estelledc.github.io/hust-eic-os-review/ch5.html">
+<meta property="og:image" content="https://estelledc.github.io/hust-eic-os-review/assets/og-os-review.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="操作系统复习系统：阅读、实践、复核三条学习路径">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="第 5 章 设备管理 — 操作系统复习系统">
+<meta name="twitter:description" content="六种磁盘调度算法、SPOOLing、I/O 软件分层。">
+<meta name="twitter:image" content="https://estelledc.github.io/hust-eic-os-review/assets/og-os-review.png">
 <link rel="stylesheet" href="assets/jx/tokens.css">
 <link rel="stylesheet" href="assets/jx/base.css">
 <link rel="stylesheet" href="assets/jx/components.css">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="themes/themes.css">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://estelledc.github.io/hust-eic-os-review/#website", "url": "https://estelledc.github.io/hust-eic-os-review/", "name": "操作系统复习系统", "description": "面向操作系统课程复习的静态学习系统：概念阅读、考前材料与 Lab Studio。", "inLanguage": ["zh-Hans", "en"], "author": {"@id": "https://estelledc.github.io/#person"}}, {"@type": "Person", "@id": "https://estelledc.github.io/#person", "name": "Jason Xun", "url": "https://estelledc.github.io/", "sameAs": ["https://github.com/estelledc"]}, {"@type": "LearningResource", "@id": "https://estelledc.github.io/hust-eic-os-review/ch5.html#resource", "url": "https://estelledc.github.io/hust-eic-os-review/ch5.html", "name": "第 5 章 设备管理", "description": "六种磁盘调度算法、SPOOLing、I/O 软件分层。", "inLanguage": "zh-Hans", "isPartOf": {"@id": "https://estelledc.github.io/hust-eic-os-review/#website"}, "author": {"@id": "https://estelledc.github.io/#person"}}]}</script>
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t==="access-light"||t==="access-dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 </head>
 <body>
-<a class="jx-return-to-hub" href="https://estelledc.github.io/" rel="home">回 Jason 主站</a>
-<a href="https://github.com/estelledc/hust-eic-os-review" class="github-corner" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码">
-  <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
-    <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" fill="var(--accent, #2962ff)"></path>
-    <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="#fff" class="octo-arm"></path>
-    <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.5 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="#fff" class="octo-body"></path>
-  </svg>
-</a>
-<style>
-  .github-corner { position: fixed; top: 0; right: 0; z-index: 99; border: 0; }
-  .github-corner svg { display: block; }
-  .github-corner:hover .octo-arm {
-    animation: octocat-wave 560ms ease-in-out;
-  }
-  @keyframes octocat-wave {
-    0%, 100% { transform: rotate(0); }
-    20%, 60% { transform: rotate(-25deg); }
-    40%, 80% { transform: rotate(10deg); }
-  }
-  .octo-arm { transform-origin: 130px 106px; }
-  @media (max-width: 500px) {
-    .github-corner:hover .octo-arm { animation: none; }
-    .github-corner .octo-arm { animation: octocat-wave 560ms ease-in-out; }
-    .github-corner svg { width: 60px; height: 60px; }
-  }
-</style>
+<a class="jx-skip-link" href="#main">跳到主要内容</a>
 <header class="topbar site-topbar" role="banner">
   <div class="topbar-inner">
     <a class="brand" href="index.html" aria-label="返回首页">
       <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
-      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+      <span><strong>OS Review</strong><small>HUST EIC · 学习系统</small></span>
     </a>
-    <button class="site-nav-toggle" type="button" aria-expanded="false" data-site-nav-toggle>导航</button>
-    <nav class="site-nav" aria-label="站点主导航">
+    <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-site-nav-toggle>导航</button>
+    <nav class="site-nav" id="site-nav" aria-label="站点主导航">
       <a class="site-nav-link" href="index.html">课程地图</a>
-      <a class="site-nav-link is-active" href="ch1.html">阅读</a>
+      <a class="site-nav-link is-active" href="ch1.html" aria-current="page">阅读</a>
       <a class="site-nav-link" href="practice.html">实践</a>
       <a class="site-nav-link" href="review.html">总复习</a>
       <a class="site-nav-link" href="homework.html">作业</a>
       <a class="site-nav-link" href="tutorial-1.html">教程</a>
       <a class="site-nav-link" href="themes-gallery.html">主题</a>
+      <span class="site-nav-global" role="group" aria-label="Jason 作品集导航">
+        <a class="site-nav-link" href="https://estelledc.github.io/">Hub</a>
+        <a class="site-nav-link" href="https://estelledc.github.io/about/">About</a>
+        <a class="site-nav-link" href="https://estelledc.github.io/resume/">Resume</a>
+        <a class="site-nav-link" href="https://github.com/estelledc/hust-eic-os-review">GitHub</a>
+      </span>
     </nav>
     <div class="topbar-actions">
-      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
-      </button>
-      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+      <nav class="portfolio-links" aria-label="Jason 作品集导航">
+        <a class="jx-return-to-hub" href="https://estelledc.github.io/" rel="home">Hub</a>
+        <a href="https://estelledc.github.io/about/">About</a>
+        <a href="https://estelledc.github.io/resume/">Resume</a>
+      </nav>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择阅读外观" data-theme-picker title="选择阅读外观（3 种）">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
       </button>
       <a class="theme-toggle" href="https://github.com/estelledc/hust-eic-os-review" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码" title="在 GitHub 查看源码">
@@ -80,7 +79,7 @@
   <div class="sidebar-footer">
     <a class="ghost" href="themes-gallery.html">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
-      <span>主题画廊（71 套）</span>
+      <span>主题来源档案（71 套）</span>
     </a>
     <p class="ghost sidebar-note">本站源代码以 markdown 编写、build.py 重新生成。</p>
   </div>
@@ -99,7 +98,7 @@
 <hr>
 <h2 id="0"><a class="toclink" href="#0">0. 一句话定位整章</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k001">
-  <img src="content/images/knowledge/ch5-k001.webp" alt="知识点插图：0. 一句话定位整章" loading="lazy">
+  <img src="content/images/knowledge/ch5-k001.webp" alt="知识点插图：0. 一句话定位整章" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：0. 一句话定位整章</figcaption>
 </figure>
 
@@ -111,13 +110,13 @@
 <hr>
 <h2 id="51-io"><a class="toclink" href="#51-io">5.1 I/O 系统概述</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k002">
-  <img src="content/images/knowledge/ch5-k002.webp" alt="知识点插图：5.1 I/O 系统概述" loading="lazy">
+  <img src="content/images/knowledge/ch5-k002.webp" alt="知识点插图：5.1 I/O 系统概述" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.1 I/O 系统概述</figcaption>
 </figure>
 
 <h3 id="511-io"><a class="toclink" href="#511-io">5.1.1 I/O 系统组成</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k003">
-  <img src="content/images/knowledge/ch5-k003.webp" alt="知识点插图：5.1.1 I/O 系统组成" loading="lazy">
+  <img src="content/images/knowledge/ch5-k003.webp" alt="知识点插图：5.1.1 I/O 系统组成" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.1.1 I/O 系统组成</figcaption>
 </figure>
 
@@ -128,7 +127,7 @@
 </blockquote>
 <h3 id="512"><a class="toclink" href="#512">5.1.2 设备分类（必背）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k004">
-  <img src="content/images/knowledge/ch5-k004.webp" alt="知识点插图：5.1.2 设备分类（必背）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k004.webp" alt="知识点插图：5.1.2 设备分类（必背）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.1.2 设备分类（必背）</figcaption>
 </figure>
 
@@ -144,19 +143,19 @@
 - <strong>直接（随机）存取</strong>：磁盘——任意块访问时间近似相同</p>
 <h3 id="513-os"><a class="toclink" href="#513-os">5.1.3 设备物理特性的差异（为什么需要 OS 来管）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k005">
-  <img src="content/images/knowledge/ch5-k005.webp" alt="知识点插图：5.1.3 设备物理特性的差异（为什么需要 OS 来管）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k005.webp" alt="知识点插图：5.1.3 设备物理特性的差异（为什么需要 OS 来管）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.1.3 设备物理特性的差异（为什么需要 OS 来管）</figcaption>
 </figure>
 
 <p>数据传输率、数据表示方式、传输单位、出错条件——四样都不一样，所以<strong>必须有一层抽象屏蔽差异</strong>。</p>
 <h3 id="514"><a class="toclink" href="#514">5.1.4 设备控制器（适配器）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k006">
-  <img src="content/images/knowledge/ch5-k006.webp" alt="知识点插图：5.1.4 设备控制器（适配器）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k006.webp" alt="知识点插图：5.1.4 设备控制器（适配器）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.1.4 设备控制器（适配器）</figcaption>
 </figure>
 
 <p><strong>作用</strong>：CPU 和具体设备之间的&rdquo;翻译官&rdquo;，让 CPU 用&rdquo;传几个参数&rdquo;的方式启动复杂 I/O 操作。</p>
-<p><strong>位置</strong>：可插主板扩充槽的印刷电路板（参考 <a href="images/slide-035-img-1.png">slide-035 主板照片</a>）。</p>
+<p><strong>位置</strong>：可插主板扩充槽的印刷电路板（可结合本节知识插图理解控制器的位置与连接关系）。</p>
 <p><strong>典型主板的扩展槽和 I/O 接口</strong>（slide-036 原图已转表）：</p>
 <table>
 <thead>
@@ -221,7 +220,7 @@
 <hr>
 <h2 id="52-io-cpu"><a class="toclink" href="#52-io-cpu">5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k007">
-  <img src="content/images/knowledge/ch5-k007.webp" alt="知识点插图：5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k007.webp" alt="知识点插图：5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.2 I/O 控制方式（演进逻辑：解放 CPU 的四步）</figcaption>
 </figure>
 
@@ -230,7 +229,7 @@
 </blockquote>
 <h3 id="_1"><a class="toclink" href="#_1">演进总览（必考填空）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k008">
-  <img src="content/images/knowledge/ch5-k008.webp" alt="知识点插图：演进总览（必考填空）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k008.webp" alt="知识点插图：演进总览（必考填空）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：演进总览（必考填空）</figcaption>
 </figure>
 
@@ -272,7 +271,7 @@
 </table>
 <h3 id="1-io-programmed-io"><a class="toclink" href="#1-io-programmed-io">1) 程序 I/O 方式（轮询 / Programmed I/O）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k009">
-  <img src="content/images/knowledge/ch5-k009.webp" alt="知识点插图：1) 程序 I/O 方式（轮询 / Programmed I/O）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k009.webp" alt="知识点插图：1) 程序 I/O 方式（轮询 / Programmed I/O）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1) 程序 I/O 方式（轮询 / Programmed I/O）</figcaption>
 </figure>
 
@@ -297,7 +296,7 @@
 - 缺点：浪费 CPU，只用于要求极低的场合</p>
 <h3 id="2"><a class="toclink" href="#2">2) 中断方式</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k010">
-  <img src="content/images/knowledge/ch5-k010.webp" alt="知识点插图：2) 中断方式" loading="lazy">
+  <img src="content/images/knowledge/ch5-k010.webp" alt="知识点插图：2) 中断方式" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：2) 中断方式</figcaption>
 </figure>
 
@@ -313,7 +312,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 适合：低速字符设备（键盘、串口、低速打印机）</p>
 <h3 id="3-dma-direct-memory-access"><a class="toclink" href="#3-dma-direct-memory-access">3) DMA 方式（Direct Memory Access）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k011">
-  <img src="content/images/knowledge/ch5-k011.webp" alt="知识点插图：3) DMA 方式（Direct Memory Access）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k011.webp" alt="知识点插图：3) DMA 方式（Direct Memory Access）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：3) DMA 方式（Direct Memory Access）</figcaption>
 </figure>
 
@@ -341,7 +340,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 适合：高速块设备（磁盘、SSD）</p>
 <h3 id="4"><a class="toclink" href="#4">4) 通道方式</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k012">
-  <img src="content/images/knowledge/ch5-k012.webp" alt="知识点插图：4) 通道方式" loading="lazy">
+  <img src="content/images/knowledge/ch5-k012.webp" alt="知识点插图：4) 通道方式" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：4) 通道方式</figcaption>
 </figure>
 
@@ -385,13 +384,13 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <hr>
 <h2 id="53-io"><a class="toclink" href="#53-io">5.3 I/O 软件层次</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k013">
-  <img src="content/images/knowledge/ch5-k013.webp" alt="知识点插图：5.3 I/O 软件层次" loading="lazy">
+  <img src="content/images/knowledge/ch5-k013.webp" alt="知识点插图：5.3 I/O 软件层次" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.3 I/O 软件层次</figcaption>
 </figure>
 
 <h3 id="531"><a class="toclink" href="#531">5.3.1 设计目标（必考）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k014">
-  <img src="content/images/knowledge/ch5-k014.webp" alt="知识点插图：5.3.1 设计目标（必考）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k014.webp" alt="知识点插图：5.3.1 设计目标（必考）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.3.1 设计目标（必考）</figcaption>
 </figure>
 
@@ -406,7 +405,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ul>
 <h3 id="532"><a class="toclink" href="#532">5.3.2 四层架构（自下而上）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k015">
-  <img src="content/images/knowledge/ch5-k015.webp" alt="知识点插图：5.3.2 四层架构（自下而上）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k015.webp" alt="知识点插图：5.3.2 四层架构（自下而上）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.3.2 四层架构（自下而上）</figcaption>
 </figure>
 
@@ -424,7 +423,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </code></pre>
 <h4 id="1-io"><a class="toclink" href="#1-io">第 1 层：I/O 中断处理程序（最底层）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k016">
-  <img src="content/images/knowledge/ch5-k016.webp" alt="知识点插图：第 1 层：I/O 中断处理程序（最底层）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k016.webp" alt="知识点插图：第 1 层：I/O 中断处理程序（最底层）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：第 1 层：I/O 中断处理程序（最底层）</figcaption>
 </figure>
 
@@ -432,7 +431,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 处理原则：正常完成→唤醒等待进程置就绪；故障→特殊处理；异步信号→对应处理。</p>
 <h4 id="2_1"><a class="toclink" href="#2_1">第 2 层：设备驱动程序</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k017">
-  <img src="content/images/knowledge/ch5-k017.webp" alt="知识点插图：第 2 层：设备驱动程序" loading="lazy">
+  <img src="content/images/knowledge/ch5-k017.webp" alt="知识点插图：第 2 层：设备驱动程序" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：第 2 层：设备驱动程序</figcaption>
 </figure>
 
@@ -449,7 +448,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 必须<strong>可重入</strong>（运行中可被再次调用）</p>
 <h4 id="3-slide-050"><a class="toclink" href="#3-slide-050">第 3 层：设备无关（独立）软件 — slide-050 整页主线</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k018">
-  <img src="content/images/knowledge/ch5-k018.webp" alt="知识点插图：第 3 层：设备无关（独立）软件 — slide-050 整页主线" loading="lazy">
+  <img src="content/images/knowledge/ch5-k018.webp" alt="知识点插图：第 3 层：设备无关（独立）软件 — slide-050 整页主线" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：第 3 层：设备无关（独立）软件 — slide-050 整页主线</figcaption>
 </figure>
 
@@ -467,7 +466,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p><strong>逻辑设备表 LUT</strong>：实现&rdquo;逻辑设备名 → 物理设备名&rdquo;映射的关键数据结构，同时保存驱动程序入口。</p>
 <h4 id="4-io"><a class="toclink" href="#4-io">第 4 层：用户空间 I/O 软件</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k019">
-  <img src="content/images/knowledge/ch5-k019.webp" alt="知识点插图：第 4 层：用户空间 I/O 软件" loading="lazy">
+  <img src="content/images/knowledge/ch5-k019.webp" alt="知识点插图：第 4 层：用户空间 I/O 软件" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：第 4 层：用户空间 I/O 软件</figcaption>
 </figure>
 
@@ -477,7 +476,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ul>
 <h3 id="533-io"><a class="toclink" href="#533-io">5.3.3 一次完整 I/O 操作的步骤（面试题）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k020">
-  <img src="content/images/knowledge/ch5-k020.webp" alt="知识点插图：5.3.3 一次完整 I/O 操作的步骤（面试题）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k020.webp" alt="知识点插图：5.3.3 一次完整 I/O 操作的步骤（面试题）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.3.3 一次完整 I/O 操作的步骤（面试题）</figcaption>
 </figure>
 
@@ -494,7 +493,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <hr>
 <h2 id="54"><a class="toclink" href="#54">5.4 缓冲技术（速率匹配 / 解耦）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k021">
-  <img src="content/images/knowledge/ch5-k021.webp" alt="知识点插图：5.4 缓冲技术（速率匹配 / 解耦）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k021.webp" alt="知识点插图：5.4 缓冲技术（速率匹配 / 解耦）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.4 缓冲技术（速率匹配 / 解耦）</figcaption>
 </figure>
 
@@ -503,7 +502,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </blockquote>
 <h3 id="541"><a class="toclink" href="#541">5.4.1 为什么需要缓冲</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k022">
-  <img src="content/images/knowledge/ch5-k022.webp" alt="知识点插图：5.4.1 为什么需要缓冲" loading="lazy">
+  <img src="content/images/knowledge/ch5-k022.webp" alt="知识点插图：5.4.1 为什么需要缓冲" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.4.1 为什么需要缓冲</figcaption>
 </figure>
 
@@ -515,7 +514,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ol>
 <h3 id="542"><a class="toclink" href="#542">5.4.2 四种缓冲方案</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k023">
-  <img src="content/images/knowledge/ch5-k023.webp" alt="知识点插图：5.4.2 四种缓冲方案" loading="lazy">
+  <img src="content/images/knowledge/ch5-k023.webp" alt="知识点插图：5.4.2 四种缓冲方案" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.4.2 四种缓冲方案</figcaption>
 </figure>
 
@@ -524,7 +523,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </blockquote>
 <h4 id="1"><a class="toclink" href="#1">1) 单缓冲</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k024">
-  <img src="content/images/knowledge/ch5-k024.webp" alt="知识点插图：1) 单缓冲" loading="lazy">
+  <img src="content/images/knowledge/ch5-k024.webp" alt="知识点插图：1) 单缓冲" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1) 单缓冲</figcaption>
 </figure>
 
@@ -539,7 +538,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p><strong>理解</strong>：T 和 C 可以并行（设备在写下一块时 CPU 在算上一块），但 M（缓冲→用户区）必须串行——因为同一个缓冲区，搬空才能再装。</p>
 <h4 id="2_2"><a class="toclink" href="#2_2">2) 双缓冲</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k025">
-  <img src="content/images/knowledge/ch5-k025.webp" alt="知识点插图：2) 双缓冲" loading="lazy">
+  <img src="content/images/knowledge/ch5-k025.webp" alt="知识点插图：2) 双缓冲" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：2) 双缓冲</figcaption>
 </figure>
 
@@ -554,7 +553,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 双缓冲对<strong>高速 I/O 设备 + 较快 CPU</strong> 提升最大</p>
 <h4 id="3"><a class="toclink" href="#3">3) 循环缓冲</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k026">
-  <img src="content/images/knowledge/ch5-k026.webp" alt="知识点插图：3) 循环缓冲" loading="lazy">
+  <img src="content/images/knowledge/ch5-k026.webp" alt="知识点插图：3) 循环缓冲" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：3) 循环缓冲</figcaption>
 </figure>
 
@@ -564,7 +563,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>适合稳定的连续数据流（如音视频）。</p>
 <h4 id="4_1"><a class="toclink" href="#4_1">4) 缓冲池</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k027">
-  <img src="content/images/knowledge/ch5-k027.webp" alt="知识点插图：4) 缓冲池" loading="lazy">
+  <img src="content/images/knowledge/ch5-k027.webp" alt="知识点插图：4) 缓冲池" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：4) 缓冲池</figcaption>
 </figure>
 
@@ -581,13 +580,13 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <hr>
 <h2 id="55"><a class="toclink" href="#55">5.5 设备分配</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k028">
-  <img src="content/images/knowledge/ch5-k028.webp" alt="知识点插图：5.5 设备分配" loading="lazy">
+  <img src="content/images/knowledge/ch5-k028.webp" alt="知识点插图：5.5 设备分配" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.5 设备分配</figcaption>
 </figure>
 
 <h3 id="551"><a class="toclink" href="#551">5.5.1 设备分类（按可分配性）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k029">
-  <img src="content/images/knowledge/ch5-k029.webp" alt="知识点插图：5.5.1 设备分类（按可分配性）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k029.webp" alt="知识点插图：5.5.1 设备分类（按可分配性）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.5.1 设备分类（按可分配性）</figcaption>
 </figure>
 
@@ -623,7 +622,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </table>
 <h3 id="552-slide-086"><a class="toclink" href="#552-slide-086">5.5.2 独享方式（slide-086 整页主线）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k030">
-  <img src="content/images/knowledge/ch5-k030.webp" alt="知识点插图：5.5.2 独享方式（slide-086 整页主线）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k030.webp" alt="知识点插图：5.5.2 独享方式（slide-086 整页主线）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.5.2 独享方式（slide-086 整页主线）</figcaption>
 </figure>
 
@@ -638,7 +637,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p><strong>为什么还要用</strong>：独占设备本质上不能并行（一份打印件不能拆给两个进程同时打）——只能从更上层（SPOOLing）解决。</p>
 <h3 id="553-4"><a class="toclink" href="#553-4">5.5.3 设备分配数据结构（4 张表）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k031">
-  <img src="content/images/knowledge/ch5-k031.webp" alt="知识点插图：5.5.3 设备分配数据结构（4 张表）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k031.webp" alt="知识点插图：5.5.3 设备分配数据结构（4 张表）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.5.3 设备分配数据结构（4 张表）</figcaption>
 </figure>
 
@@ -676,7 +675,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p><strong>分配链路</strong>：进程要 I/O → 查 SDT 找设备 → 经 DCT 查到 COCT → 再查 CHCT → 一路通则可分配，否则进等待队列。</p>
 <h3 id="554"><a class="toclink" href="#554">5.5.4 分配策略</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k032">
-  <img src="content/images/knowledge/ch5-k032.webp" alt="知识点插图：5.5.4 分配策略" loading="lazy">
+  <img src="content/images/knowledge/ch5-k032.webp" alt="知识点插图：5.5.4 分配策略" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.5.4 分配策略</figcaption>
 </figure>
 
@@ -689,7 +688,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - <strong>不安全分配方式</strong>：发 I/O 后继续运行，可继续发新 I/O。<strong>可能死锁</strong>，需做安全性检查。</p>
 <h3 id="555-spooling"><a class="toclink" href="#555-spooling">5.5.5 SPOOLing 技术（虚拟设备）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k033">
-  <img src="content/images/knowledge/ch5-k033.webp" alt="知识点插图：5.5.5 SPOOLing 技术（虚拟设备）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k033.webp" alt="知识点插图：5.5.5 SPOOLing 技术（虚拟设备）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.5.5 SPOOLing 技术（虚拟设备）</figcaption>
 </figure>
 
@@ -698,7 +697,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </blockquote>
 <h4 id="_2"><a class="toclink" href="#_2">历史脉络</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k034">
-  <img src="content/images/knowledge/ch5-k034.webp" alt="知识点插图：历史脉络" loading="lazy">
+  <img src="content/images/knowledge/ch5-k034.webp" alt="知识点插图：历史脉络" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：历史脉络</figcaption>
 </figure>
 
@@ -708,7 +707,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ul>
 <h4 id="_3"><a class="toclink" href="#_3">必备条件</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k035">
-  <img src="content/images/knowledge/ch5-k035.webp" alt="知识点插图：必备条件" loading="lazy">
+  <img src="content/images/knowledge/ch5-k035.webp" alt="知识点插图：必备条件" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：必备条件</figcaption>
 </figure>
 
@@ -718,7 +717,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ul>
 <h4 id="4_2"><a class="toclink" href="#4_2">系统组成（4 部分）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k036">
-  <img src="content/images/knowledge/ch5-k036.webp" alt="知识点插图：系统组成（4 部分）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k036.webp" alt="知识点插图：系统组成（4 部分）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：系统组成（4 部分）</figcaption>
 </figure>
 
@@ -730,7 +729,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ol>
 <h4 id="_4"><a class="toclink" href="#_4">数据结构</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k037">
-  <img src="content/images/knowledge/ch5-k037.webp" alt="知识点插图：数据结构" loading="lazy">
+  <img src="content/images/knowledge/ch5-k037.webp" alt="知识点插图：数据结构" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：数据结构</figcaption>
 </figure>
 
@@ -741,14 +740,14 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ul>
 <h4 id="4_3"><a class="toclink" href="#4_3">输入井作业 4 种状态</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k038">
-  <img src="content/images/knowledge/ch5-k038.webp" alt="知识点插图：输入井作业 4 种状态" loading="lazy">
+  <img src="content/images/knowledge/ch5-k038.webp" alt="知识点插图：输入井作业 4 种状态" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：输入井作业 4 种状态</figcaption>
 </figure>
 
 <p>输入状态 → 收容状态 → 执行状态 → 完成状态。</p>
 <h4 id="_5"><a class="toclink" href="#_5">共享打印机典型应用</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k039">
-  <img src="content/images/knowledge/ch5-k039.webp" alt="知识点插图：共享打印机典型应用" loading="lazy">
+  <img src="content/images/knowledge/ch5-k039.webp" alt="知识点插图：共享打印机典型应用" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：共享打印机典型应用</figcaption>
 </figure>
 
@@ -759,7 +758,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 4. 输出 SPOOLing 系统<strong>串行</strong>调度真打印机依次输出</p>
 <h4 id="spooling"><a class="toclink" href="#spooling">SPOOLing 三大特点（必考）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k040">
-  <img src="content/images/knowledge/ch5-k040.webp" alt="知识点插图：SPOOLing 三大特点（必考）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k040.webp" alt="知识点插图：SPOOLing 三大特点（必考）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：SPOOLing 三大特点（必考）</figcaption>
 </figure>
 
@@ -771,13 +770,13 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <hr>
 <h2 id="56"><a class="toclink" href="#56">5.6 磁盘存储管理（重头戏 / 必考计算）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k041">
-  <img src="content/images/knowledge/ch5-k041.webp" alt="知识点插图：5.6 磁盘存储管理（重头戏 / 必考计算）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k041.webp" alt="知识点插图：5.6 磁盘存储管理（重头戏 / 必考计算）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.6 磁盘存储管理（重头戏 / 必考计算）</figcaption>
 </figure>
 
 <h3 id="561"><a class="toclink" href="#561">5.6.1 磁盘物理结构</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k042">
-  <img src="content/images/knowledge/ch5-k042.webp" alt="知识点插图：5.6.1 磁盘物理结构" loading="lazy">
+  <img src="content/images/knowledge/ch5-k042.webp" alt="知识点插图：5.6.1 磁盘物理结构" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.6.1 磁盘物理结构</figcaption>
 </figure>
 
@@ -804,7 +803,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
     arm -->|读/写头 0| P0
 </pre>
 <p><strong>关键关系</strong>：8 个磁头由<strong>同一个磁盘臂</strong>带动，所以<strong>所有磁头同步移动到同一柱面</strong>——这就是为什么&rdquo;柱面&rdquo;（不同盘面同半径磁道的集合）是磁盘 I/O 的自然组织单位（一次寻道，多个磁头同时可读）。</p>
-<p>单个盘面的同心圆扇区结构见 <a href="images/slide-058-img-2.png">slide-058-img-2</a>。</p>
+<p>单个盘面的同心圆扇区结构可结合本节知识插图理解。</p>
 <p><strong>关键术语</strong>：
 - <strong>盘面 Platter</strong>：金属盘片，双面可记录
 - <strong>磁道 Track</strong>：同心圆环
@@ -817,7 +816,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p><strong>例</strong>：3.5 寸软盘 1.44MB = 2 (磁头) × 80 (磁道) × 18 (扇区) × 512 (字节)。</p>
 <h3 id="562"><a class="toclink" href="#562">5.6.2 磁盘类型</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k043">
-  <img src="content/images/knowledge/ch5-k043.webp" alt="知识点插图：5.6.2 磁盘类型" loading="lazy">
+  <img src="content/images/knowledge/ch5-k043.webp" alt="知识点插图：5.6.2 磁盘类型" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.6.2 磁盘类型</figcaption>
 </figure>
 
@@ -847,7 +846,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </table>
 <h3 id="563"><a class="toclink" href="#563">5.6.3 磁盘访问时间（必考公式）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k044">
-  <img src="content/images/knowledge/ch5-k044.webp" alt="知识点插图：5.6.3 磁盘访问时间（必考公式）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k044.webp" alt="知识点插图：5.6.3 磁盘访问时间（必考公式）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.6.3 磁盘访问时间（必考公式）</figcaption>
 </figure>
 
@@ -857,7 +856,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </code></pre>
 <h4 id="1-ts"><a class="toclink" href="#1-ts">(1) 寻道时间 Ts（移动磁臂）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k045">
-  <img src="content/images/knowledge/ch5-k045.webp" alt="知识点插图：(1) 寻道时间 Ts（移动磁臂）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k045.webp" alt="知识点插图：(1) 寻道时间 Ts（移动磁臂）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：(1) 寻道时间 Ts（移动磁臂）</figcaption>
 </figure>
 
@@ -871,7 +870,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>平均寻道时间 ≈ 10 ms。</p>
 <h4 id="2-tr"><a class="toclink" href="#2-tr">(2) 旋转延迟时间 Tr（等扇区转到磁头下）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k046">
-  <img src="content/images/knowledge/ch5-k046.webp" alt="知识点插图：(2) 旋转延迟时间 Tr（等扇区转到磁头下）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k046.webp" alt="知识点插图：(2) 旋转延迟时间 Tr（等扇区转到磁头下）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：(2) 旋转延迟时间 Tr（等扇区转到磁头下）</figcaption>
 </figure>
 
@@ -885,7 +884,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 600 rpm 软盘：Tr = 50 ms</p>
 <h4 id="3-tt"><a class="toclink" href="#3-tt">(3) 传输时间 Tt</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k047">
-  <img src="content/images/knowledge/ch5-k047.webp" alt="知识点插图：(3) 传输时间 Tt" loading="lazy">
+  <img src="content/images/knowledge/ch5-k047.webp" alt="知识点插图：(3) 传输时间 Tt" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：(3) 传输时间 Tt</figcaption>
 </figure>
 
@@ -899,7 +898,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>通常 Tt 极小（&lt;1 ms），可忽略。</p>
 <h4 id="_6"><a class="toclink" href="#_6">综合：</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k048">
-  <img src="content/images/knowledge/ch5-k048.webp" alt="知识点插图：综合：" loading="lazy">
+  <img src="content/images/knowledge/ch5-k048.webp" alt="知识点插图：综合：" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：综合：</figcaption>
 </figure>
 
@@ -910,7 +909,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </blockquote>
 <h3 id="564"><a class="toclink" href="#564">5.6.4 磁盘调度算法（必考计算题）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k049">
-  <img src="content/images/knowledge/ch5-k049.webp" alt="知识点插图：5.6.4 磁盘调度算法（必考计算题）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k049.webp" alt="知识点插图：5.6.4 磁盘调度算法（必考计算题）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.6.4 磁盘调度算法（必考计算题）</figcaption>
 </figure>
 
@@ -920,7 +919,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </blockquote>
 <h4 id="1fcfs"><a class="toclink" href="#1fcfs">算法 1：FCFS（先来先服务）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k050">
-  <img src="content/images/knowledge/ch5-k050.webp" alt="知识点插图：算法 1：FCFS（先来先服务）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k050.webp" alt="知识点插图：算法 1：FCFS（先来先服务）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：算法 1：FCFS（先来先服务）</figcaption>
 </figure>
 
@@ -933,7 +932,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>特点：公平、简单；性能差。</p>
 <h4 id="2sstf"><a class="toclink" href="#2sstf">算法 2：SSTF（最短查找时间优先）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k051">
-  <img src="content/images/knowledge/ch5-k051.webp" alt="知识点插图：算法 2：SSTF（最短查找时间优先）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k051.webp" alt="知识点插图：算法 2：SSTF（最短查找时间优先）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：算法 2：SSTF（最短查找时间优先）</figcaption>
 </figure>
 
@@ -944,7 +943,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>特点：性能好；可能&rdquo;饥饿&rdquo;——远端请求长期不被服务。</p>
 <h4 id="3scan"><a class="toclink" href="#3scan">算法 3：SCAN（扫描算法）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k052">
-  <img src="content/images/knowledge/ch5-k052.webp" alt="知识点插图：算法 3：SCAN（扫描算法）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k052.webp" alt="知识点插图：算法 3：SCAN（扫描算法）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：算法 3：SCAN（扫描算法）</figcaption>
 </figure>
 
@@ -956,7 +955,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>特点：避免饥饿；中间请求平均等待短，端点请求等待长。</p>
 <h4 id="4n-step-scan"><a class="toclink" href="#4n-step-scan">算法 4：N-Step-SCAN（分步扫描）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k053">
-  <img src="content/images/knowledge/ch5-k053.webp" alt="知识点插图：算法 4：N-Step-SCAN（分步扫描）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k053.webp" alt="知识点插图：算法 4：N-Step-SCAN（分步扫描）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：算法 4：N-Step-SCAN（分步扫描）</figcaption>
 </figure>
 
@@ -966,7 +965,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - N=1 → 接近 FCFS</p>
 <h4 id="5look"><a class="toclink" href="#5look">算法 5：电梯调度（LOOK）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k054">
-  <img src="content/images/knowledge/ch5-k054.webp" alt="知识点插图：算法 5：电梯调度（LOOK）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k054.webp" alt="知识点插图：算法 5：电梯调度（LOOK）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：算法 5：电梯调度（LOOK）</figcaption>
 </figure>
 
@@ -980,7 +979,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>PPT 标的&rdquo;电梯调度算法 = 310&rdquo;对应这个版本。</p>
 <h4 id="6c-scan"><a class="toclink" href="#6c-scan">算法 6：C-SCAN（循环扫描）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k055">
-  <img src="content/images/knowledge/ch5-k055.webp" alt="知识点插图：算法 6：C-SCAN（循环扫描）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k055.webp" alt="知识点插图：算法 6：C-SCAN（循环扫描）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：算法 6：C-SCAN（循环扫描）</figcaption>
 </figure>
 
@@ -992,7 +991,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <p>特点：访问请求<strong>等待时间均匀</strong>，对实时系统更友好。</p>
 <h4 id="c-look-look"><a class="toclink" href="#c-look-look">C-LOOK（循环扫描的 LOOK 版）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k056">
-  <img src="content/images/knowledge/ch5-k056.webp" alt="知识点插图：C-LOOK（循环扫描的 LOOK 版）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k056.webp" alt="知识点插图：C-LOOK（循环扫描的 LOOK 版）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：C-LOOK（循环扫描的 LOOK 版）</figcaption>
 </figure>
 
@@ -1002,13 +1001,13 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </code></pre>
 <h3 id="565-ppt-532-533"><a class="toclink" href="#565-ppt-532-533">5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k057">
-  <img src="content/images/knowledge/ch5-k057.webp" alt="知识点插图：5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k057.webp" alt="知识点插图：5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.6.5 磁盘性能优化的两个补充技术（PPT 5.3.2-5.3.3）</figcaption>
 </figure>
 
 <h4 id="_7"><a class="toclink" href="#_7">循环排序（旋转优化）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k058">
-  <img src="content/images/knowledge/ch5-k058.webp" alt="知识点插图：循环排序（旋转优化）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k058.webp" alt="知识点插图：循环排序（旋转优化）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：循环排序（旋转优化）</figcaption>
 </figure>
 
@@ -1019,7 +1018,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 - 已知磁头在记录 3，按 4,1,2,3：1 圈 = 20 ms</p>
 <h4 id="_8"><a class="toclink" href="#_8">优化分布</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k059">
-  <img src="content/images/knowledge/ch5-k059.webp" alt="知识点插图：优化分布" loading="lazy">
+  <img src="content/images/knowledge/ch5-k059.webp" alt="知识点插图：优化分布" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：优化分布</figcaption>
 </figure>
 
@@ -1030,7 +1029,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </blockquote>
 <h3 id="566"><a class="toclink" href="#566">5.6.6 交替地址（多重副本）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k060">
-  <img src="content/images/knowledge/ch5-k060.webp" alt="知识点插图：5.6.6 交替地址（多重副本）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k060.webp" alt="知识点插图：5.6.6 交替地址（多重副本）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.6.6 交替地址（多重副本）</figcaption>
 </figure>
 
@@ -1039,7 +1038,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <hr>
 <h2 id="57-ppt"><a class="toclink" href="#57-ppt">5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k061">
-  <img src="content/images/knowledge/ch5-k061.webp" alt="知识点插图：5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k061.webp" alt="知识点插图：5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.7 文件系统（PPT 中本章未展开，作为衔接概念列出）</figcaption>
 </figure>
 
@@ -1049,13 +1048,13 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 <hr>
 <h2 id="58"><a class="toclink" href="#58">5.8 章末速查表</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k062">
-  <img src="content/images/knowledge/ch5-k062.webp" alt="知识点插图：5.8 章末速查表" loading="lazy">
+  <img src="content/images/knowledge/ch5-k062.webp" alt="知识点插图：5.8 章末速查表" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：5.8 章末速查表</figcaption>
 </figure>
 
 <h3 id="_9"><a class="toclink" href="#_9">必背概念对照</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k063">
-  <img src="content/images/knowledge/ch5-k063.webp" alt="知识点插图：必背概念对照" loading="lazy">
+  <img src="content/images/knowledge/ch5-k063.webp" alt="知识点插图：必背概念对照" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：必背概念对照</figcaption>
 </figure>
 
@@ -1097,7 +1096,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </table>
 <h3 id="_10"><a class="toclink" href="#_10">公式速查</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k064">
-  <img src="content/images/knowledge/ch5-k064.webp" alt="知识点插图：公式速查" loading="lazy">
+  <img src="content/images/knowledge/ch5-k064.webp" alt="知识点插图：公式速查" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：公式速查</figcaption>
 </figure>
 
@@ -1115,7 +1114,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </code></pre>
 <h3 id="_11"><a class="toclink" href="#_11">磁盘调度题答题模板（考试 / 面试通用）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k065">
-  <img src="content/images/knowledge/ch5-k065.webp" alt="知识点插图：磁盘调度题答题模板（考试 / 面试通用）" loading="lazy">
+  <img src="content/images/knowledge/ch5-k065.webp" alt="知识点插图：磁盘调度题答题模板（考试 / 面试通用）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：磁盘调度题答题模板（考试 / 面试通用）</figcaption>
 </figure>
 
@@ -1131,7 +1130,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </ol>
 <h3 id="_12"><a class="toclink" href="#_12">易混对比</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k066">
-  <img src="content/images/knowledge/ch5-k066.webp" alt="知识点插图：易混对比" loading="lazy">
+  <img src="content/images/knowledge/ch5-k066.webp" alt="知识点插图：易混对比" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：易混对比</figcaption>
 </figure>
 
@@ -1188,7 +1187,7 @@ CPU 响应中断 → 进入中断处理例程 → 把缓冲寄存器内容写内
 </table>
 <h3 id="io"><a class="toclink" href="#io">一图记住四种 I/O 控制方式的并行度</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k067">
-  <img src="content/images/knowledge/ch5-k067.webp" alt="知识点插图：一图记住四种 I/O 控制方式的并行度" loading="lazy">
+  <img src="content/images/knowledge/ch5-k067.webp" alt="知识点插图：一图记住四种 I/O 控制方式的并行度" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：一图记住四种 I/O 控制方式的并行度</figcaption>
 </figure>
 
@@ -1199,7 +1198,7 @@ DMA：         [CPU 启动][CPU 干别的................] [一块中断]
 </code></pre>
 <h3 id="_13"><a class="toclink" href="#_13">面试常见追问</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k068">
-  <img src="content/images/knowledge/ch5-k068.webp" alt="知识点插图：面试常见追问" loading="lazy">
+  <img src="content/images/knowledge/ch5-k068.webp" alt="知识点插图：面试常见追问" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：面试常见追问</figcaption>
 </figure>
 
@@ -1224,7 +1223,7 @@ DMA：         [CPU 启动][CPU 干别的................] [一块中断]
 <hr>
 <h2 id="_14"><a class="toclink" href="#_14">疑点 / 待澄清</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch5-k069">
-  <img src="content/images/knowledge/ch5-k069.webp" alt="知识点插图：疑点 / 待澄清" loading="lazy">
+  <img src="content/images/knowledge/ch5-k069.webp" alt="知识点插图：疑点 / 待澄清" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：疑点 / 待澄清</figcaption>
 </figure>
 
@@ -1560,31 +1559,33 @@ Tt = 传输时间 = b / (r × N)（b=字节数，N=每道字节数）
 <footer class="jx-footer">
   <div class="jx-footer__colophon">
     <strong>OS Review</strong>
-    <span lang="en">HUST EIC · MMXXVI</span>
+    <span lang="en">A Jason product system · MMXXVI</span>
   </div>
   <nav class="jx-footer__index">
     <a href="index.html">course map</a>
     <a href="review.html">复习提纲</a>
-    <a href="themes-gallery.html">71 主题</a>
+    <a href="practice.html">lab studio</a>
+    <a href="https://estelledc.github.io/">hub</a>
+    <a href="https://estelledc.github.io/about/">about</a>
+    <a href="https://estelledc.github.io/resume/">resume</a>
     <a href="https://github.com/estelledc/hust-eic-os-review">github</a>
   </nav>
-  <time class="jx-footer__stamp" datetime="2026-05-31" lang="en">2026·05·31</time>
+  <time class="jx-footer__stamp" datetime="2026-07-11" lang="en">Updated 2026·07·11</time>
 </footer>
-<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+<aside class="theme-picker" data-theme-panel hidden role="dialog" aria-modal="true" aria-labelledby="theme-picker-title">
   <div class="theme-picker-head">
-    <h3 class="theme-picker-title">选择主题</h3>
-    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <h2 class="theme-picker-title" id="theme-picker-title">阅读外观</h2>
+    <p class="theme-picker-sub">只保留 3 种经过可读性收敛的模式；默认跟随系统，无需脚本也能阅读。</p>
     <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
   </div>
-  <div class="theme-picker-actions">
-    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
-    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  <div class="access-mode-grid" data-theme-grid role="list">
+    <button type="button" class="access-mode-card" data-theme-set="" role="listitem"><strong>跟随系统</strong><span>自动响应设备的明暗偏好。</span></button><button type="button" class="access-mode-card" data-theme-set="access-light" role="listitem"><strong>高可读浅色</strong><span>纯白底、深色正文与清晰链接。</span></button><button type="button" class="access-mode-card" data-theme-set="access-dark" role="listitem"><strong>高对比深色</strong><span>深色底、提亮正文并强化边界。</span></button>
   </div>
-  <div class="theme-picker-grid" data-theme-grid></div>
+  <p class="theme-picker-archive">原有 71 套色板没有删除，仍可在<a href="themes-gallery.html">主题来源档案</a>查看。</p>
+  <noscript><p class="theme-picker-noscript">JavaScript 已关闭：页面继续使用系统明暗偏好。</p></noscript>
 </aside>
 <div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
 
-<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
 <script src="assets/app.js" defer></script>
 </body></html>

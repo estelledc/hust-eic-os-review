@@ -225,10 +225,10 @@ P₃: CPU(30 ms), I₁(20 ms), CPU(10 ms), I₁(10 ms)
 
 | 题目章节 | 配套笔记 |
 |---|---|
-| 习题一 | [ch1-概论/notes.md](../ch1-概论/notes.md) + [教程-第6版/notes-part1.md](../教程-第6版/notes-part1.md) |
-| 习题二 | [ch2-处理器管理/notes.md](../ch2-处理器管理/notes.md) + [教程-第6版/notes-part1.md](../教程-第6版/notes-part1.md) |
-| 习题三 | [ch4-存储管理/notes.md](../ch4-存储管理/notes.md) + [教程-第6版/notes-part2.md](../教程-第6版/notes-part2.md) |
-| 习题四 | [ch5-设备管理/notes.md](../ch5-设备管理/notes.md) + [教程-第6版/notes-part2.md](../教程-第6版/notes-part2.md) |
-| 习题六 | [ch3-同步互斥/notes-part1.md](../ch3-同步互斥/notes-part1.md) + [notes-part2.md](../ch3-同步互斥/notes-part2.md) + [教程-第6版/notes-part3.md](../教程-第6版/notes-part3.md) |
+| 习题一 | [第 1 章：操作系统概论](ch1.html) + [教程笔记 Part 1](tutorial-1.html) |
+| 习题二 | [第 2 章：处理器管理](ch2.html) + [教程笔记 Part 1](tutorial-1.html) |
+| 习题三 | [第 4 章：存储管理](ch4.html) + [教程笔记 Part 2](tutorial-2.html) |
+| 习题四 | [第 5 章：设备管理](ch5.html) + [教程笔记 Part 2](tutorial-2.html) |
+| 习题六 | [第 3 章：同步互斥与死锁](ch3.html) + [教程笔记 Part 3](tutorial-3.html) |
 
 > 注意：教材**第六章并发程序设计**对应学校 PPT **ch3 同步互斥**（章号不一致）。

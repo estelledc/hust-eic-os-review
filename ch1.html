@@ -4,64 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。">
+<meta name="author" content="Jason Xun">
 <meta name="color-scheme" content="light dark">
-<title>第 1 章 操作系统概论 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<title>第 1 章 操作系统概论 — 操作系统复习系统</title>
+<link rel="canonical" href="https://estelledc.github.io/hust-eic-os-review/ch1.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="操作系统复习系统">
+<meta property="og:title" content="第 1 章 操作系统概论 — 操作系统复习系统">
+<meta property="og:description" content="并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。">
+<meta property="og:url" content="https://estelledc.github.io/hust-eic-os-review/ch1.html">
+<meta property="og:image" content="https://estelledc.github.io/hust-eic-os-review/assets/og-os-review.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="操作系统复习系统：阅读、实践、复核三条学习路径">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="第 1 章 操作系统概论 — 操作系统复习系统">
+<meta name="twitter:description" content="并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。">
+<meta name="twitter:image" content="https://estelledc.github.io/hust-eic-os-review/assets/og-os-review.png">
 <link rel="stylesheet" href="assets/jx/tokens.css">
 <link rel="stylesheet" href="assets/jx/base.css">
 <link rel="stylesheet" href="assets/jx/components.css">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="themes/themes.css">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://estelledc.github.io/hust-eic-os-review/#website", "url": "https://estelledc.github.io/hust-eic-os-review/", "name": "操作系统复习系统", "description": "面向操作系统课程复习的静态学习系统：概念阅读、考前材料与 Lab Studio。", "inLanguage": ["zh-Hans", "en"], "author": {"@id": "https://estelledc.github.io/#person"}}, {"@type": "Person", "@id": "https://estelledc.github.io/#person", "name": "Jason Xun", "url": "https://estelledc.github.io/", "sameAs": ["https://github.com/estelledc"]}, {"@type": "LearningResource", "@id": "https://estelledc.github.io/hust-eic-os-review/ch1.html#resource", "url": "https://estelledc.github.io/hust-eic-os-review/ch1.html", "name": "第 1 章 操作系统概论", "description": "并发 / 共享 / 虚拟 / 异步四大特性，分时与多道架构。", "inLanguage": "zh-Hans", "isPartOf": {"@id": "https://estelledc.github.io/hust-eic-os-review/#website"}, "author": {"@id": "https://estelledc.github.io/#person"}}]}</script>
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t==="access-light"||t==="access-dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 </head>
 <body>
-<a class="jx-return-to-hub" href="https://estelledc.github.io/" rel="home">回 Jason 主站</a>
-<a href="https://github.com/estelledc/hust-eic-os-review" class="github-corner" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码">
-  <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
-    <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" fill="var(--accent, #2962ff)"></path>
-    <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="#fff" class="octo-arm"></path>
-    <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.5 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="#fff" class="octo-body"></path>
-  </svg>
-</a>
-<style>
-  .github-corner { position: fixed; top: 0; right: 0; z-index: 99; border: 0; }
-  .github-corner svg { display: block; }
-  .github-corner:hover .octo-arm {
-    animation: octocat-wave 560ms ease-in-out;
-  }
-  @keyframes octocat-wave {
-    0%, 100% { transform: rotate(0); }
-    20%, 60% { transform: rotate(-25deg); }
-    40%, 80% { transform: rotate(10deg); }
-  }
-  .octo-arm { transform-origin: 130px 106px; }
-  @media (max-width: 500px) {
-    .github-corner:hover .octo-arm { animation: none; }
-    .github-corner .octo-arm { animation: octocat-wave 560ms ease-in-out; }
-    .github-corner svg { width: 60px; height: 60px; }
-  }
-</style>
+<a class="jx-skip-link" href="#main">跳到主要内容</a>
 <header class="topbar site-topbar" role="banner">
   <div class="topbar-inner">
     <a class="brand" href="index.html" aria-label="返回首页">
       <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
-      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+      <span><strong>OS Review</strong><small>HUST EIC · 学习系统</small></span>
     </a>
-    <button class="site-nav-toggle" type="button" aria-expanded="false" data-site-nav-toggle>导航</button>
-    <nav class="site-nav" aria-label="站点主导航">
+    <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-site-nav-toggle>导航</button>
+    <nav class="site-nav" id="site-nav" aria-label="站点主导航">
       <a class="site-nav-link" href="index.html">课程地图</a>
-      <a class="site-nav-link is-active" href="ch1.html">阅读</a>
+      <a class="site-nav-link is-active" href="ch1.html" aria-current="page">阅读</a>
       <a class="site-nav-link" href="practice.html">实践</a>
       <a class="site-nav-link" href="review.html">总复习</a>
       <a class="site-nav-link" href="homework.html">作业</a>
       <a class="site-nav-link" href="tutorial-1.html">教程</a>
       <a class="site-nav-link" href="themes-gallery.html">主题</a>
+      <span class="site-nav-global" role="group" aria-label="Jason 作品集导航">
+        <a class="site-nav-link" href="https://estelledc.github.io/">Hub</a>
+        <a class="site-nav-link" href="https://estelledc.github.io/about/">About</a>
+        <a class="site-nav-link" href="https://estelledc.github.io/resume/">Resume</a>
+        <a class="site-nav-link" href="https://github.com/estelledc/hust-eic-os-review">GitHub</a>
+      </span>
     </nav>
     <div class="topbar-actions">
-      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
-      </button>
-      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+      <nav class="portfolio-links" aria-label="Jason 作品集导航">
+        <a class="jx-return-to-hub" href="https://estelledc.github.io/" rel="home">Hub</a>
+        <a href="https://estelledc.github.io/about/">About</a>
+        <a href="https://estelledc.github.io/resume/">Resume</a>
+      </nav>
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择阅读外观" data-theme-picker title="选择阅读外观（3 种）">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
       </button>
       <a class="theme-toggle" href="https://github.com/estelledc/hust-eic-os-review" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码" title="在 GitHub 查看源码">
@@ -80,7 +79,7 @@
   <div class="sidebar-footer">
     <a class="ghost" href="themes-gallery.html">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
-      <span>主题画廊（71 套）</span>
+      <span>主题来源档案（71 套）</span>
     </a>
     <p class="ghost sidebar-note">本站源代码以 markdown 编写、build.py 重新生成。</p>
   </div>
@@ -100,13 +99,13 @@
 <hr>
 <h2 id="11"><a class="toclink" href="#11">1.1 什么是操作系统</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k001">
-  <img src="content/images/knowledge/ch1-k001.webp" alt="知识点插图：1.1 什么是操作系统" loading="lazy">
+  <img src="content/images/knowledge/ch1-k001.webp" alt="知识点插图：1.1 什么是操作系统" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.1 什么是操作系统</figcaption>
 </figure>
 
 <h3 id="_1"><a class="toclink" href="#_1">一句话定义</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k002">
-  <img src="content/images/knowledge/ch1-k002.webp" alt="知识点插图：一句话定义" loading="lazy">
+  <img src="content/images/knowledge/ch1-k002.webp" alt="知识点插图：一句话定义" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：一句话定义</figcaption>
 </figure>
 
@@ -114,7 +113,7 @@
 <p>教材里另一种更短的说法：<strong>用以控制和管理系统资源、方便用户使用计算机的程序集合。</strong></p>
 <h3 id="_2"><a class="toclink" href="#_2">日常类比</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k003">
-  <img src="content/images/knowledge/ch1-k003.webp" alt="知识点插图：日常类比" loading="lazy">
+  <img src="content/images/knowledge/ch1-k003.webp" alt="知识点插图：日常类比" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：日常类比</figcaption>
 </figure>
 
@@ -125,7 +124,7 @@
 <p>订单不会直接冲进后厨抢锅；它通过经理（OS）登记、排队、分配灶台。<strong>用户和应用从不直接碰硬件，必须经过 OS 这个中介。</strong></p>
 <h3 id="os"><a class="toclink" href="#os">OS 在计算机系统中的位置（重要分层图）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k004">
-  <img src="content/images/knowledge/ch1-k004.webp" alt="知识点插图：OS 在计算机系统中的位置（重要分层图）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k004.webp" alt="知识点插图：OS 在计算机系统中的位置（重要分层图）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：OS 在计算机系统中的位置（重要分层图）</figcaption>
 </figure>
 
@@ -142,7 +141,7 @@
 - <strong>对下</strong> 统一管硬件资源，让多个应用能&rdquo;和平共享&rdquo;同一套硬件而不打架</p>
 <h3 id="os_1"><a class="toclink" href="#os_1">OS 的四种观察视角（考点：背熟这四个观点）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k005">
-  <img src="content/images/knowledge/ch1-k005.webp" alt="知识点插图：OS 的四种观察视角（考点：背熟这四个观点）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k005.webp" alt="知识点插图：OS 的四种观察视角（考点：背熟这四个观点）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：OS 的四种观察视角（考点：背熟这四个观点）</figcaption>
 </figure>
 
@@ -182,13 +181,13 @@
 <hr>
 <h2 id="12-os"><a class="toclink" href="#12-os">1.2 OS 的功能与特性</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k006">
-  <img src="content/images/knowledge/ch1-k006.webp" alt="知识点插图：1.2 OS 的功能与特性" loading="lazy">
+  <img src="content/images/knowledge/ch1-k006.webp" alt="知识点插图：1.2 OS 的功能与特性" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.2 OS 的功能与特性</figcaption>
 </figure>
 
 <h3 id="_3"><a class="toclink" href="#_3">五大功能（考点）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k007">
-  <img src="content/images/knowledge/ch1-k007.webp" alt="知识点插图：五大功能（考点）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k007.webp" alt="知识点插图：五大功能（考点）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：五大功能（考点）</figcaption>
 </figure>
 
@@ -225,7 +224,7 @@
 <p>第 2~6 章会一一展开。</p>
 <h3 id="_4"><a class="toclink" href="#_4">四大特性（考点 + 关系图）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k008">
-  <img src="content/images/knowledge/ch1-k008.webp" alt="知识点插图：四大特性（考点 + 关系图）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k008.webp" alt="知识点插图：四大特性（考点 + 关系图）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：四大特性（考点 + 关系图）</figcaption>
 </figure>
 
@@ -268,7 +267,7 @@
 <hr>
 <h2 id="13"><a class="toclink" href="#13">1.3 资源管理三大技术：复用 / 虚拟 / 抽象</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k009">
-  <img src="content/images/knowledge/ch1-k009.webp" alt="知识点插图：1.3 资源管理三大技术：复用 / 虚拟 / 抽象" loading="lazy">
+  <img src="content/images/knowledge/ch1-k009.webp" alt="知识点插图：1.3 资源管理三大技术：复用 / 虚拟 / 抽象" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.3 资源管理三大技术：复用 / 虚拟 / 抽象</figcaption>
 </figure>
 
@@ -301,7 +300,7 @@
 </table>
 <h3 id="1"><a class="toclink" href="#1">(1) 复用：分割共享一个物理资源</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k010">
-  <img src="content/images/knowledge/ch1-k010.webp" alt="知识点插图：(1) 复用：分割共享一个物理资源" loading="lazy">
+  <img src="content/images/knowledge/ch1-k010.webp" alt="知识点插图：(1) 复用：分割共享一个物理资源" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：(1) 复用：分割共享一个物理资源</figcaption>
 </figure>
 
@@ -315,7 +314,7 @@
 <p>类比：教室是空分复用（每个人占一张桌子）；公共篮球场是时分复用（你打半小时下场让别人）。</p>
 <h3 id="2"><a class="toclink" href="#2">(2) 虚拟：创造&rdquo;虚假但好用&rdquo;的资源</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k011">
-  <img src="content/images/knowledge/ch1-k011.webp" alt="知识点插图：(2) 虚拟：创造&quot;虚假但好用&quot;的资源" loading="lazy">
+  <img src="content/images/knowledge/ch1-k011.webp" alt="知识点插图：(2) 虚拟：创造&quot;虚假但好用&quot;的资源" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：(2) 虚拟：创造&quot;虚假但好用&quot;的资源</figcaption>
 </figure>
 
@@ -329,7 +328,7 @@
 - <strong>虚拟信道</strong></p>
 <h3 id="3"><a class="toclink" href="#3">(3) 抽象：屏蔽硬件细节，提供易用接口</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k012">
-  <img src="content/images/knowledge/ch1-k012.webp" alt="知识点插图：(3) 抽象：屏蔽硬件细节，提供易用接口" loading="lazy">
+  <img src="content/images/knowledge/ch1-k012.webp" alt="知识点插图：(3) 抽象：屏蔽硬件细节，提供易用接口" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：(3) 抽象：屏蔽硬件细节，提供易用接口</figcaption>
 </figure>
 
@@ -352,7 +351,7 @@
 </code></pre>
 <h3 id="4"><a class="toclink" href="#4">(4) 三技术的组合使用</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k013">
-  <img src="content/images/knowledge/ch1-k013.webp" alt="知识点插图：(4) 三技术的组合使用" loading="lazy">
+  <img src="content/images/knowledge/ch1-k013.webp" alt="知识点插图：(4) 三技术的组合使用" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：(4) 三技术的组合使用</figcaption>
 </figure>
 
@@ -381,7 +380,7 @@
 </table>
 <h3 id="os_2"><a class="toclink" href="#os_2">OS 三大基础抽象（考点）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k014">
-  <img src="content/images/knowledge/ch1-k014.webp" alt="知识点插图：OS 三大基础抽象（考点）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k014.webp" alt="知识点插图：OS 三大基础抽象（考点）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：OS 三大基础抽象（考点）</figcaption>
 </figure>
 
@@ -419,7 +418,7 @@
 <p>文件依赖虚存（要把数据加载到地址空间），虚存依赖进程（要在某个执行上下文里访问）。</p>
 <h3 id="os_3"><a class="toclink" href="#os_3">OS 虚拟机概念</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k015">
-  <img src="content/images/knowledge/ch1-k015.webp" alt="知识点插图：OS 虚拟机概念" loading="lazy">
+  <img src="content/images/knowledge/ch1-k015.webp" alt="知识点插图：OS 虚拟机概念" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：OS 虚拟机概念</figcaption>
 </figure>
 
@@ -435,7 +434,7 @@
 <hr>
 <h2 id="14-os-os"><a class="toclink" href="#14-os-os">1.4 OS 接口：用户怎么和 OS 打交道</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k016">
-  <img src="content/images/knowledge/ch1-k016.webp" alt="知识点插图：1.4 OS 接口：用户怎么和 OS 打交道" loading="lazy">
+  <img src="content/images/knowledge/ch1-k016.webp" alt="知识点插图：1.4 OS 接口：用户怎么和 OS 打交道" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.4 OS 接口：用户怎么和 OS 打交道</figcaption>
 </figure>
 
@@ -463,7 +462,7 @@
 </table>
 <h3 id="141"><a class="toclink" href="#141">1.4.1 程序接口与系统调用</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k017">
-  <img src="content/images/knowledge/ch1-k017.webp" alt="知识点插图：1.4.1 程序接口与系统调用" loading="lazy">
+  <img src="content/images/knowledge/ch1-k017.webp" alt="知识点插图：1.4.1 程序接口与系统调用" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.4.1 程序接口与系统调用</figcaption>
 </figure>
 
@@ -529,7 +528,7 @@
 <p><strong>系统调用分类</strong>（6 类）：进程/作业管理、文件操作、设备管理、主存管理、信息维护、进程通信。</p>
 <h3 id="142"><a class="toclink" href="#142">1.4.2 操作接口与系统程序</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k018">
-  <img src="content/images/knowledge/ch1-k018.webp" alt="知识点插图：1.4.2 操作接口与系统程序" loading="lazy">
+  <img src="content/images/knowledge/ch1-k018.webp" alt="知识点插图：1.4.2 操作接口与系统程序" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.4.2 操作接口与系统程序</figcaption>
 </figure>
 
@@ -580,13 +579,13 @@
 <hr>
 <h2 id="15-os-vs"><a class="toclink" href="#15-os-vs">1.5 OS 结构：单内核 vs 微内核</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k019">
-  <img src="content/images/knowledge/ch1-k019.webp" alt="知识点插图：1.5 OS 结构：单内核 vs 微内核" loading="lazy">
+  <img src="content/images/knowledge/ch1-k019.webp" alt="知识点插图：1.5 OS 结构：单内核 vs 微内核" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.5 OS 结构：单内核 vs 微内核</figcaption>
 </figure>
 
 <h3 id="151-os"><a class="toclink" href="#151-os">1.5.1 四种 OS 结构</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k020">
-  <img src="content/images/knowledge/ch1-k020.webp" alt="知识点插图：1.5.1 四种 OS 结构" loading="lazy">
+  <img src="content/images/knowledge/ch1-k020.webp" alt="知识点插图：1.5.1 四种 OS 结构" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.5.1 四种 OS 结构</figcaption>
 </figure>
 
@@ -624,7 +623,7 @@
 </table>
 <h3 id="152-kernel"><a class="toclink" href="#152-kernel">1.5.2 内核 (kernel) 概念</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k021">
-  <img src="content/images/knowledge/ch1-k021.webp" alt="知识点插图：1.5.2 内核 (kernel) 概念" loading="lazy">
+  <img src="content/images/knowledge/ch1-k021.webp" alt="知识点插图：1.5.2 内核 (kernel) 概念" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.5.2 内核 (kernel) 概念</figcaption>
 </figure>
 
@@ -646,7 +645,7 @@
 <p><strong>内核分两类</strong>：单内核（宏内核） vs 微内核——这是重点。</p>
 <h3 id="153-monolithic-kernel"><a class="toclink" href="#153-monolithic-kernel">1.5.3 单内核（宏内核, Monolithic Kernel）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k022">
-  <img src="content/images/knowledge/ch1-k022.webp" alt="知识点插图：1.5.3 单内核（宏内核, Monolithic Kernel）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k022.webp" alt="知识点插图：1.5.3 单内核（宏内核, Monolithic Kernel）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.5.3 单内核（宏内核, Monolithic Kernel）</figcaption>
 </figure>
 
@@ -674,7 +673,7 @@
 <p>类比：一家什么都自己做的小餐馆，老板兼厨师兼服务员，效率高但一个人病了店就关了。</p>
 <h3 id="154-microkernel"><a class="toclink" href="#154-microkernel">1.5.4 微内核 (Microkernel)</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k023">
-  <img src="content/images/knowledge/ch1-k023.webp" alt="知识点插图：1.5.4 微内核 (Microkernel)" loading="lazy">
+  <img src="content/images/knowledge/ch1-k023.webp" alt="知识点插图：1.5.4 微内核 (Microkernel)" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.5.4 微内核 (Microkernel)</figcaption>
 </figure>
 
@@ -722,7 +721,7 @@
 <p>类比：一家分工明确的连锁餐厅，前台只做接待（微内核），厨房、库房、清洁各自独立（用户态服务进程）；某天清洁出问题，餐厅照常开业。但每件事要经多次电话传递，效率不如夫妻店。</p>
 <h3 id="155-os"><a class="toclink" href="#155-os">1.5.5 OS 运行模型</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k024">
-  <img src="content/images/knowledge/ch1-k024.webp" alt="知识点插图：1.5.5 OS 运行模型" loading="lazy">
+  <img src="content/images/knowledge/ch1-k024.webp" alt="知识点插图：1.5.5 OS 运行模型" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.5.5 OS 运行模型</figcaption>
 </figure>
 
@@ -748,13 +747,13 @@
 <hr>
 <h2 id="16-os"><a class="toclink" href="#16-os">1.6 OS 发展历史</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k025">
-  <img src="content/images/knowledge/ch1-k025.webp" alt="知识点插图：1.6 OS 发展历史" loading="lazy">
+  <img src="content/images/knowledge/ch1-k025.webp" alt="知识点插图：1.6 OS 发展历史" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.6 OS 发展历史</figcaption>
 </figure>
 
 <h3 id="_5"><a class="toclink" href="#_5">时间线</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k026">
-  <img src="content/images/knowledge/ch1-k026.webp" alt="知识点插图：时间线" loading="lazy">
+  <img src="content/images/knowledge/ch1-k026.webp" alt="知识点插图：时间线" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：时间线</figcaption>
 </figure>
 
@@ -797,7 +796,7 @@
 <p>每个阶段诞生的关键技术，都为了解决上一阶段的痛点。</p>
 <h3 id="161-194650s"><a class="toclink" href="#161-194650s">1.6.1 人工操作阶段（电子管，1946~50s）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k027">
-  <img src="content/images/knowledge/ch1-k027.webp" alt="知识点插图：1.6.1 人工操作阶段（电子管，1946~50s）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k027.webp" alt="知识点插图：1.6.1 人工操作阶段（电子管，1946~50s）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.6.1 人工操作阶段（电子管，1946~50s）</figcaption>
 </figure>
 
@@ -808,7 +807,7 @@
 <p>幻灯片 107 的卡通画就是这个时代的写照：人坐在机器前，手工准备纸带、装入、取出。</p>
 <h3 id="162-50s-60s"><a class="toclink" href="#162-50s-60s">1.6.2 执行系统阶段（晶体管，50s 末~60s 中）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k028">
-  <img src="content/images/knowledge/ch1-k028.webp" alt="知识点插图：1.6.2 执行系统阶段（晶体管，50s 末~60s 中）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k028.webp" alt="知识点插图：1.6.2 执行系统阶段（晶体管，50s 末~60s 中）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.6.2 执行系统阶段（晶体管，50s 末~60s 中）</figcaption>
 </figure>
 
@@ -821,7 +820,7 @@
 - 监督程序容易被用户程序破坏（那时还没有内存保护）</p>
 <h3 id="163-os-60s"><a class="toclink" href="#163-os-60s">1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k029">
-  <img src="content/images/knowledge/ch1-k029.webp" alt="知识点插图：1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k029.webp" alt="知识点插图：1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.6.3 多道程序设计与 OS 形成（集成电路，60s 中后）</figcaption>
 </figure>
 
@@ -833,7 +832,7 @@
 <p>有了这两件神器，<strong>多道程序设计</strong>才成为可能（这是后续所有 OS 概念的源头）。</p>
 <h3 id="_6"><a class="toclink" href="#_6">多道程序设计（核心概念，考点中的考点）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k030">
-  <img src="content/images/knowledge/ch1-k030.webp" alt="知识点插图：多道程序设计（核心概念，考点中的考点）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k030.webp" alt="知识点插图：多道程序设计（核心概念，考点中的考点）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：多道程序设计（核心概念，考点中的考点）</figcaption>
 </figure>
 
@@ -850,7 +849,7 @@
 - <strong>微观上串行</strong>：单 CPU 上各作业交替使用 CPU</p>
 <h4 id="vs"><a class="toclink" href="#vs">单道 vs 多道 对比（考点必出）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k031">
-  <img src="content/images/knowledge/ch1-k031.webp" alt="知识点插图：单道 vs 多道 对比（考点必出）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k031.webp" alt="知识点插图：单道 vs 多道 对比（考点必出）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：单道 vs 多道 对比（考点必出）</figcaption>
 </figure>
 
@@ -900,7 +899,7 @@ C:           [CPU][I/O      ][CPU][I/O ]
 <p><strong>记忆点</strong>：单道是&rdquo;程序排队&rdquo;；多道是&rdquo;程序并发&rdquo;。<strong>多道引入的关键就是&rdquo;当一个程序阻塞在 I/O 时，CPU 切到另一个就绪程序&rdquo;——这就是后续&rdquo;进程&rdquo;&ldquo;调度&rdquo;概念的源头</strong>。</p>
 <h4 id="cpu"><a class="toclink" href="#cpu">CPU 利用率公式（必背）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k032">
-  <img src="content/images/knowledge/ch1-k032.webp" alt="知识点插图：CPU 利用率公式（必背）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k032.webp" alt="知识点插图：CPU 利用率公式（必背）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：CPU 利用率公式（必背）</figcaption>
 </figure>
 
@@ -914,7 +913,7 @@ CPU 利用率 = 1 − p^n
 - CPU 利用率 = 1 − 0.8⁴ = <strong>59%</strong>
 - 加 1MB 内存后能跑 9 道：CPU 利用率 = 1 − 0.8⁹ = <strong>87%</strong>
 - 第二个 1MB 提升 47% 的 CPU 利用率——<strong>多道+扩内存性价比极高</strong></p>
-<p><img alt="CPU 利用率随道数变化曲线" src="content/images/ch1-cpu-utilization.jpg" loading="lazy"></p>
+<p><img alt="CPU 利用率随道数变化曲线" src="content/images/ch1-cpu-utilization.jpg" loading="lazy" decoding="async" width="1034" height="631"></p>
 <p>幻灯片 123 这张图是 CPU 利用率随道数变化的曲线：
 - 横轴：多道程序道数（1~10）
 - 纵轴：CPU 利用率（%）
@@ -925,7 +924,7 @@ CPU 利用率 = 1 − p^n
 - p=80%：n=10 都没拉满（曲线还在涨）</p>
 <h4 id="_7"><a class="toclink" href="#_7">多道程序设计的代价</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k033">
-  <img src="content/images/knowledge/ch1-k033.webp" alt="知识点插图：多道程序设计的代价" loading="lazy">
+  <img src="content/images/knowledge/ch1-k033.webp" alt="知识点插图：多道程序设计的代价" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：多道程序设计的代价</figcaption>
 </figure>
 
@@ -936,7 +935,7 @@ CPU 利用率 = 1 − p^n
 <p>类比：一个人专心做一件事 30 分钟搞定；同时做三件事可能每件 1 小时——总产出多了，但每件慢了。</p>
 <h4 id="vs_1"><a class="toclink" href="#vs_1">多道程序 vs 多重处理</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k034">
-  <img src="content/images/knowledge/ch1-k034.webp" alt="知识点插图：多道程序 vs 多重处理" loading="lazy">
+  <img src="content/images/knowledge/ch1-k034.webp" alt="知识点插图：多道程序 vs 多重处理" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：多道程序 vs 多重处理</figcaption>
 </figure>
 
@@ -947,7 +946,7 @@ CPU 利用率 = 1 − p^n
 <p><strong>关系</strong>：多重处理系统<strong>必须采用</strong>多道程序设计才能发挥威力；但多道不需要多重处理。</p>
 <h4 id="3_1"><a class="toclink" href="#3_1">实现多道要解决的 3 个问题</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k035">
-  <img src="content/images/knowledge/ch1-k035.webp" alt="知识点插图：实现多道要解决的 3 个问题" loading="lazy">
+  <img src="content/images/knowledge/ch1-k035.webp" alt="知识点插图：实现多道要解决的 3 个问题" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：实现多道要解决的 3 个问题</figcaption>
 </figure>
 
@@ -959,7 +958,7 @@ CPU 利用率 = 1 − p^n
 <p>——这三个问题的解决方案就构成了<strong>现代 OS 的雏形</strong>。</p>
 <h3 id="164-70s"><a class="toclink" href="#164-70s">1.6.4 分时系统（70s）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k036">
-  <img src="content/images/knowledge/ch1-k036.webp" alt="知识点插图：1.6.4 分时系统（70s）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k036.webp" alt="知识点插图：1.6.4 分时系统（70s）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.6.4 分时系统（70s）</figcaption>
 </figure>
 
@@ -990,7 +989,7 @@ CPU 利用率 = 1 − p^n
 <p><strong>代表系统</strong>：CTSS、TSS、Multics、<strong>UNIX</strong>。</p>
 <h4 id="vs_2"><a class="toclink" href="#vs_2">分时 vs 批处理（考点对比）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k037">
-  <img src="content/images/knowledge/ch1-k037.webp" alt="知识点插图：分时 vs 批处理（考点对比）" loading="lazy">
+  <img src="content/images/knowledge/ch1-k037.webp" alt="知识点插图：分时 vs 批处理（考点对比）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：分时 vs 批处理（考点对比）</figcaption>
 </figure>
 
@@ -1027,7 +1026,7 @@ CPU 利用率 = 1 − p^n
 </table>
 <h3 id="165"><a class="toclink" href="#165">1.6.5 实时系统</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k038">
-  <img src="content/images/knowledge/ch1-k038.webp" alt="知识点插图：1.6.5 实时系统" loading="lazy">
+  <img src="content/images/knowledge/ch1-k038.webp" alt="知识点插图：1.6.5 实时系统" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.6.5 实时系统</figcaption>
 </figure>
 
@@ -1040,7 +1039,7 @@ CPU 利用率 = 1 − p^n
 <p><strong>处理流程</strong>：数据采集 → 加工处理 → 操作控制 → 反馈处理。</p>
 <h3 id="166"><a class="toclink" href="#166">1.6.6 进一步发展：网络/分布式/并行/嵌入式/云</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k039">
-  <img src="content/images/knowledge/ch1-k039.webp" alt="知识点插图：1.6.6 进一步发展：网络/分布式/并行/嵌入式/云" loading="lazy">
+  <img src="content/images/knowledge/ch1-k039.webp" alt="知识点插图：1.6.6 进一步发展：网络/分布式/并行/嵌入式/云" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.6.6 进一步发展：网络/分布式/并行/嵌入式/云</figcaption>
 </figure>
 
@@ -1113,7 +1112,7 @@ CPU 利用率 = 1 − p^n
 <hr>
 <h2 id="17-os"><a class="toclink" href="#17-os">1.7 常见 OS 类型一览</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k040">
-  <img src="content/images/knowledge/ch1-k040.webp" alt="知识点插图：1.7 常见 OS 类型一览" loading="lazy">
+  <img src="content/images/knowledge/ch1-k040.webp" alt="知识点插图：1.7 常见 OS 类型一览" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.7 常见 OS 类型一览</figcaption>
 </figure>
 
@@ -1146,13 +1145,13 @@ CPU 利用率 = 1 − p^n
 <hr>
 <h2 id="18"><a class="toclink" href="#18">1.8 章末考试要点速查</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k041">
-  <img src="content/images/knowledge/ch1-k041.webp" alt="知识点插图：1.8 章末考试要点速查" loading="lazy">
+  <img src="content/images/knowledge/ch1-k041.webp" alt="知识点插图：1.8 章末考试要点速查" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：1.8 章末考试要点速查</figcaption>
 </figure>
 
 <h3 id="_8"><a class="toclink" href="#_8">必背名词解释</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k042">
-  <img src="content/images/knowledge/ch1-k042.webp" alt="知识点插图：必背名词解释" loading="lazy">
+  <img src="content/images/knowledge/ch1-k042.webp" alt="知识点插图：必背名词解释" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：必背名词解释</figcaption>
 </figure>
 
@@ -1169,7 +1168,7 @@ CPU 利用率 = 1 − p^n
 </ol>
 <h3 id="_9"><a class="toclink" href="#_9">必背概念辨析</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k043">
-  <img src="content/images/knowledge/ch1-k043.webp" alt="知识点插图：必背概念辨析" loading="lazy">
+  <img src="content/images/knowledge/ch1-k043.webp" alt="知识点插图：必背概念辨析" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：必背概念辨析</figcaption>
 </figure>
 
@@ -1217,7 +1216,7 @@ CPU 利用率 = 1 − p^n
 </table>
 <h3 id="_10"><a class="toclink" href="#_10">必背计算</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k044">
-  <img src="content/images/knowledge/ch1-k044.webp" alt="知识点插图：必背计算" loading="lazy">
+  <img src="content/images/knowledge/ch1-k044.webp" alt="知识点插图：必背计算" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：必背计算</figcaption>
 </figure>
 
@@ -1225,7 +1224,7 @@ CPU 利用率 = 1 − p^n
 <p>会算：给 p、n 求利用率；给目标利用率求 n。</p>
 <h3 id="_11"><a class="toclink" href="#_11">必背关系图</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k045">
-  <img src="content/images/knowledge/ch1-k045.webp" alt="知识点插图：必背关系图" loading="lazy">
+  <img src="content/images/knowledge/ch1-k045.webp" alt="知识点插图：必背关系图" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：必背关系图</figcaption>
 </figure>
 
@@ -1237,7 +1236,7 @@ CPU 利用率 = 1 − p^n
 </ol>
 <h3 id="_12"><a class="toclink" href="#_12">高频简答题套路</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k046">
-  <img src="content/images/knowledge/ch1-k046.webp" alt="知识点插图：高频简答题套路" loading="lazy">
+  <img src="content/images/knowledge/ch1-k046.webp" alt="知识点插图：高频简答题套路" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：高频简答题套路</figcaption>
 </figure>
 
@@ -1255,7 +1254,7 @@ CPU 利用率 = 1 − p^n
 <hr>
 <h2 id="_13"><a class="toclink" href="#_13">附录：对应原始幻灯片范围映射表</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k047">
-  <img src="content/images/knowledge/ch1-k047.webp" alt="知识点插图：附录：对应原始幻灯片范围映射表" loading="lazy">
+  <img src="content/images/knowledge/ch1-k047.webp" alt="知识点插图：附录：对应原始幻灯片范围映射表" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：附录：对应原始幻灯片范围映射表</figcaption>
 </figure>
 
@@ -1316,7 +1315,7 @@ CPU 利用率 = 1 − p^n
 <hr>
 <h2 id="_14"><a class="toclink" href="#_14">写作中遗留的疑问点</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="ch1-k048">
-  <img src="content/images/knowledge/ch1-k048.webp" alt="知识点插图：写作中遗留的疑问点" loading="lazy">
+  <img src="content/images/knowledge/ch1-k048.webp" alt="知识点插图：写作中遗留的疑问点" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：写作中遗留的疑问点</figcaption>
 </figure>
 
@@ -1463,31 +1462,33 @@ CPU 利用率 = 1 − p^n
 <footer class="jx-footer">
   <div class="jx-footer__colophon">
     <strong>OS Review</strong>
-    <span lang="en">HUST EIC · MMXXVI</span>
+    <span lang="en">A Jason product system · MMXXVI</span>
   </div>
   <nav class="jx-footer__index">
     <a href="index.html">course map</a>
     <a href="review.html">复习提纲</a>
-    <a href="themes-gallery.html">71 主题</a>
+    <a href="practice.html">lab studio</a>
+    <a href="https://estelledc.github.io/">hub</a>
+    <a href="https://estelledc.github.io/about/">about</a>
+    <a href="https://estelledc.github.io/resume/">resume</a>
     <a href="https://github.com/estelledc/hust-eic-os-review">github</a>
   </nav>
-  <time class="jx-footer__stamp" datetime="2026-05-31" lang="en">2026·05·31</time>
+  <time class="jx-footer__stamp" datetime="2026-07-11" lang="en">Updated 2026·07·11</time>
 </footer>
-<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+<aside class="theme-picker" data-theme-panel hidden role="dialog" aria-modal="true" aria-labelledby="theme-picker-title">
   <div class="theme-picker-head">
-    <h3 class="theme-picker-title">选择主题</h3>
-    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <h2 class="theme-picker-title" id="theme-picker-title">阅读外观</h2>
+    <p class="theme-picker-sub">只保留 3 种经过可读性收敛的模式；默认跟随系统，无需脚本也能阅读。</p>
     <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
   </div>
-  <div class="theme-picker-actions">
-    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
-    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  <div class="access-mode-grid" data-theme-grid role="list">
+    <button type="button" class="access-mode-card" data-theme-set="" role="listitem"><strong>跟随系统</strong><span>自动响应设备的明暗偏好。</span></button><button type="button" class="access-mode-card" data-theme-set="access-light" role="listitem"><strong>高可读浅色</strong><span>纯白底、深色正文与清晰链接。</span></button><button type="button" class="access-mode-card" data-theme-set="access-dark" role="listitem"><strong>高对比深色</strong><span>深色底、提亮正文并强化边界。</span></button>
   </div>
-  <div class="theme-picker-grid" data-theme-grid></div>
+  <p class="theme-picker-archive">原有 71 套色板没有删除，仍可在<a href="themes-gallery.html">主题来源档案</a>查看。</p>
+  <noscript><p class="theme-picker-noscript">JavaScript 已关闭：页面继续使用系统明暗偏好。</p></noscript>
 </aside>
 <div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
 
-<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
 <script src="assets/app.js" defer></script>
 </body></html>
