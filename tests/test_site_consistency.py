@@ -17,6 +17,8 @@ GENERATED_PAGES = [
     "review.html",
     "homework.html",
     "practice.html",
+    "cheatsheet.html",
+    "quiz.html",
     "tutorial-1.html",
     "tutorial-2.html",
     "tutorial-3.html",
@@ -91,6 +93,37 @@ class SiteConsistencyTest(unittest.TestCase):
             ".btn-secondary",
         ):
             self.assertIn(shared_selector, style_css)
+
+    def test_public_homepage_explains_the_case_and_its_boundary(self) -> None:
+        html = self.read_page("index.html")
+
+        for label in (
+            "Problem / 问题",
+            "Role / 角色",
+            "System / 系统",
+            "Evidence / 证据",
+            "Limitations / 边界",
+            "Jason 决定目标、结构与验收",
+            "不声称提高成绩",
+        ):
+            self.assertIn(label, html)
+
+        for destination in (
+            "https://estelledc.github.io/",
+            "https://estelledc.github.io/about/",
+            "https://estelledc.github.io/resume/",
+            "https://github.com/estelledc/hust-eic-os-review",
+        ):
+            self.assertIn(destination, html)
+
+    def test_every_page_has_share_and_structured_metadata(self) -> None:
+        for page in GENERATED_PAGES:
+            html = self.read_page(page)
+            self.assertIn('<link rel="canonical" href="https://estelledc.github.io/hust-eic-os-review/', html, page)
+            self.assertIn('property="og:image"', html, page)
+            self.assertIn('name="twitter:card" content="summary_large_image"', html, page)
+            self.assertIn('type="application/ld+json"', html, page)
+            self.assertIn('class="jx-skip-link"', html, page)
 
 
 if __name__ == "__main__":

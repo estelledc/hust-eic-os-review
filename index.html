@@ -3,61 +3,64 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="5 章 + 复习提纲 + 作业 + 实践模式 + 教程三部分。">
+<meta name="description" content="把 5 章概念、考前材料与 9 个引导式 Lab 组织成能走、能练、能复核的静态学习系统。">
+<meta name="author" content="Jason">
 <meta name="color-scheme" content="light dark">
-<title>课程地图 — 华中科技大学电信本科 · 操作系统复习笔记</title>
+<title>操作系统复习系统</title>
+<link rel="canonical" href="https://estelledc.github.io/hust-eic-os-review/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="操作系统复习系统">
+<meta property="og:title" content="操作系统复习系统">
+<meta property="og:description" content="把 5 章概念、考前材料与 9 个引导式 Lab 组织成能走、能练、能复核的静态学习系统。">
+<meta property="og:url" content="https://estelledc.github.io/hust-eic-os-review/">
+<meta property="og:image" content="https://estelledc.github.io/hust-eic-os-review/assets/og-os-review.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="操作系统复习系统：阅读、实践、复核三条学习路径">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="操作系统复习系统">
+<meta name="twitter:description" content="把 5 章概念、考前材料与 9 个引导式 Lab 组织成能走、能练、能复核的静态学习系统。">
+<meta name="twitter:image" content="https://estelledc.github.io/hust-eic-os-review/assets/og-os-review.png">
 <link rel="stylesheet" href="assets/jx/tokens.css">
 <link rel="stylesheet" href="assets/jx/base.css">
 <link rel="stylesheet" href="assets/jx/components.css">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="themes/themes.css">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://estelledc.github.io/hust-eic-os-review/#website", "url": "https://estelledc.github.io/hust-eic-os-review/", "name": "操作系统复习系统", "description": "面向操作系统课程复习的静态学习系统：概念阅读、考前材料与 Lab Studio。", "inLanguage": ["zh-Hans", "en"], "author": {"@id": "https://estelledc.github.io/#jason"}}, {"@type": "Person", "@id": "https://estelledc.github.io/#jason", "name": "Jason", "url": "https://estelledc.github.io/", "sameAs": ["https://github.com/estelledc"]}, {"@type": "CreativeWork", "@id": "https://estelledc.github.io/hust-eic-os-review/#resource", "url": "https://estelledc.github.io/hust-eic-os-review/", "name": "操作系统复习系统", "description": "把 5 章概念、考前材料与 9 个引导式 Lab 组织成能走、能练、能复核的静态学习系统。", "inLanguage": "zh-Hans", "isPartOf": {"@id": "https://estelledc.github.io/hust-eic-os-review/#website"}, "author": {"@id": "https://estelledc.github.io/#jason"}}]}</script>
 <script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 </head>
 <body>
-<a class="jx-return-to-hub" href="https://estelledc.github.io/" rel="home">回 Jason 主站</a>
-<a href="https://github.com/estelledc/hust-eic-os-review" class="github-corner" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码">
-  <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
-    <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" fill="var(--accent, #2962ff)"></path>
-    <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="#fff" class="octo-arm"></path>
-    <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.5 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="#fff" class="octo-body"></path>
-  </svg>
-</a>
-<style>
-  .github-corner { position: fixed; top: 0; right: 0; z-index: 99; border: 0; }
-  .github-corner svg { display: block; }
-  .github-corner:hover .octo-arm {
-    animation: octocat-wave 560ms ease-in-out;
-  }
-  @keyframes octocat-wave {
-    0%, 100% { transform: rotate(0); }
-    20%, 60% { transform: rotate(-25deg); }
-    40%, 80% { transform: rotate(10deg); }
-  }
-  .octo-arm { transform-origin: 130px 106px; }
-  @media (max-width: 500px) {
-    .github-corner:hover .octo-arm { animation: none; }
-    .github-corner .octo-arm { animation: octocat-wave 560ms ease-in-out; }
-    .github-corner svg { width: 60px; height: 60px; }
-  }
-</style>
+<a class="jx-skip-link" href="#main">跳到主要内容</a>
 <header class="topbar site-topbar" role="banner">
   <div class="topbar-inner">
     <a class="brand" href="index.html" aria-label="返回首页">
       <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#book"/></svg>
-      <span>华中科技大学电信本科 · 操作系统复习笔记</span>
+      <span><strong>OS Review</strong><small>HUST EIC · 学习系统</small></span>
     </a>
-    <button class="site-nav-toggle" type="button" aria-expanded="false" data-site-nav-toggle>导航</button>
-    <nav class="site-nav" aria-label="站点主导航">
-      <a class="site-nav-link is-active" href="index.html">课程地图</a>
+    <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-site-nav-toggle>导航</button>
+    <nav class="site-nav" id="site-nav" aria-label="站点主导航">
+      <a class="site-nav-link is-active" href="index.html" aria-current="page">课程地图</a>
       <a class="site-nav-link" href="ch1.html">阅读</a>
       <a class="site-nav-link" href="practice.html">实践</a>
       <a class="site-nav-link" href="review.html">总复习</a>
       <a class="site-nav-link" href="homework.html">作业</a>
       <a class="site-nav-link" href="tutorial-1.html">教程</a>
       <a class="site-nav-link" href="themes-gallery.html">主题</a>
+      <span class="site-nav-global" role="group" aria-label="Jason 作品集导航">
+        <a class="site-nav-link" href="https://estelledc.github.io/">Hub</a>
+        <a class="site-nav-link" href="https://estelledc.github.io/about/">About</a>
+        <a class="site-nav-link" href="https://estelledc.github.io/resume/">Resume</a>
+        <a class="site-nav-link" href="https://github.com/estelledc/hust-eic-os-review">GitHub</a>
+      </span>
     </nav>
     <div class="topbar-actions">
+      <nav class="portfolio-links" aria-label="Jason 作品集导航">
+        <a class="jx-return-to-hub" href="https://estelledc.github.io/" rel="home">Hub</a>
+        <a href="https://estelledc.github.io/about/">About</a>
+        <a href="https://estelledc.github.io/resume/">Resume</a>
+      </nav>
       <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
       </button>
@@ -87,21 +90,91 @@
 </aside>
 <main class="main main-home" id="main">
   <article class="home home-dashboard">
-    <header class="hero home-hero surface">
-      <p class="kicker">华中科技大学 · 电信本科</p>
-      <h1 class="hero-title">操作系统复习笔记</h1>
-      <p class="hero-lede">把阅读、考前复习、作业题和 Lab 实践放进同一套学习路径。先建立概念，再做练习，最后回到题型和实验证据。</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="ch1.html">从第 1 章开始</a>
-        <a class="btn btn-secondary" href="practice.html">进入实践模式</a>
-        <a class="btn btn-ghost" href="review.html">直达总复习</a>
+    <header class="showcase-hero" aria-labelledby="showcase-title">
+      <div class="showcase-hero__copy">
+        <div class="showcase-hero__meta">
+          <span class="jx-chip" data-state="maintained">Maintained</span>
+          <span class="jx-eyebrow"><span class="jx-eyebrow__rule"></span>Public learning system</span>
+        </div>
+        <p class="kicker">华中科技大学 · 电信本科 · 操作系统</p>
+        <h1 class="hero-title" id="showcase-title">把散落的课程材料，组织成一套能走、能练、能复核的学习系统</h1>
+        <p class="hero-lede">我把章节笔记、考前材料与 9 个 Lab 的引导式实践统一到三条清晰路径里，让学习者先建立机制地图，再动手验证，最后回到题型复核。</p>
+        <p class="showcase-hero__en" lang="en">A static operating-systems review system that turns fragmented notes, exam material, and guided labs into one evidence-oriented learning path.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#system">查看系统设计</a>
+          <a class="btn btn-secondary" href="practice.html">进入 Lab Studio</a>
+          <a class="btn btn-ghost" href="https://github.com/estelledc/hust-eic-os-review">查看源码 ↗</a>
+        </div>
+      </div>
+      <div class="os-stack" role="img" aria-label="学习系统的三层结构：概念、实践、复核">
+        <div class="os-stack__label"><span>OS REVIEW / SYSTEM MAP</span><span>03 PATHS</span></div>
+        <ol>
+          <li><span>01</span><strong>概念阅读</strong><small>5 章机制主线</small></li>
+          <li><span>02</span><strong>引导实践</strong><small>Lab1—Lab9</small></li>
+          <li><span>03</span><strong>考前复核</strong><small>提纲 · 题型 · 默写</small></li>
+        </ol>
       </div>
     </header>
 
-    <section class="map learning-section">
+    <section class="jx-proof showcase-proof" aria-labelledby="problem-title">
+      <div>
+        <p class="jx-case-section__heading">Problem / 问题</p>
+        <h2 id="problem-title">课程内容不缺，缺的是一条能持续推进的路径</h2>
+        <p class="jx-proof__summary">章节、作业、考试重点和实验往往分散在不同材料里。这个项目的核心不是再堆一份笔记，而是把“理解—练习—复核”做成同一个可导航、可重建的静态系统。</p>
+        <p class="jx-proof__summary-en" lang="en">The product problem was information architecture: connect reading, guided practice, and exam recall without claiming to replace the course or a real OS lab.</p>
+        <div class="jx-proof__metrics" aria-label="可核验项目数据">
+          <div class="jx-proof__metric"><strong>5</strong><span>章概念主线</span></div>
+          <div class="jx-proof__metric"><strong>9</strong><span>个引导式 Lab</span></div>
+          <div class="jx-proof__metric"><strong>614</strong><span>张在库知识插图</span></div>
+        </div>
+      </div>
+      <dl class="jx-proof__meta">
+        <div><dt>Role / 角色</dt><dd>产品定义、信息架构、内容整合、前端实现与验收</dd></div>
+        <div><dt>Audience / 用户</dt><dd>正在建立操作系统知识框架的课程学习者</dd></div>
+        <div><dt>Stack / 实现</dt><dd>Python 静态生成器 · Markdown · Vanilla JS · CSS</dd></div>
+        <div><dt>Boundary / 协作</dt><dd>Jason 决定目标、结构与验收；AI 工具辅助代码、内容结构化和插图生产</dd></div>
+      </dl>
+    </section>
+
+    <section class="jx-case-section showcase-system" id="system" aria-labelledby="system-title">
+      <div class="jx-case-section__grid">
+        <h2 class="jx-case-section__heading" id="system-title">System / 系统</h2>
+        <div class="jx-case-section__body system-paths">
+          <a href="ch1.html"><span>01 · Understand</span><strong>沿 5 章机制主线建立概念地图</strong><small>概论 → 处理器 → 同步与死锁 → 存储 → 设备</small></a>
+          <a href="practice.html"><span>02 · Practice</span><strong>用分阶段提示推进 Lab1—Lab9</strong><small>目标、行动、检查和证据留在同一个工作台</small></a>
+          <a href="review.html"><span>03 · Recall</span><strong>用提纲、速练与默写清单复核</strong><small>从长内容切换到高频考点与可回看的题型</small></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="jx-case-section" aria-labelledby="evidence-title">
+      <div class="jx-case-section__grid">
+        <h2 class="jx-case-section__heading" id="evidence-title">Evidence / 证据</h2>
+        <div class="jx-case-section__body">
+          <p>所有数字都来自仓库内可重复运行的构建输入，不把“内容数量”包装成学习效果。</p>
+          <ul class="jx-evidence-list">
+            <li><a href="index.html#course-map"><span class="evidence-copy"><strong>13 条内容路线</strong><small>5 章、复习材料、实践与三段教程</small></span></a></li>
+            <li><a href="practice.html"><span class="evidence-copy"><strong>9 个 Lab 数据包</strong><small>由构建脚本拆分并按需加载</small></span></a></li>
+            <li><a href="themes-gallery.html"><span class="evidence-copy"><strong>71 套可切换主题</strong><small>保留课程站的个性化阅读体验</small></span></a></li>
+            <li><a href="https://github.com/estelledc/hust-eic-os-review"><span class="evidence-copy"><strong>可重建与可测试</strong><small>Markdown 源内容、Python 生成器与自动化检查</small></span></a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="jx-case-section" aria-labelledby="limitations-title">
+      <div class="jx-case-section__grid">
+        <h2 class="jx-case-section__heading" id="limitations-title">Limitations / 边界</h2>
+        <div class="jx-case-section__body jx-case-limit">
+          <p><strong>这是一套个人课程复习系统，不是官方教材或真实实验环境。</strong>Lab Studio 提供引导式推理和本地进度记录，不执行内核编译；站点不含账号、云同步或学习分析，也不声称提高成绩。教材与课程材料版权归原作者和权利人。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="map learning-section" id="course-map">
       <header class="section-head">
-        <p class="kicker">阅读模式</p>
-        <h2>章节路径</h2>
+        <p class="kicker">Course map / 阅读模式</p>
+        <h2>从这里进入学习系统</h2>
         <p>按操作系统的主线推进：概论、处理器、同步互斥、存储、设备。</p>
       </header>
       <ol class="cards">
@@ -170,15 +243,18 @@
 <footer class="jx-footer">
   <div class="jx-footer__colophon">
     <strong>OS Review</strong>
-    <span lang="en">HUST EIC · MMXXVI</span>
+    <span lang="en">A Jason product system · MMXXVI</span>
   </div>
   <nav class="jx-footer__index">
     <a href="index.html">course map</a>
     <a href="review.html">复习提纲</a>
-    <a href="themes-gallery.html">71 主题</a>
+    <a href="practice.html">lab studio</a>
+    <a href="https://estelledc.github.io/">hub</a>
+    <a href="https://estelledc.github.io/about/">about</a>
+    <a href="https://estelledc.github.io/resume/">resume</a>
     <a href="https://github.com/estelledc/hust-eic-os-review">github</a>
   </nav>
-  <time class="jx-footer__stamp" datetime="2026-05-31" lang="en">2026·05·31</time>
+  <time class="jx-footer__stamp" datetime="2026-07-11" lang="en">Updated 2026·07·11</time>
 </footer>
 <aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
   <div class="theme-picker-head">
