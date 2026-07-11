@@ -1,5 +1,5 @@
 // Site-wide interactivity:
-//   - theme toggle (light/dark) + named theme picker (71 themes from awesome-design-md)
+//   - three accessibility-oriented reading modes
 //   - mobile site navigation disclosure
 //   - scroll-spy TOC
 //   - back-to-top button
@@ -10,11 +10,13 @@
 
   const root = document.documentElement;
   const STORAGE_KEY = "os-review-theme";
+  const ALLOWED_THEMES = new Set(["", "access-light", "access-dark"]);
 
   /* ---- theme storage ---- */
   function read() {
     try {
-      return localStorage.getItem(STORAGE_KEY) || "";
+      const value = localStorage.getItem(STORAGE_KEY) || "";
+      return ALLOWED_THEMES.has(value) ? value : "";
     } catch {
       return "";
     }
@@ -29,27 +31,23 @@
   // Apply persisted theme as early as possible (head inline already does this; this is defensive).
   const stored = read();
   if (stored) root.setAttribute("data-theme", stored);
+  else root.removeAttribute("data-theme");
 
   function currentTheme() {
-    const explicit = root.getAttribute("data-theme");
-    if (explicit) return explicit;
-    return matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
+    return root.getAttribute("data-theme") || "";
   }
 
   function isDarkTheme(slug) {
-    if (!slug || slug === "auto") {
+    if (!slug) {
       return matchMedia("(prefers-color-scheme: dark)").matches;
     }
-    if (slug === "dark") return true;
-    if (slug === "light") return false;
-    const t = (window.__THEMES__ || []).find((x) => x.slug === slug);
-    if (t) return !!t.is_dark;
+    if (slug === "access-dark") return true;
+    if (slug === "access-light") return false;
     return matchMedia("(prefers-color-scheme: dark)").matches;
   }
 
   function setTheme(slug) {
+    slug = ALLOWED_THEMES.has(slug) ? slug : "";
     if (!slug) {
       root.removeAttribute("data-theme");
       write("");
@@ -61,12 +59,13 @@
     refreshActiveCards();
   }
 
-  /* ---- delegated click: toggle + named theme buttons ---- */
+  /* ---- delegated click: accessible reading-mode buttons ---- */
   document.addEventListener("click", (e) => {
     const t = e.target.closest("[data-theme-toggle]");
     if (t) {
       const cur = currentTheme();
-      setTheme(isDarkTheme(cur) ? "light" : "dark");
+      const order = ["", "access-light", "access-dark"];
+      setTheme(order[(order.indexOf(cur) + 1) % order.length]);
       return;
     }
     const s = e.target.closest("[data-theme-set]");
@@ -94,17 +93,21 @@
     const openBtns = document.querySelectorAll("[data-theme-picker]");
     const closeBtns = document.querySelectorAll("[data-theme-panel-close]");
     if (!panel || !grid) return;
+    let opener = null;
 
-    function open() {
-      renderGrid();
+    function open(event) {
+      opener = event?.currentTarget || document.activeElement;
       panel.hidden = false;
       if (backdrop) backdrop.hidden = false;
       panel.setAttribute("aria-hidden", "false");
+      refreshActiveCards();
+      grid.querySelector("[data-theme-set]")?.focus();
     }
     function close() {
       panel.hidden = true;
       if (backdrop) backdrop.hidden = true;
       panel.setAttribute("aria-hidden", "true");
+      if (opener && typeof opener.focus === "function") opener.focus();
     }
     openBtns.forEach((b) => b.addEventListener("click", open));
     closeBtns.forEach((b) => b.addEventListener("click", close));
@@ -113,23 +116,6 @@
       if (e.key === "Escape" && !panel.hidden) close();
     });
 
-    function renderGrid() {
-      const themes = window.__THEMES__ || [];
-      const cur = currentTheme();
-      grid.innerHTML = themes.map((t) => themeCard(t, cur === t.slug)).join("");
-    }
-  }
-
-  function themeCard(t, active) {
-    const swatch = (t.swatch || [])
-      .slice(0, 4)
-      .map((c) => `<span style="background:${c}"></span>`)
-      .join("");
-    return `<button type="button" class="theme-card${active ? " theme-card-active" : ""}" data-theme-set="${t.slug}">
-      <div class="theme-card-swatch">${swatch}</div>
-      <div class="theme-card-name">${escHtml(t.name)} <span class="theme-card-mode">${t.is_dark ? "dark" : "light"}</span></div>
-      <div class="theme-card-desc">${escHtml(t.description || "")}</div>
-    </button>`;
   }
 
   function escHtml(s) {
@@ -150,7 +136,6 @@
     const cur = currentTheme();
     document.querySelectorAll("[data-theme-set]").forEach((el) => {
       const slug = el.getAttribute("data-theme-set");
-      el.classList.toggle("theme-card-active", slug === cur);
       el.classList.toggle("is-active", slug === cur);
     });
   }
@@ -1415,7 +1400,7 @@
       window.mermaid.initialize({
         startOnLoad: false,
         theme: mermaidThemeName(),
-        securityLevel: "loose",
+        securityLevel: "strict",
         flowchart: { htmlLabels: true, curve: "basis" },
       });
       document.querySelectorAll("pre.mermaid").forEach((el) => {

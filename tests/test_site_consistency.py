@@ -4,6 +4,7 @@ import subprocess
 import sys
 import unittest
 from pathlib import Path
+from html.parser import HTMLParser
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,19 @@ GENERATED_PAGES = [
     "tutorial-3.html",
     "themes-gallery.html",
 ]
+
+
+class ImageContractParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.invalid: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag != "img":
+            return
+        values = dict(attrs)
+        if any(not values.get(key) for key in ("width", "height", "loading", "decoding")):
+            self.invalid.append(values.get("src") or "<unknown>")
 
 
 class SiteConsistencyTest(unittest.TestCase):
@@ -124,6 +138,42 @@ class SiteConsistencyTest(unittest.TestCase):
             self.assertIn('name="twitter:card" content="summary_large_image"', html, page)
             self.assertIn('type="application/ld+json"', html, page)
             self.assertIn('class="jx-skip-link"', html, page)
+            self.assertIn('<meta name="author" content="Jason Xun">', html, page)
+            self.assertIn('https://estelledc.github.io/#person', html, page)
+            self.assertIn('"name": "Jason Xun"', html, page)
+
+    def test_lab_studio_is_primary_and_has_a_no_js_three_step_entry(self) -> None:
+        html = self.read_page("index.html")
+        hero_actions = html.split('<div class="hero-actions">', 1)[1].split("</div>", 1)[0]
+        self.assertLess(hero_actions.index('href="practice.html"'), hero_actions.index('href="#system"'))
+        self.assertIn('id="lab-entry"', html)
+        self.assertEqual(html.count('name="lab-entry-step"'), 3)
+        self.assertIn("关闭 JavaScript 后仍能完整阅读", html)
+        self.assertIn("<noscript>", html)
+
+    def test_public_theme_surface_is_three_accessibility_modes(self) -> None:
+        index_html = self.read_page("index.html")
+        gallery_html = self.read_page("themes-gallery.html")
+        self.assertEqual(index_html.count('class="access-mode-card"'), 3)
+        self.assertIn("跟随系统", index_html)
+        self.assertIn("高可读浅色", index_html)
+        self.assertIn("高对比深色", index_html)
+        self.assertNotIn("window.__THEMES__", index_html)
+        self.assertNotIn("themes/themes.css", index_html)
+        self.assertEqual(gallery_html.count('class="gallery-card"'), 71)
+        self.assertIn("主题来源档案", gallery_html)
+
+    def test_generated_images_reserve_space_and_decode_asynchronously(self) -> None:
+        for page in GENERATED_PAGES:
+            parser = ImageContractParser()
+            parser.feed(self.read_page(page))
+            self.assertEqual(parser.invalid, [], page)
+
+    def test_narrow_keyboard_and_motion_contracts_exist(self) -> None:
+        css = (ROOT / "assets" / "style.css").read_text(encoding="utf-8")
+        self.assertIn("@media (max-width: 360px)", css)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+        self.assertIn("summary:focus-visible", css)
 
 
 if __name__ == "__main__":

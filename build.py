@@ -25,6 +25,8 @@ CONTENT = ROOT / "content"
 ASSETS_REL = "assets"
 IMAGES_REL = "content/images"
 KNOWLEDGE_MANIFEST_REL = "content/knowledge-illustrations.json"
+KNOWLEDGE_IMAGE_WIDTH = 1536
+KNOWLEDGE_IMAGE_HEIGHT = 1024
 
 # slug, source md (str or tuple of merged parts), display title, group, intro
 PAGES = [
@@ -106,7 +108,8 @@ def knowledge_figure_html(entry: dict) -> str:
     point_id = html_mod.escape(str(entry.get("id", "")), quote=True)
     return (
         f'<figure class="knowledge-figure" data-knowledge-id="{point_id}">\n'
-        f'  <img src="{image}" alt="{alt}" loading="lazy">\n'
+        f'  <img src="{image}" alt="{alt}" width="{KNOWLEDGE_IMAGE_WIDTH}" '
+        f'height="{KNOWLEDGE_IMAGE_HEIGHT}" loading="lazy" decoding="async">\n'
         f'  <figcaption>插图：{title}</figcaption>\n'
         f'</figure>'
     )
@@ -181,15 +184,28 @@ IMAGE_REWRITES: dict[str, str] = {
     "images/img-166-479.png":           "content/images/ch3-bankers-matrix.png",
 }
 
+IMAGE_DIMENSIONS: dict[str, tuple[int, int]] = {
+    "content/images/ch1-cpu-utilization.jpg": (1034, 631),
+    "content/images/ch3-deadlock-spacetime.png": (1587, 987),
+    "content/images/ch3-bankers-matrix.png": (1608, 756),
+}
+
 IMG_HTML_RE = re.compile(r'<img([^>]*?)src="(images/[^"]+)"([^>]*)>')
 
 def fix_images(html: str) -> str:
     def _sub(m: re.Match) -> str:
         before, src, after = m.group(1), m.group(2), m.group(3)
         new_src = IMAGE_REWRITES.get(src, f"content/{src}")
-        # add lazy loading + clean alt fallback
+        attrs = before + after
+        width, height = IMAGE_DIMENSIONS.get(new_src, (0, 0))
         if "loading=" not in (before + after):
             after += ' loading="lazy"'
+        if "decoding=" not in attrs:
+            after += ' decoding="async"'
+        if width and "width=" not in attrs:
+            after += f' width="{width}"'
+        if height and "height=" not in attrs:
+            after += f' height="{height}"'
         return f'<img{before}src="{new_src}"{after}>'
     return IMG_HTML_RE.sub(_sub, html)
 
@@ -222,6 +238,11 @@ HUB_URL = "https://estelledc.github.io/"
 ABOUT_URL = "https://estelledc.github.io/about/"
 RESUME_URL = "https://estelledc.github.io/resume/"
 OG_IMAGE_URL = f"{SITE_URL}assets/og-os-review.png"
+ACCESSIBILITY_MODES: tuple[tuple[str, str, str], ...] = (
+    ("", "跟随系统", "自动响应设备的明暗偏好。"),
+    ("access-light", "高可读浅色", "纯白底、深色正文与清晰链接。"),
+    ("access-dark", "高对比深色", "深色底、提亮正文并强化边界。"),
+)
 
 
 def public_url(slug: str) -> str:
@@ -238,12 +259,12 @@ def structured_data(page_title: str, page_desc: str, slug: str) -> str:
             "name": SITE_TITLE,
             "description": "面向操作系统课程复习的静态学习系统：概念阅读、考前材料与 Lab Studio。",
             "inLanguage": ["zh-Hans", "en"],
-            "author": {"@id": f"{HUB_URL}#jason"},
+            "author": {"@id": f"{HUB_URL}#person"},
         },
         {
             "@type": "Person",
-            "@id": f"{HUB_URL}#jason",
-            "name": "Jason",
+            "@id": f"{HUB_URL}#person",
+            "name": "Jason Xun",
             "url": HUB_URL,
             "sameAs": ["https://github.com/estelledc"],
         },
@@ -255,7 +276,7 @@ def structured_data(page_title: str, page_desc: str, slug: str) -> str:
             "description": page_desc,
             "inLanguage": "zh-Hans",
             "isPartOf": {"@id": f"{SITE_URL}#website"},
-            "author": {"@id": f"{HUB_URL}#jason"},
+            "author": {"@id": f"{HUB_URL}#person"},
         },
     ]
     return json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False)
@@ -273,7 +294,7 @@ def head_html(page_title: str, page_desc: str, slug: str) -> str:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="{desc}">
-<meta name="author" content="Jason">
+<meta name="author" content="Jason Xun">
 <meta name="color-scheme" content="light dark">
 <title>{html_mod.escape(full_title)}</title>
 <link rel="canonical" href="{page_url}">
@@ -295,10 +316,9 @@ def head_html(page_title: str, page_desc: str, slug: str) -> str:
 <link rel="stylesheet" href="{ASSETS_REL}/jx/base.css">
 <link rel="stylesheet" href="{ASSETS_REL}/jx/components.css">
 <link rel="stylesheet" href="{ASSETS_REL}/style.css">
-<link rel="stylesheet" href="themes/themes.css">
 <link rel="icon" type="image/svg+xml" href="{ASSETS_REL}/favicon.svg">
 <script type="application/ld+json">{json_ld}</script>
-<script>(function(){{try{{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}}catch(e){{}}}})();</script>
+<script>(function(){{try{{var t=localStorage.getItem("os-review-theme");if(t==="access-light"||t==="access-dark")document.documentElement.setAttribute("data-theme",t);}}catch(e){{}}}})();</script>
 </head>
 <body>
 <a class="jx-skip-link" href="#main">跳到主要内容</a>
@@ -361,10 +381,7 @@ def topbar_html(active_slug: str) -> str:
         <a href="{ABOUT_URL}">About</a>
         <a href="{RESUME_URL}">Resume</a>
       </nav>
-      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#sun"/></svg>
-      </button>
-      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择阅读外观" data-theme-picker title="选择阅读外观（3 种）">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#palette"/></svg>
       </button>
       <a class="theme-toggle" href="{REPO_URL}" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码" title="在 GitHub 查看源码">
@@ -404,7 +421,7 @@ def sidebar_html(active_slug: str) -> str:
   <div class="sidebar-footer">
     <a class="ghost" href="themes-gallery.html">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="{ASSETS_REL}/icons.svg#palette"/></svg>
-      <span>主题画廊（71 套）</span>
+      <span>主题来源档案（71 套）</span>
     </a>
     <p class="ghost sidebar-note">本站源代码以 markdown 编写、build.py 重新生成。</p>
   </div>
@@ -429,28 +446,26 @@ FOOTER_HTML = f"""<footer class="jx-footer">
 </footer>
 """
 
-PICKER_HTML = f"""<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+ACCESSIBILITY_MODE_BUTTONS = "".join(
+    f'<button type="button" class="access-mode-card" data-theme-set="{slug}" role="listitem">'
+    f'<strong>{label}</strong><span>{description}</span></button>'
+    for slug, label, description in ACCESSIBILITY_MODES
+)
+
+PICKER_HTML = f"""<aside class="theme-picker" data-theme-panel hidden role="dialog" aria-modal="true" aria-labelledby="theme-picker-title">
   <div class="theme-picker-head">
-    <h3 class="theme-picker-title">选择主题</h3>
-    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <h2 class="theme-picker-title" id="theme-picker-title">阅读外观</h2>
+    <p class="theme-picker-sub">只保留 3 种经过可读性收敛的模式；默认跟随系统，无需脚本也能阅读。</p>
     <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
   </div>
-  <div class="theme-picker-actions">
-    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
-    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  <div class="access-mode-grid" data-theme-grid role="list">
+    {ACCESSIBILITY_MODE_BUTTONS}
   </div>
-  <div class="theme-picker-grid" data-theme-grid></div>
+  <p class="theme-picker-archive">原有 71 套色板没有删除，仍可在<a href="themes-gallery.html">主题来源档案</a>查看。</p>
+  <noscript><p class="theme-picker-noscript">JavaScript 已关闭：页面继续使用系统明暗偏好。</p></noscript>
 </aside>
 <div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
 """
-
-def themes_inline_script() -> str:
-    p = ROOT / "themes" / "themes.json"
-    if not p.exists():
-        return '<script>window.__THEMES__=[];</script>'
-    obj = json.loads(p.read_text(encoding="utf-8"))
-    arr = obj.get("themes", [])
-    return f'<script id="themes-data">window.__THEMES__={json.dumps(arr, ensure_ascii=False)};</script>'
 
 PRACTICE_LABS_OUT_DIR = ROOT / "practice-labs"
 
@@ -513,7 +528,6 @@ def practice_inline_script() -> str:
     )
 
 SCRIPTS_HTML = f"""
-{themes_inline_script()}
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
 <script src="{ASSETS_REL}/app.js" defer></script>
 """
@@ -566,11 +580,12 @@ INDEX_TEMPLATE = """<main class="main main-home" id="main">
         </div>
         <p class="kicker">华中科技大学 · 电信本科 · 操作系统</p>
         <h1 class="hero-title" id="showcase-title">把散落的课程材料，组织成一套能走、能练、能复核的学习系统</h1>
-        <p class="hero-lede">我把章节笔记、考前材料与 9 个 Lab 的引导式实践统一到三条清晰路径里，让学习者先建立机制地图，再动手验证，最后回到题型复核。</p>
+        <p class="hero-lede">Lab Studio 是第一入口：先在一个实验里看见机制、做出判断、留下证据，再回到章节与题型补齐知识地图。</p>
         <p class="showcase-hero__en" lang="en">A static operating-systems review system that turns fragmented notes, exam material, and guided labs into one evidence-oriented learning path.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#system">查看系统设计</a>
-          <a class="btn btn-secondary" href="practice.html">进入 Lab Studio</a>
+          <a class="btn btn-primary" href="practice.html">进入 Lab Studio</a>
+          <a class="btn btn-secondary" href="#lab-entry">先走 3 步预览</a>
+          <a class="btn btn-ghost" href="#system">查看系统设计</a>
           <a class="btn btn-ghost" href="https://github.com/estelledc/hust-eic-os-review">查看源码 ↗</a>
         </div>
       </div>
@@ -583,6 +598,40 @@ INDEX_TEMPLATE = """<main class="main main-home" id="main">
         </ol>
       </div>
     </header>
+
+    <section class="lab-entry" id="lab-entry" aria-labelledby="lab-entry-title">
+      <header class="lab-entry__head">
+        <div>
+          <p class="jx-case-section__heading">Start here · Lab Studio</p>
+          <h2 id="lab-entry-title">用 3 步进入一次 OS 机制实验。</h2>
+        </div>
+        <p>这是 Lab 6 的入口预演：不运行真实内核，也不展示实验答案。原生 details/summary 可用键盘操作，关闭 JavaScript 后仍能完整阅读。</p>
+      </header>
+      <div class="lab-entry__steps">
+        <details name="lab-entry-step" open>
+          <summary><span>01</span><strong>先问问题</strong><small>Why</small></summary>
+          <div class="lab-entry__panel">
+            <p>多个进程抢同一个资源时，信号量怎样决定谁继续、谁等待、谁被唤醒？</p>
+            <span class="lab-entry__source">Lab 6 · 信号量的实现与应用</span>
+          </div>
+        </details>
+        <details name="lab-entry-step">
+          <summary><span>02</span><strong>再看机制</strong><small>Observe</small></summary>
+          <div class="lab-entry__panel">
+            <p>把信号量看成“剩余名额 + 等待队列”：没名额时阻塞，释放资源后再唤醒。先预测状态变化，再决定 P/V 顺序。</p>
+            <span class="lab-entry__source">概念 · 计数 / 阻塞队列 / 临界区</span>
+          </div>
+        </details>
+        <details name="lab-entry-step">
+          <summary><span>03</span><strong>带着证据进入</strong><small>Act</small></summary>
+          <div class="lab-entry__panel">
+            <p>工作台会把目标、行动、检查与复盘放在同一条路径；进度只保存在当前浏览器。</p>
+            <a class="btn btn-primary" href="practice.html">打开 Lab Studio · Lab1—Lab9</a>
+          </div>
+        </details>
+      </div>
+      <noscript><p class="lab-entry__noscript">JavaScript 已关闭：上面的 3 步预览和 Lab Studio 说明仍可读；动态进度与答案检查需要启用 JavaScript。</p></noscript>
+    </section>
 
     <section class="jx-proof showcase-proof" aria-labelledby="problem-title">
       <div>
@@ -623,7 +672,7 @@ INDEX_TEMPLATE = """<main class="main main-home" id="main">
           <ul class="jx-evidence-list">
             <li><a href="index.html#course-map"><span class="evidence-copy"><strong>13 条内容路线</strong><small>5 章、复习材料、实践与三段教程</small></span></a></li>
             <li><a href="practice.html"><span class="evidence-copy"><strong>9 个 Lab 数据包</strong><small>由构建脚本拆分并按需加载</small></span></a></li>
-            <li><a href="themes-gallery.html"><span class="evidence-copy"><strong>71 套可切换主题</strong><small>保留课程站的个性化阅读体验</small></span></a></li>
+            <li><a href="themes-gallery.html"><span class="evidence-copy"><strong>3 种可访问阅读模式</strong><small>跟随系统、高可读浅色、高对比深色；71 套历史色板保留为来源档案</small></span></a></li>
             <li><a href="https://github.com/estelledc/hust-eic-os-review"><span class="evidence-copy"><strong>可重建与可测试</strong><small>Markdown 源内容、Python 生成器与自动化检查</small></span></a></li>
           </ul>
         </div>
@@ -774,19 +823,18 @@ def gallery_page() -> str:
             f'</div>'
             f'<p class="gallery-card-desc">{desc}</p>'
             f'<div class="gallery-card-actions">'
-            f'<button class="btn btn-mini btn-primary" type="button" data-theme-set="{slug}" data-gallery-apply>应用主题</button>'
-            f'<a class="btn btn-mini btn-secondary" href="ch1.html" data-preview-link="{slug}">在 ch1 中预览</a>'
+            f'<a class="btn btn-mini btn-secondary" href="ch1.html">打开标准阅读页</a>'
             f'</div></div></article>'
         )
     body = (
         f'<main class="main main-home" id="main">'
         f'<article class="home gallery-page">'
         f'<header class="hero home-hero surface">'
-        f'<p class="kicker">主题画廊</p>'
-        f'<h1 class="hero-title">71 套设计系统主题</h1>'
-        f'<p class="hero-lede">来自开源仓库 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的主题色板，已经映射到本站 CSS 变量。切换主题后，全站阅读页和实践页会一起变化。</p>'
+        f'<p class="kicker">Theme source archive</p>'
+        f'<h1 class="hero-title">71 套主题来源档案</h1>'
+        f'<p class="hero-lede">原有 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 色板继续保留用于追溯与设计研究；公开阅读体验已收敛为 3 种可访问模式，不再让颜色选择压过课程内容。</p>'
         f'<div class="hero-actions">'
-        f'<button class="btn btn-primary" type="button" data-theme-set="">默认（跟随系统）</button>'
+        f'<button class="btn btn-primary" type="button" data-theme-picker>选择 3 种阅读模式</button>'
         f'<a class="btn btn-secondary" href="index.html">返回课程地图</a>'
         f'</div>'
         f'</header>'
@@ -794,7 +842,7 @@ def gallery_page() -> str:
         f'<header class="section-head">'
         f'<p class="kicker">外观设置</p>'
         f'<h2>选择主题</h2>'
-        f'<p>搜索品牌名或按明暗筛选，再直接应用到当前站点。</p>'
+        f'<p>搜索品牌名或按明暗筛选；这里是来源档案，不直接改变阅读页外观。</p>'
         f'</header>'
         f'<div class="site-toolbar">'
         f'<input class="gallery-search" type="search" placeholder="搜索主题名（apple / spotify / claude ...）" data-gallery-search aria-label="搜索主题">'
@@ -844,24 +892,11 @@ def gallery_page() -> str:
       apply();
     });
   });
-  // Reflect active theme on the apply button
-  function refresh(){
-    var cur = document.documentElement.getAttribute('data-theme') || '';
-    grid.querySelectorAll('[data-theme-set]').forEach(function(el){
-      el.classList.toggle('is-active', el.getAttribute('data-theme-set') === cur);
-      if (el.getAttribute('data-theme-set') === cur) el.textContent = '✓ 已应用';
-      else if (el.hasAttribute('data-gallery-apply')) el.textContent = '应用主题';
-    });
-  }
-  refresh();
-  document.documentElement.addEventListener('DOMSubtreeModified', function(){}, true);
-  // Listen to attribute change via MutationObserver
-  new MutationObserver(refresh).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 </script>
 """
     return (
-        head_html("主题画廊", "71 套来自 awesome-design-md 的 design-md 主题。", "themes-gallery")
+        head_html("主题来源档案", "71 套历史色板的可搜索来源档案；公开阅读体验收敛为 3 种可访问模式。", "themes-gallery")
         + topbar_html("__gallery__")
         + '<div class="layout layout-home">\n'
         + sidebar_html("__gallery__")
@@ -888,6 +923,26 @@ def build() -> None:
     print("  build  index.html")
     (ROOT / "themes-gallery.html").write_text(gallery_page(), encoding="utf-8")
     print("  build  themes-gallery.html")
+
+    not_found_body = (
+        '<p>这个地址可能已经移动。返回 <a href="index.html">课程地图</a>，'
+        '从 Lab Studio、章节阅读或考前复核继续。</p>'
+        '<p><a class="btn btn-primary" href="practice.html">进入 Lab Studio</a> '
+        f'<a class="btn btn-secondary" href="{HUB_URL}">打开 Jason Hub</a></p>'
+    )
+    not_found = page_html(
+        "404",
+        "页面未找到",
+        "这条路径没有对应的操作系统学习页面。",
+        not_found_body,
+        "",
+    ).replace(
+        '<meta name="author" content="Jason Xun">',
+        '<meta name="author" content="Jason Xun">\n<meta name="robots" content="noindex,follow">',
+        1,
+    )
+    (ROOT / "404.html").write_text(not_found, encoding="utf-8")
+    print("  build  404.html")
 
     print(f"\nDone. Output: {ROOT}/")
 

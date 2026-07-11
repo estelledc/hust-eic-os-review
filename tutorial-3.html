@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="死锁 · 网络 / 分布式 / 云。">
-<meta name="author" content="Jason">
+<meta name="author" content="Jason Xun">
 <meta name="color-scheme" content="light dark">
 <title>教程笔记 · Part 3 — 操作系统复习系统</title>
 <link rel="canonical" href="https://estelledc.github.io/hust-eic-os-review/tutorial-3.html">
@@ -26,10 +26,9 @@
 <link rel="stylesheet" href="assets/jx/base.css">
 <link rel="stylesheet" href="assets/jx/components.css">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="themes/themes.css">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://estelledc.github.io/hust-eic-os-review/#website", "url": "https://estelledc.github.io/hust-eic-os-review/", "name": "操作系统复习系统", "description": "面向操作系统课程复习的静态学习系统：概念阅读、考前材料与 Lab Studio。", "inLanguage": ["zh-Hans", "en"], "author": {"@id": "https://estelledc.github.io/#jason"}}, {"@type": "Person", "@id": "https://estelledc.github.io/#jason", "name": "Jason", "url": "https://estelledc.github.io/", "sameAs": ["https://github.com/estelledc"]}, {"@type": "LearningResource", "@id": "https://estelledc.github.io/hust-eic-os-review/tutorial-3.html#resource", "url": "https://estelledc.github.io/hust-eic-os-review/tutorial-3.html", "name": "教程笔记 · Part 3", "description": "死锁 · 网络 / 分布式 / 云。", "inLanguage": "zh-Hans", "isPartOf": {"@id": "https://estelledc.github.io/hust-eic-os-review/#website"}, "author": {"@id": "https://estelledc.github.io/#jason"}}]}</script>
-<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://estelledc.github.io/hust-eic-os-review/#website", "url": "https://estelledc.github.io/hust-eic-os-review/", "name": "操作系统复习系统", "description": "面向操作系统课程复习的静态学习系统：概念阅读、考前材料与 Lab Studio。", "inLanguage": ["zh-Hans", "en"], "author": {"@id": "https://estelledc.github.io/#person"}}, {"@type": "Person", "@id": "https://estelledc.github.io/#person", "name": "Jason Xun", "url": "https://estelledc.github.io/", "sameAs": ["https://github.com/estelledc"]}, {"@type": "LearningResource", "@id": "https://estelledc.github.io/hust-eic-os-review/tutorial-3.html#resource", "url": "https://estelledc.github.io/hust-eic-os-review/tutorial-3.html", "name": "教程笔记 · Part 3", "description": "死锁 · 网络 / 分布式 / 云。", "inLanguage": "zh-Hans", "isPartOf": {"@id": "https://estelledc.github.io/hust-eic-os-review/#website"}, "author": {"@id": "https://estelledc.github.io/#person"}}]}</script>
+<script>(function(){try{var t=localStorage.getItem("os-review-theme");if(t==="access-light"||t==="access-dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 </head>
 <body>
 <a class="jx-skip-link" href="#main">跳到主要内容</a>
@@ -61,10 +60,7 @@
         <a href="https://estelledc.github.io/about/">About</a>
         <a href="https://estelledc.github.io/resume/">Resume</a>
       </nav>
-      <button class="theme-toggle" type="button" aria-label="切换深浅色" data-theme-toggle title="切换深浅色">
-        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg>
-      </button>
-      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择主题" data-theme-picker title="选择主题（71 套）">
+      <button class="theme-toggle theme-picker-btn" type="button" aria-label="选择阅读外观" data-theme-picker title="选择阅读外观（3 种）">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
       </button>
       <a class="theme-toggle" href="https://github.com/estelledc/hust-eic-os-review" target="_blank" rel="noopener" aria-label="在 GitHub 查看源码" title="在 GitHub 查看源码">
@@ -83,7 +79,7 @@
   <div class="sidebar-footer">
     <a class="ghost" href="themes-gallery.html">
       <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#palette"/></svg>
-      <span>主题画廊（71 套）</span>
+      <span>主题来源档案（71 套）</span>
     </a>
     <p class="ghost sidebar-note">本站源代码以 markdown 编写、build.py 重新生成。</p>
   </div>
@@ -101,13 +97,13 @@
 <hr>
 <h2 id="6-66-p230-p239-img-241250"><a class="toclink" href="#6-66-p230-p239-img-241250">第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k001">
-  <img src="content/images/knowledge/tutorial-3-k001.webp" alt="知识点插图：第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k001.webp" alt="知识点插图：第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：第 6 章 6.6 节 死锁（书 p230-p239 / img-241~250）</figcaption>
 </figure>
 
 <h3 id="661"><a class="toclink" href="#661">6.6.1 死锁的产生</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k002">
-  <img src="content/images/knowledge/tutorial-3-k002.webp" alt="知识点插图：6.6.1 死锁的产生" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k002.webp" alt="知识点插图：6.6.1 死锁的产生" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：6.6.1 死锁的产生</figcaption>
 </figure>
 
@@ -121,7 +117,7 @@
 </ul>
 <h3 id="662"><a class="toclink" href="#662">6.6.2 死锁的防止</a></h3>
 <p><figure class="knowledge-figure" data-knowledge-id="tutorial-3-k003">
-  <img src="content/images/knowledge/tutorial-3-k003.webp" alt="知识点插图：6.6.2 死锁的防止" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k003.webp" alt="知识点插图：6.6.2 死锁的防止" width="1536" height="1024" loading="lazy" decoding="async">
 <br>
 <figcaption>插图：6.6.2 死锁的防止</figcaption></p>
 </figure>
@@ -167,7 +163,7 @@
 </ol>
 <h3 id="663-dijkstra-1965"><a class="toclink" href="#663-dijkstra-1965">6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k004">
-  <img src="content/images/knowledge/tutorial-3-k004.webp" alt="知识点插图：6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k004.webp" alt="知识点插图：6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：6.6.3 死锁的避免 — 银行家算法（Dijkstra 1965）</figcaption>
 </figure>
 
@@ -209,7 +205,7 @@
 <p><strong>缺点</strong>：保守、资源利用率低；且每次分配前都要检查每个进程对各类资源的最大需求，<strong>时间开销大</strong>。</p>
 <h3 id="664"><a class="toclink" href="#664">6.6.4 死锁的检测</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k005">
-  <img src="content/images/knowledge/tutorial-3-k005.webp" alt="知识点插图：6.6.4 死锁的检测" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k005.webp" alt="知识点插图：6.6.4 死锁的检测" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：6.6.4 死锁的检测</figcaption>
 </figure>
 
@@ -239,7 +235,7 @@
 </blockquote>
 <h3 id="66-p239"><a class="toclink" href="#66-p239">6.6 本章小结（书 p239）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k006">
-  <img src="content/images/knowledge/tutorial-3-k006.webp" alt="知识点插图：6.6 本章小结（书 p239）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k006.webp" alt="知识点插图：6.6 本章小结（书 p239）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：6.6 本章小结（书 p239）</figcaption>
 </figure>
 
@@ -258,7 +254,7 @@
 </ul>
 <h3 id="p240-246-img-251257"><a class="toclink" href="#p240-246-img-251257">习题六（书 p240-246 / img-251~257）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k007">
-  <img src="content/images/knowledge/tutorial-3-k007.webp" alt="知识点插图：习题六（书 p240-246 / img-251~257）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k007.webp" alt="知识点插图：习题六（书 p240-246 / img-251~257）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：习题六（书 p240-246 / img-251~257）</figcaption>
 </figure>
 
@@ -292,7 +288,7 @@
 <hr>
 <h2 id="7-p247-p302-img-258313"><a class="toclink" href="#7-p247-p302-img-258313">第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）</a></h2>
 <p><figure class="knowledge-figure" data-knowledge-id="tutorial-3-k008">
-  <img src="content/images/knowledge/tutorial-3-k008.webp" alt="知识点插图：第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k008.webp" alt="知识点插图：第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）" width="1536" height="1024" loading="lazy" decoding="async">
 <br>
 <figcaption>插图：第 7 章 网络环境下的操作系统（书 p247-p302 / img-258~313）</figcaption></p>
 </figure>
@@ -302,13 +298,13 @@
 </blockquote>
 <h3 id="71-p247-p256"><a class="toclink" href="#71-p247-p256">7.1 计算机网络与网络操作系统（书 p247-p256）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k009">
-  <img src="content/images/knowledge/tutorial-3-k009.webp" alt="知识点插图：7.1 计算机网络与网络操作系统（书 p247-p256）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k009.webp" alt="知识点插图：7.1 计算机网络与网络操作系统（书 p247-p256）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.1 计算机网络与网络操作系统（书 p247-p256）</figcaption>
 </figure>
 
 <h4 id="711"><a class="toclink" href="#711">7.1.1 网络体系结构</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k010">
-  <img src="content/images/knowledge/tutorial-3-k010.webp" alt="知识点插图：7.1.1 网络体系结构" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k010.webp" alt="知识点插图：7.1.1 网络体系结构" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.1.1 网络体系结构</figcaption>
 </figure>
 
@@ -322,7 +318,7 @@
 </ul>
 <h4 id="712-nos"><a class="toclink" href="#712-nos">7.1.2 网络操作系统（NOS）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k011">
-  <img src="content/images/knowledge/tutorial-3-k011.webp" alt="知识点插图：7.1.2 网络操作系统（NOS）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k011.webp" alt="知识点插图：7.1.2 网络操作系统（NOS）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.1.2 网络操作系统（NOS）</figcaption>
 </figure>
 
@@ -357,7 +353,7 @@
 <p>C/S 优点：数据分布存储、处理分布、应用编程方便。</p>
 <h4 id="713-nfs"><a class="toclink" href="#713-nfs">7.1.3 网络文件系统（NFS）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k012">
-  <img src="content/images/knowledge/tutorial-3-k012.webp" alt="知识点插图：7.1.3 网络文件系统（NFS）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k012.webp" alt="知识点插图：7.1.3 网络文件系统（NFS）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.1.3 网络文件系统（NFS）</figcaption>
 </figure>
 
@@ -376,13 +372,13 @@
 </ul>
 <h3 id="72-p256-p266"><a class="toclink" href="#72-p256-p266">7.2 分布式操作系统（书 p256-p266）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k013">
-  <img src="content/images/knowledge/tutorial-3-k013.webp" alt="知识点插图：7.2 分布式操作系统（书 p256-p266）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k013.webp" alt="知识点插图：7.2 分布式操作系统（书 p256-p266）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.2 分布式操作系统（书 p256-p266）</figcaption>
 </figure>
 
 <h4 id="721"><a class="toclink" href="#721">7.2.1 概念与特点</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k014">
-  <img src="content/images/knowledge/tutorial-3-k014.webp" alt="知识点插图：7.2.1 概念与特点" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k014.webp" alt="知识点插图：7.2.1 概念与特点" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.2.1 概念与特点</figcaption>
 </figure>
 
@@ -390,7 +386,7 @@
 <p><strong>与网络 OS 的区别</strong>：网络 OS 强调每台机器独立操作系统，仅协议互联；分布式 OS 强调统一系统映像。</p>
 <h4 id="722"><a class="toclink" href="#722">7.2.2 分布式进程通信</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k015">
-  <img src="content/images/knowledge/tutorial-3-k015.webp" alt="知识点插图：7.2.2 分布式进程通信" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k015.webp" alt="知识点插图：7.2.2 分布式进程通信" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.2.2 分布式进程通信</figcaption>
 </figure>
 
@@ -424,7 +420,7 @@
 <p>服务器收到客户请求后通常<strong>创建子进程</strong>响应，自己继续 listen，形成主从服务器并发。</p>
 <h4 id="723-dsm"><a class="toclink" href="#723-dsm">7.2.3 分布式共享内存（DSM）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k016">
-  <img src="content/images/knowledge/tutorial-3-k016.webp" alt="知识点插图：7.2.3 分布式共享内存（DSM）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k016.webp" alt="知识点插图：7.2.3 分布式共享内存（DSM）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.2.3 分布式共享内存（DSM）</figcaption>
 </figure>
 
@@ -468,7 +464,7 @@
 <p><strong>基于页的 DSM 设计</strong>：用主存管理单元 + OS 软件模拟多处理器缓存——为每个机器提供线性分页内存，页可在机器间移动。地址空间分为页块（chunks），分布在所有处理器上。访问非本地地址 → 陷入指令 → DSM 软件取来包含该地址的数据块 → 重启故障指令。</p>
 <h4 id="724"><a class="toclink" href="#724">7.2.4 分布式事务处理</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k017">
-  <img src="content/images/knowledge/tutorial-3-k017.webp" alt="知识点插图：7.2.4 分布式事务处理" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k017.webp" alt="知识点插图：7.2.4 分布式事务处理" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.2.4 分布式事务处理</figcaption>
 </figure>
 
@@ -487,13 +483,13 @@
 <p>崩溃的参与者重启后若发现自己已在 Precommit，可以独立做出 Commit 决定（与其他 Ready 状态者也能达成一致），<strong>避免阻塞</strong>。但实际中 2PC 阻塞情况很少，3PC 应用不多。</p>
 <h3 id="73-p266-p273"><a class="toclink" href="#73-p266-p273">7.3 云计算与虚拟化（书 p266-p273）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k018">
-  <img src="content/images/knowledge/tutorial-3-k018.webp" alt="知识点插图：7.3 云计算与虚拟化（书 p266-p273）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k018.webp" alt="知识点插图：7.3 云计算与虚拟化（书 p266-p273）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.3 云计算与虚拟化（书 p266-p273）</figcaption>
 </figure>
 
 <h4 id="731"><a class="toclink" href="#731">7.3.1 云计算</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k019">
-  <img src="content/images/knowledge/tutorial-3-k019.webp" alt="知识点插图：7.3.1 云计算" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k019.webp" alt="知识点插图：7.3.1 云计算" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.3.1 云计算</figcaption>
 </figure>
 
@@ -507,7 +503,7 @@
 <p><strong>部署模式</strong>：公有云 / 私有云 / 混合云 / 社区云。</p>
 <h4 id="732"><a class="toclink" href="#732">7.3.2 虚拟化</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k020">
-  <img src="content/images/knowledge/tutorial-3-k020.webp" alt="知识点插图：7.3.2 虚拟化" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k020.webp" alt="知识点插图：7.3.2 虚拟化" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.3.2 虚拟化</figcaption>
 </figure>
 
@@ -533,13 +529,13 @@
 </ol>
 <h3 id="74-p273-p286"><a class="toclink" href="#74-p273-p286">7.4 移动终端操作系统（书 p273-p286）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k021">
-  <img src="content/images/knowledge/tutorial-3-k021.webp" alt="知识点插图：7.4 移动终端操作系统（书 p273-p286）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k021.webp" alt="知识点插图：7.4 移动终端操作系统（书 p273-p286）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.4 移动终端操作系统（书 p273-p286）</figcaption>
 </figure>
 
 <h4 id="741"><a class="toclink" href="#741">7.4.1 移动终端处理器结构</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k022">
-  <img src="content/images/knowledge/tutorial-3-k022.webp" alt="知识点插图：7.4.1 移动终端处理器结构" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k022.webp" alt="知识点插图：7.4.1 移动终端处理器结构" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.4.1 移动终端处理器结构</figcaption>
 </figure>
 
@@ -548,19 +544,19 @@
 <p><strong>GPU 编程库</strong>：OpenGL ES（移动端）、Metal（iOS）、Vulkan、CUDA（NVIDIA）等。</p>
 <h4 id="742"><a class="toclink" href="#742">7.4.2 触摸屏与人机交互</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k023">
-  <img src="content/images/knowledge/tutorial-3-k023.webp" alt="知识点插图：7.4.2 触摸屏与人机交互" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k023.webp" alt="知识点插图：7.4.2 触摸屏与人机交互" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.4.2 触摸屏与人机交互</figcaption>
 </figure>
 
 <h4 id="743"><a class="toclink" href="#743">7.4.3 移动终端的无线通信</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k024">
-  <img src="content/images/knowledge/tutorial-3-k024.webp" alt="知识点插图：7.4.3 移动终端的无线通信" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k024.webp" alt="知识点插图：7.4.3 移动终端的无线通信" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.4.3 移动终端的无线通信</figcaption>
 </figure>
 
 <h4 id="744"><a class="toclink" href="#744">7.4.4 移动终端的操作系统实例</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k025">
-  <img src="content/images/knowledge/tutorial-3-k025.webp" alt="知识点插图：7.4.4 移动终端的操作系统实例" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k025.webp" alt="知识点插图：7.4.4 移动终端的操作系统实例" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.4.4 移动终端的操作系统实例</figcaption>
 </figure>
 
@@ -643,13 +639,13 @@
 <p>底层结构提供文件系统、内存管理、I/O 等基础服务；高层结构建立在低层之上，提供 UI 控件、文件访问等具体服务。可触摸层主要核心是 <strong>UIKit.Framework</strong>——应用界面所有组件都由它呈现。核心服务层在核心 OS 层基础上提供更丰富的功能。</p>
 <h3 id="75-p284-p294"><a class="toclink" href="#75-p284-p294">7.5 网络环境下的操作系统安全（书 p284-p294）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k026">
-  <img src="content/images/knowledge/tutorial-3-k026.webp" alt="知识点插图：7.5 网络环境下的操作系统安全（书 p284-p294）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k026.webp" alt="知识点插图：7.5 网络环境下的操作系统安全（书 p284-p294）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.5 网络环境下的操作系统安全（书 p284-p294）</figcaption>
 </figure>
 
 <h4 id="751"><a class="toclink" href="#751">7.5.1 安全概述</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k027">
-  <img src="content/images/knowledge/tutorial-3-k027.webp" alt="知识点插图：7.5.1 安全概述" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k027.webp" alt="知识点插图：7.5.1 安全概述" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.5.1 安全概述</figcaption>
 </figure>
 
@@ -658,7 +654,7 @@
 <p><strong>可靠性</strong>（reliability）= 硬件系统正常持续运行能力；<strong>安全性</strong>（security）= 防止信息被窃取/破坏。两者是不同概念。</p>
 <h4 id="752"><a class="toclink" href="#752">7.5.2 计算机病毒</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k028">
-  <img src="content/images/knowledge/tutorial-3-k028.webp" alt="知识点插图：7.5.2 计算机病毒" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k028.webp" alt="知识点插图：7.5.2 计算机病毒" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.5.2 计算机病毒</figcaption>
 </figure>
 
@@ -700,7 +696,7 @@
 <p><strong>应对</strong>：① 预防（最理想）② 检测（确定感染并定位）③ 识别（病毒类型）④ 清除（根除并恢复程序原状；不能清除则删除并重装无毒版本）。</p>
 <h4 id="753-auditing"><a class="toclink" href="#753-auditing">7.5.3 安全审计（auditing）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k029">
-  <img src="content/images/knowledge/tutorial-3-k029.webp" alt="知识点插图：7.5.3 安全审计（auditing）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k029.webp" alt="知识点插图：7.5.3 安全审计（auditing）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.5.3 安全审计（auditing）</figcaption>
 </figure>
 
@@ -713,7 +709,7 @@
 <p>由于 I/O 耗时，引入缓冲区。可用多个相同大小的缓冲区构成缓冲池提高并发。审计员可调节缓冲区大小和数量。缓冲区控制结构包括：基址、大小、个数、读/写指针、临界界线等。</p>
 <h4 id="754"><a class="toclink" href="#754">7.5.4 安全模型</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k030">
-  <img src="content/images/knowledge/tutorial-3-k030.webp" alt="知识点插图：7.5.4 安全模型" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k030.webp" alt="知识点插图：7.5.4 安全模型" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.5.4 安全模型</figcaption>
 </figure>
 
@@ -726,7 +722,7 @@
 <p><strong>安全模型分两种</strong>：形式化（数学模型，精确）+ 非形式化（自然语言描述）。常见模型：BLP（Bell-LaPadula 多级安全模型）、Biba 完整性模型、Clark-Wilson、RBAC（基于角色的访问控制）。</p>
 <h4 id="755"><a class="toclink" href="#755">7.5.5 安全加密算法</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k031">
-  <img src="content/images/knowledge/tutorial-3-k031.webp" alt="知识点插图：7.5.5 安全加密算法" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k031.webp" alt="知识点插图：7.5.5 安全加密算法" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.5.5 安全加密算法</figcaption>
 </figure>
 
@@ -748,13 +744,13 @@
 <p><strong>网络加密</strong>两种：<strong>链加密</strong>（相邻节点间链路加密）和<strong>端加密</strong>（端到端加密）。</p>
 <h3 id="76-p293-p302-img-304313"><a class="toclink" href="#76-p293-p302-img-304313">7.6 区块链（书 p293-p302 / img-304~313）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k032">
-  <img src="content/images/knowledge/tutorial-3-k032.webp" alt="知识点插图：7.6 区块链（书 p293-p302 / img-304~313）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k032.webp" alt="知识点插图：7.6 区块链（书 p293-p302 / img-304~313）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.6 区块链（书 p293-p302 / img-304~313）</figcaption>
 </figure>
 
 <h4 id="761"><a class="toclink" href="#761">7.6.1 区块链概述</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k033">
-  <img src="content/images/knowledge/tutorial-3-k033.webp" alt="知识点插图：7.6.1 区块链概述" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k033.webp" alt="知识点插图：7.6.1 区块链概述" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.6.1 区块链概述</figcaption>
 </figure>
 
@@ -800,7 +796,7 @@
 </ol>
 <h4 id="762-5-6"><a class="toclink" href="#762-5-6">7.6.2 区块链的架构（5-6 层模型）</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k034">
-  <img src="content/images/knowledge/tutorial-3-k034.webp" alt="知识点插图：7.6.2 区块链的架构（5-6 层模型）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k034.webp" alt="知识点插图：7.6.2 区块链的架构（5-6 层模型）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.6.2 区块链的架构（5-6 层模型）</figcaption>
 </figure>
 
@@ -815,7 +811,7 @@
 </ul>
 <h4 id="763"><a class="toclink" href="#763">7.6.3 区块链的应用</a></h4>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k035">
-  <img src="content/images/knowledge/tutorial-3-k035.webp" alt="知识点插图：7.6.3 区块链的应用" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k035.webp" alt="知识点插图：7.6.3 区块链的应用" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7.6.3 区块链的应用</figcaption>
 </figure>
 
@@ -924,7 +920,7 @@
 </table>
 <h3 id="7-p301"><a class="toclink" href="#7-p301">7 章本章小结（书 p301）</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k036">
-  <img src="content/images/knowledge/tutorial-3-k036.webp" alt="知识点插图：7 章本章小结（书 p301）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k036.webp" alt="知识点插图：7 章本章小结（书 p301）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：7 章本章小结（书 p301）</figcaption>
 </figure>
 
@@ -942,13 +938,13 @@
 <hr>
 <h2 id="p303-p346-img-314357"><a class="toclink" href="#p303-p346-img-314357">附录 《操作系统教程》导学（书 p303-p346 / img-314~357）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k037">
-  <img src="content/images/knowledge/tutorial-3-k037.webp" alt="知识点插图：附录 《操作系统教程》导学（书 p303-p346 / img-314~357）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k037.webp" alt="知识点插图：附录 《操作系统教程》导学（书 p303-p346 / img-314~357）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：附录 《操作系统教程》导学（书 p303-p346 / img-314~357）</figcaption>
 </figure>
 
 <h3 id="_1"><a class="toclink" href="#_1">设计思想</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k038">
-  <img src="content/images/knowledge/tutorial-3-k038.webp" alt="知识点插图：设计思想" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k038.webp" alt="知识点插图：设计思想" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：设计思想</figcaption>
 </figure>
 
@@ -1104,7 +1100,7 @@
 </ul>
 <h3 id="_2"><a class="toclink" href="#_2">附录章节范围</a></h3>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k039">
-  <img src="content/images/knowledge/tutorial-3-k039.webp" alt="知识点插图：附录章节范围" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k039.webp" alt="知识点插图：附录章节范围" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：附录章节范围</figcaption>
 </figure>
 
@@ -1160,7 +1156,7 @@
 <hr>
 <h2 id="p347-p350-img-358361"><a class="toclink" href="#p347-p350-img-358361">课后阅读材料（书 p347-p350 / img-358~361）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k040">
-  <img src="content/images/knowledge/tutorial-3-k040.webp" alt="知识点插图：课后阅读材料（书 p347-p350 / img-358~361）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k040.webp" alt="知识点插图：课后阅读材料（书 p347-p350 / img-358~361）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：课后阅读材料（书 p347-p350 / img-358~361）</figcaption>
 </figure>
 
@@ -1186,7 +1182,7 @@
 <hr>
 <h2 id="img-362"><a class="toclink" href="#img-362">封底元数据（img-362）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k041">
-  <img src="content/images/knowledge/tutorial-3-k041.webp" alt="知识点插图：封底元数据（img-362）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k041.webp" alt="知识点插图：封底元数据（img-362）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：封底元数据（img-362）</figcaption>
 </figure>
 
@@ -1200,7 +1196,7 @@
 <hr>
 <h2 id="part-3"><a class="toclink" href="#part-3">Part 3 整理疑点</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k042">
-  <img src="content/images/knowledge/tutorial-3-k042.webp" alt="知识点插图：Part 3 整理疑点" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k042.webp" alt="知识点插图：Part 3 整理疑点" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：Part 3 整理疑点</figcaption>
 </figure>
 
@@ -1214,7 +1210,7 @@
 <hr>
 <h2 id="241-362"><a class="toclink" href="#241-362">图片清理报告（241-362 段）</a></h2>
 <figure class="knowledge-figure" data-knowledge-id="tutorial-3-k043">
-  <img src="content/images/knowledge/tutorial-3-k043.webp" alt="知识点插图：图片清理报告（241-362 段）" loading="lazy">
+  <img src="content/images/knowledge/tutorial-3-k043.webp" alt="知识点插图：图片清理报告（241-362 段）" width="1536" height="1024" loading="lazy" decoding="async">
   <figcaption>插图：图片清理报告（241-362 段）</figcaption>
 </figure>
 
@@ -1292,21 +1288,20 @@
   </nav>
   <time class="jx-footer__stamp" datetime="2026-07-11" lang="en">Updated 2026·07·11</time>
 </footer>
-<aside class="theme-picker" data-theme-panel hidden aria-label="主题选择器">
+<aside class="theme-picker" data-theme-panel hidden role="dialog" aria-modal="true" aria-labelledby="theme-picker-title">
   <div class="theme-picker-head">
-    <h3 class="theme-picker-title">选择主题</h3>
-    <p class="theme-picker-sub">71 套来自 <a href="https://github.com/VoltAgent/awesome-design-md" target="_blank" rel="noopener">awesome-design-md</a> 的设计系统</p>
+    <h2 class="theme-picker-title" id="theme-picker-title">阅读外观</h2>
+    <p class="theme-picker-sub">只保留 3 种经过可读性收敛的模式；默认跟随系统，无需脚本也能阅读。</p>
     <button class="theme-picker-close" type="button" aria-label="关闭" data-theme-panel-close>×</button>
   </div>
-  <div class="theme-picker-actions">
-    <button type="button" class="btn btn-mini" data-theme-set="">默认（跟随系统）</button>
-    <a class="btn btn-mini" href="themes-gallery.html">画廊页 →</a>
+  <div class="access-mode-grid" data-theme-grid role="list">
+    <button type="button" class="access-mode-card" data-theme-set="" role="listitem"><strong>跟随系统</strong><span>自动响应设备的明暗偏好。</span></button><button type="button" class="access-mode-card" data-theme-set="access-light" role="listitem"><strong>高可读浅色</strong><span>纯白底、深色正文与清晰链接。</span></button><button type="button" class="access-mode-card" data-theme-set="access-dark" role="listitem"><strong>高对比深色</strong><span>深色底、提亮正文并强化边界。</span></button>
   </div>
-  <div class="theme-picker-grid" data-theme-grid></div>
+  <p class="theme-picker-archive">原有 71 套色板没有删除，仍可在<a href="themes-gallery.html">主题来源档案</a>查看。</p>
+  <noscript><p class="theme-picker-noscript">JavaScript 已关闭：页面继续使用系统明暗偏好。</p></noscript>
 </aside>
 <div class="theme-picker-backdrop" data-theme-panel-backdrop hidden></div>
 
-<script id="themes-data">window.__THEMES__=[{"slug": "airbnb", "name": "Airbnb", "description": "A warm, generous consumer marketplace anchored on a clean white canvas and Airbnb Rausch (#ff385c), the single brand voltage that carries every primary CTA, search-button orb, and rating dot. Type runs Airbnb Cereal VF at modest weights — d", "is_dark": false, "swatch": ["#ffffff", "#222222", "#ff385c", "#dddddd"]}, {"slug": "airtable", "name": "Airtable", "description": "A sober, editorial workflow-software interface anchored on white canvas and dark-ink type, where brand voltage comes from full-bleed signature cards in coral, dark green, peach, and dark navy that punctuate long-scroll explainer pages. Prim", "is_dark": false, "swatch": ["#ffffff", "#181d26", "#181d26", "#dddddd"]}, {"slug": "apple", "name": "Apple", "description": "A photography-first interface that turns marketing into a museum gallery. Edge-to-edge product tiles alternate light and dark canvases, framed by SF Pro Display headlines with negative letter-spacing and a single Action Blue (#0066cc) inter", "is_dark": false, "swatch": ["#ffffff", "#1d1d1f", "#0066cc", "#e0e0e0"]}, {"slug": "binance", "name": "Binance", "description": "A confident financial-platform interface anchored on a deep near-black canvas, where Binance's iconic yellow (#FCD535) carries every primary CTA, brand accent, and value-claim moment. Type runs Binance's custom BinanceNova / BinancePlex sta", "is_dark": false, "swatch": ["#ffffff", "#181a20", "#fcd535", "#cdd1d6"]}, {"slug": "bmw", "name": "BMW", "description": "BMW's corporate site — distinct from BMW M's motorsport-bombastic variant, this is a measured and settled corporate-automotive interface. On a light (cream-tinted white) canvas, BMW corporate blue (#1c69d4) carries every primary CTA; dark n", "is_dark": false, "swatch": ["#ffffff", "#262626", "#1c69d4", "#e6e6e6"]}, {"slug": "bmw-m", "name": "BMW M", "description": "A motorsport-engineering interface anchored on a near-black canvas with white BMW Type Next Latin display headlines in confident UPPERCASE. The brand carries no decorative voltage — its energy comes from full-bleed automotive photography (c", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#3c3c3c"]}, {"slug": "bugatti", "name": "Bugatti", "description": "An austere luxury-automotive interface that uses near-pure black canvas, white uppercase letterspaced display, and full-bleed automotive photography as the only voltage. The system runs three custom Bugatti typefaces — Bugatti Display, Buga", "is_dark": true, "swatch": ["#000000", "#ffffff", "#ffffff", "#262626"]}, {"slug": "cal", "name": "Cal.com", "description": "A clean, calendar-software-first interface anchored on white canvas with black primary CTAs and custom Cal Sans display typography. The system reads as friendly modern SaaS — generous whitespace, soft-rounded cards (~12px), product UI fragm", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#e5e7eb"]}, {"slug": "claude", "name": "Claude", "description": "A warm-canvas editorial interface for Anthropic's Claude product. The system anchors on a tinted cream canvas with serif display headlines, warm coral CTAs, and dark navy product surfaces (code editor mockups, model showcase cards). Brand v", "is_dark": false, "swatch": ["#faf9f5", "#141413", "#cc785c", "#e6dfd8"]}, {"slug": "clay", "name": "Clay", "description": "A vibrant claymation-meets-data interface for Clay.com (GTM data-orchestration platform). Anchors on white canvas with dark-navy primary CTAs, custom rounded display type, and saturated single-color feature cards — hot pink, deep teal, lave", "is_dark": false, "swatch": ["#fffaf0", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "clickhouse", "name": "ClickHouse", "description": "A high-performance database interface anchored on near-pure black canvas with electric yellow as the brand voltage. White typography in confident sans, yellow CTAs, and yellow-text stat numbers carry the brand voice across every page. Code ", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#faff69", "#2a2a2a"]}, {"slug": "cohere", "name": "Cohere", "description": "Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling dis", "is_dark": false, "swatch": ["#ffffff", "#212121", "#17171c", "#d9d9dd"]}, {"slug": "coinbase", "name": "Coinbase", "description": "An institutional-grade crypto exchange whose marketing surfaces read like a quietly-confident financial-services brand. The base canvas is pure white; Coinbase Blue (`#0052ff`) is the single brand voltage, used scarcely on primary CTAs, sig", "is_dark": false, "swatch": ["#ffffff", "#0a0b0d", "#0052ff", "#dee1e6"]}, {"slug": "composio", "name": "Composio", "description": "A developer-tools brand for AI-agent tool integration whose marketing surfaces lean into a dark, technical aesthetic with a single deep-electric-blue voltage (`#0007cd`). The page floor is near-black (`#0f0f0f`); cards float above on subtle", "is_dark": true, "swatch": ["#0f0f0f", "#ffffff", "#0007cd", "#222222"]}, {"slug": "cursor", "name": "Cursor", "description": "An AI-first code editor whose marketing site reads like a quietly-confident developer-tools brand with a warm-cream editorial canvas (`#f7f7f4`) instead of the typical dark IDE atmosphere. Near-black warm ink (`#26251e`) carries body and di", "is_dark": false, "swatch": ["#f7f7f4", "#26251e", "#f54e00", "#e6e5e0"]}, {"slug": "elevenlabs", "name": "ElevenLabs", "description": "A voice-AI brand whose marketing surfaces read like a quietly editorial print magazine. The base canvas is off-white (`#f5f5f5`) holding warm near-black ink (`#292524`); the brand voltage is photographic, not chromatic — soft pastel atmosph", "is_dark": false, "swatch": ["#f5f5f5", "#0c0a09", "#292524", "#e7e5e4"]}, {"slug": "expo", "name": "Expo", "description": "A React Native developer-platform whose marketing site reads like a quietly-confident infrastructure brand. The base canvas is pure white with a soft sky-blue gradient atmospheric wash behind the hero; near-black ink (`#171717`) carries bod", "is_dark": false, "swatch": ["#ffffff", "#171717", "#000000", "#f0f0f3"]}, {"slug": "ferrari", "name": "Ferrari", "description": "A luxury-automotive brand whose marketing surfaces read as cinematic editorial. The base canvas is **near-black** (`#181818`) holding pure white display type; white-canvas bands appear only inside specific editorial contexts (preowned listi", "is_dark": true, "swatch": ["#181818", "#ffffff", "#da291c", "#303030"]}, {"slug": "figma", "name": "Figma", "description": "\"A confident black-and-white editorial frame interrupted by oversized, hand-cut pastel color blocks. The marketing canvas is rigorously monochrome — figmaSans variable type, pure white surfaces, pure black ink, pill-shaped CTAs — while each", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e6e6e6"]}, {"slug": "framer", "name": "Framer", "description": "\"A confident dark-canvas builder marketing site that treats the page like a working artboard — pure black surfaces, white display type set in GT Walsheim Medium with aggressive negative tracking, and a single confident blue (#0099ff) reserv", "is_dark": true, "swatch": ["#090909", "#ffffff", "#ffffff", "#262626"]}, {"slug": "hashicorp", "name": "HashiCorp", "description": "\"An enterprise-infrastructure marketing canvas built around a near-black ground (#000000) and a system of per-product accent colors — Terraform purple, Vault yellow, Consul pink, Waypoint cyan, Vagrant blue — that act as identity tokens rat", "is_dark": true, "swatch": ["#000000", "#ffffff", "#000000", "#3b3d45"]}, {"slug": "ibm", "name": "IBM", "description": "\"An enterprise-marketing canvas faithful to Carbon Design System: white surfaces, charcoal type, IBM Blue (#0f62fe) as the single confident accent, and a deliberately flat-square aesthetic where corners stay at 0–4px. Type runs IBM Plex San", "is_dark": false, "swatch": ["#ffffff", "#161616", "#0f62fe", "#e0e0e0"]}, {"slug": "intercom", "name": "Intercom", "description": "\"An editorial customer-service marketing canvas built around a soft cream-white ground, charcoal type set in Saans (Intercom's proprietary geometric sans), and a single confident Fin Orange (#ff5600) reserved for the Fin AI brand. Cards liv", "is_dark": false, "swatch": ["#f5f1ec", "#111111", "#111111", "#d3cec6"]}, {"slug": "kraken", "name": "Kraken", "description": "Kraken-style purple-on-white crypto exchange aesthetic.", "is_dark": false, "swatch": ["#ffffff", "#101114", "#7132f5", "#dedee5"]}, {"slug": "lamborghini", "name": "Lamborghini", "description": "Cinematic black canvas with gold accent — nocturnal luxury.", "is_dark": true, "swatch": ["#000000", "#ffffff", "#FFC000", "#202020"]}, {"slug": "linear.app", "name": "Linear", "description": "\"A near-black product-focused marketing canvas built around #010102 (the deepest dark surface of any tool in this collection), light gray text (#f7f8f8), and the signature Linear lavender-blue (#5e6ad2) used as the single chromatic accent. ", "is_dark": true, "swatch": ["#010102", "#f7f8f8", "#5e6ad2", "#23252a"]}, {"slug": "lovable", "name": "Lovable", "description": "Warm cream parchment background with friendly tone.", "is_dark": false, "swatch": ["#f7f4ed", "#1c1c1c", "#3b82f6", "#eceae4"]}, {"slug": "mastercard", "name": "Mastercard", "description": "Editorial putty-cream canvas, signal-orange CTAs, pill shapes.", "is_dark": false, "swatch": ["#F3F0EE", "#141413", "#CF4500", "#e3dfdb"]}, {"slug": "meta", "name": "Meta", "description": "Meta's design system spans hardware commerce (Quest VR, Ray-Ban Meta AI glasses) and brand surfaces with a confident product-merchandising voice. The system pairs a stark white canvas with full-bleed photographic product cards, a confident ", "is_dark": false, "swatch": ["#ffffff", "#1c1e21", "#0064e0", "#ced0d4"]}, {"slug": "minimax", "name": "MiniMax", "description": "MiniMax presents itself as a premium AI infrastructure brand through a striking duality — bold black-pill CTAs and stark white canvas for marketing, paired with vibrant gradient product cards (orange-red, magenta-pink, purple, blue) that tu", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e7eb"]}, {"slug": "mintlify", "name": "Mintlify", "description": "Mintlify presents documentation infrastructure with a dual-mode aesthetic — atmospheric sky-gradient marketing heroes (cloud illustration backdrops, soft cream-to-blue washes) paired with dense developer-grade documentation surfaces. The sy", "is_dark": false, "swatch": ["#ffffff", "#0a0a0a", "#0a0a0a", "#e5e5e5"]}, {"slug": "miro", "name": "Miro", "description": "Miro presents itself as the AI-powered visual workspace through a confident, almost playful brand voice — anchored by its signature canary yellow ({colors.brand-yellow}) wordmark over white canvas, broken open by colorful pastel feature tin", "is_dark": false, "swatch": ["#ffffff", "#1c1c1e", "#1c1c1e", "#e0e2e8"]}, {"slug": "mistral.ai", "name": "Mistral AI", "description": "Mistral AI brands itself with a singular signature — atmospheric sunset gradients (mustard, orange, deep red) layered over photography of mountains, plus a horizontal \"sunset stripe\" bar that closes every page. The system pairs warm cream-y", "is_dark": false, "swatch": ["#ffffff", "#1f1f1f", "#fa520f", "#e5e5e5"]}, {"slug": "mongodb", "name": "MongoDB", "description": "MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across prod", "is_dark": false, "swatch": ["#ffffff", "#001e2b", "#00ed64", "#e1e5e8"]}, {"slug": "nike", "name": "Nike", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#111111", "#111111", "#cacacb"]}, {"slug": "notion", "name": "Notion", "description": "Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice — anchored by a deep navy hero band ({colors.brand-navy}) decorated with brand-colored sticky-note dots and mesh wire illustrations, a sig", "is_dark": false, "swatch": ["#ffffff", "#1a1a1a", "#5645d4", "#e5e3df"]}, {"slug": "nvidia", "name": "NVIDIA", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#76b900", "#cccccc"]}, {"slug": "ollama", "name": "Ollama", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e5e5e5"]}, {"slug": "opencode.ai", "name": "OpenCode", "description": "|", "is_dark": false, "swatch": ["#fdfcfc", "#201d1d", "#201d1d", "rgba(15,0,0,0.12)"]}, {"slug": "pinterest", "name": "Pinterest", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#e60023", "#dadad3"]}, {"slug": "playstation", "name": "PlayStation", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#0070d1", "#f3f3f3"]}, {"slug": "posthog", "name": "PostHog", "description": "|", "is_dark": false, "swatch": ["#eeefe9", "#23251d", "#f7a501", "#bfc1b7"]}, {"slug": "raycast", "name": "Raycast", "description": "|", "is_dark": true, "swatch": ["#07080a", "#f4f4f6", "#ffffff", "#242728"]}, {"slug": "renault", "name": "Renault", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#000000", "#ffed00", "#f2f2f2"]}, {"slug": "replicate", "name": "Replicate", "description": "|", "is_dark": false, "swatch": ["#f9f7f3", "#202020", "#ea2804", "rgba(32,32,32,0.12)"]}, {"slug": "resend", "name": "Resend", "description": "|", "is_dark": true, "swatch": ["#000000", "#fcfdff", "#fcfdff", "rgba(255,255,255,0.06)"]}, {"slug": "revolut", "name": "Revolut", "description": "|", "is_dark": false, "swatch": ["#ffffff", "#191c1f", "#494fdf", "rgba(255,255,255,0.06)"]}, {"slug": "runwayml", "name": "RunwayML", "description": "Cinematic dark editorial — black canvas, white type, full-bleed.", "is_dark": true, "swatch": ["#0c0c0c", "#fafafa", "#ffffff", "#27272a"]}, {"slug": "sanity", "name": "Sanity", "description": "Near-black command-center palette with electric-blue accent.", "is_dark": true, "swatch": ["#0b0b0b", "#ededed", "#0052ef", "#212121"]}, {"slug": "sentry", "name": "Sentri Inspired", "description": "An inspired interpretation of Sentri's design language — a developer-tools brand built on a deep purple-violet midnight canvas, electric lime accents, and a slightly subversive illustrated personality. The system pairs a custom display sans", "is_dark": true, "swatch": ["#1f1633", "#e6e6e6", "#150f23", "#362d59"]}, {"slug": "shopify", "name": "Shopifi Inspired", "description": "An inspired interpretation of Shopifi's design language — a cinematic commerce platform that runs two parallel design tracks. The marketing-hero and product-narrative pages live on near-black canvases with full-bleed photography of merchant", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#e4e4e7"]}, {"slug": "slack", "name": "Slacc Inspired", "description": "An inspired interpretation of Slacc's design language — a workplace messaging brand built on a deep aubergine primary, with cream-lavender hero gradients, blue inline links, and pill CTAs. The system pairs a proprietary humanist sans for di", "is_dark": false, "swatch": ["#ffffff", "#1d1d1d", "#4a154b", "#e6e6e6"]}, {"slug": "spacex", "name": "Spasex Inspired", "description": "An inspired interpretation of Spasex's design language — a mission-oriented aerospace brand built on pure black canvas, full-bleed photographic and video heroes of rockets and Mars landscapes, and uppercase D-DIN display type set in tight v", "is_dark": true, "swatch": ["#000000", "#e6e6e6", "#000000", "#3a3a3f"]}, {"slug": "spotify", "name": "Spotify", "description": "Iconic dark surface with Spotify Green primary.", "is_dark": true, "swatch": ["#121212", "#ffffff", "#1db954", "#272727"]}, {"slug": "starbucks", "name": "Starbucks", "description": "Heritage green editorial palette on white canvas.", "is_dark": false, "swatch": ["#ffffff", "#1E3932", "#006241", "#d4e9e2"]}, {"slug": "stripe", "name": "Stripi Inspired", "description": "An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketin", "is_dark": false, "swatch": ["#ffffff", "#0d253d", "#533afd", "#e3e8ee"]}, {"slug": "supabase", "name": "Supabaze Inspired", "description": "An inspired interpretation of Supabaze's design language — an open-source database platform built on a clean white-and-near-black system with a single signature emerald-green CTA, a custom humanist sans display tier, and dense product UI mo", "is_dark": false, "swatch": ["#ffffff", "#171717", "#3ecf8e", "#dfdfdf"]}, {"slug": "superhuman", "name": "Superhumon Inspired", "description": "An inspired interpretation of Superhumon's design language — a fast-email productivity brand split between an editorial dark hero (deep indigo navy with violet-sky atmospheric backdrop and a portrait subject) and a quiet white content body ", "is_dark": false, "swatch": ["#ffffff", "#292827", "#1b1938", "#e8e4dd"]}, {"slug": "tesla", "name": "Tesla", "description": "Ascetic white canvas with electric-blue CTA, photography-led.", "is_dark": false, "swatch": ["#ffffff", "#171A20", "#3E6AE1", "#D0D1D2"]}, {"slug": "theverge", "name": "The Verge", "description": "Dark editorial chip palette — mint and ultraviolet accents.", "is_dark": true, "swatch": ["#131313", "#ffffff", "#3cffd0", "#2d2d2d"]}, {"slug": "together.ai", "name": "Together AI Inspired", "description": "An inspired interpretation of Together AI's design language — an AI infrastructure platform whose surface alternates between near-black hero bands (with a three-color orange-magenta-periwinkle gradient as the single piece of brand chrome) a", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#959494"]}, {"slug": "uber", "name": "Uber Inspired", "description": "An inspired interpretation of Uber's design language — a transportation-and-delivery super-app brand whose web surface is a black-and-white duet, framed by a custom geometric display sans, accented by a single signature pill shape (radius 9", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#4b4b4b"]}, {"slug": "vercel", "name": "Vercel Inspired", "description": "An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that a", "is_dark": false, "swatch": ["#ffffff", "#171717", "#171717", "#ebebeb"]}, {"slug": "vodafone", "name": "Vodafone Inspired", "description": "An inspired interpretation of Vodafone's design language — a telecom super-brand whose web surface alternates between editorial photography hero bands with massive uppercase display headlines and clean white content bands, anchored by the c", "is_dark": false, "swatch": ["#ffffff", "#25282b", "#e60000", "#e2e2df"]}, {"slug": "voltagent", "name": "Voltagent Inspired", "description": "An inspired interpretation of Voltagent's design language — a developer-focused AI agent engineering platform whose surface is an unrelenting near-black canvas broken only by a single electric-green brand accent, code-editor mockups inside ", "is_dark": true, "swatch": ["#101010", "#f2f2f2", "#00d992", "#3d3a39"]}, {"slug": "warp", "name": "Warp Inspired", "description": "An inspired interpretation of Warp's design language — an agentic terminal-and-development-environment brand whose surface is a warm near-charcoal canvas (a tint warmer than pure black), broken only by clean Inter typography, the occasional", "is_dark": true, "swatch": ["#2b2622", "#f7f5f0", "#f7f5f0", "#3f3a36"]}, {"slug": "webflow", "name": "Webflow Inspired", "description": "An inspired interpretation of Webflow's design language — a visual web development platform whose surface contrasts a deep near-black `#080808` primary against a generous white canvas, broken by a five-stop chromatic accent system (purple /", "is_dark": false, "swatch": ["#ffffff", "#080808", "#080808", "#d8d8d8"]}, {"slug": "wired", "name": "Wired Inspired", "description": "An inspired interpretation of Wired's design language — a flagship technology-magazine brand whose surface is a strict editorial duet of stark black wordmark on white canvas, anchored by a tall narrow custom display serif for hero headlines", "is_dark": false, "swatch": ["#ffffff", "#000000", "#000000", "#e0e0e0"]}, {"slug": "wise", "name": "Wise Inspired", "description": "An inspired interpretation of Wise's design language — a global money-transfer brand whose surface combines an unusually heavy near-black display sans (weight 900 at 64–126 px) with a vivid lime-green brand accent, sage-tinted surface neutr", "is_dark": false, "swatch": ["#ffffff", "#0e0f0c", "#9fe870", "#e2e2df"]}, {"slug": "x.ai", "name": "xAI Inspired", "description": "An inspired interpretation of xAI's design language — Elon Musk's frontier-AI company whose web surface is a strict near-black canvas broken only by white pill outlines, occasional warm sunset / dusk gradient accents, a custom geometric san", "is_dark": true, "swatch": ["#0a0a0a", "#ffffff", "#ffffff", "#212327"]}, {"slug": "zapier", "name": "Zapier Inspired", "description": "An inspired interpretation of Zapier's design language — a workflow-automation platform whose surface combines warm-cream neutrals (`#fffefb` canvas, `#f8f4f0` soft cream) with deep coffee ink (`#201515`) and a single saturated orange CTA a", "is_dark": false, "swatch": ["#fffefb", "#201515", "#ff4f00", "#e2e2df"]}];</script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
 <script src="assets/app.js" defer></script>
 </body></html>
