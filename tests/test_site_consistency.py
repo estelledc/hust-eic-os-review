@@ -174,6 +174,17 @@ class SiteConsistencyTest(unittest.TestCase):
         self.assertIn("@media (max-width: 360px)", css)
         self.assertIn("@media (prefers-reduced-motion: reduce)", css)
         self.assertIn("summary:focus-visible", css)
+        self.assertEqual((ROOT / "assets" / "jx" / "VERSION").read_text(encoding="utf-8").strip(), "2.2.0")
+        self.assertNotRegex(css, r"transition\s*:[^;]*\ball\b")
+        self.assertNotIn("0.01ms", css)
+        self.assertNotIn(".main, .home, .sidebar { animation", css)
+        self.assertNotIn(".cards .card { animation", css)
+        self.assertIn("var(--jx-ease-drawer)", css)
+        self.assertIn("@media (hover: hover) and (pointer: fine)", css)
+
+        for selector in (".card:hover {", ".gallery-card:hover {", ".system-paths a:hover {"):
+            block = css.split(selector, 1)[1].split("}", 1)[0]
+            self.assertNotIn("transform:", block, selector)
 
 
 if __name__ == "__main__":
