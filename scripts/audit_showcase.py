@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from html.parser import HTMLParser
@@ -180,8 +181,22 @@ def audit_claims(errors: list[str]) -> None:
             errors.append(f"manifest image missing: {entry['image']}")
 
     version = (ROOT / "assets" / "jx" / "VERSION").read_text(encoding="utf-8").strip()
-    if version != "2.1.0":
-        errors.append(f"Jason DS version is {version}, expected 2.1.0")
+    if version != "2.2.0":
+        errors.append(f"Jason DS version is {version}, expected 2.2.0")
+
+    style_css = (ROOT / "assets" / "style.css").read_text(encoding="utf-8")
+    if re.search(r"transition\s*:[^;]*\ball\b", style_css):
+        errors.append("assets/style.css: transition: all is not allowed")
+    if "0.01ms" in style_css:
+        errors.append("assets/style.css: reduced motion still uses the 0.01ms global override")
+    if ".main, .home, .sidebar { animation" in style_css or ".cards .card { animation" in style_css:
+        errors.append("assets/style.css: global page/card reveal animation remains")
+    if "var(--jx-ease-drawer)" not in style_css:
+        errors.append("assets/style.css: theme picker does not use the DS drawer easing")
+    for selector in (".card:hover {", ".gallery-card:hover {", ".system-paths a:hover {"):
+        block = style_css.split(selector, 1)[1].split("}", 1)[0]
+        if "transform:" in block:
+            errors.append(f"assets/style.css: card lift remains in {selector}")
     if 'securityLevel: "strict"' not in (ROOT / "assets" / "app.js").read_text(encoding="utf-8"):
         errors.append("Mermaid must use strict security mode")
 
